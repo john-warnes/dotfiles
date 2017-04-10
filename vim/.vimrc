@@ -96,7 +96,7 @@ set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch                  " Show matching brackets / parenthesis
 set matchtime=3                " Show matching character for .3s
 
-" Show whitespace
+" Show hitespace
 " MUST be inserted BEFORE the colorscheme command
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 au InsertLeave * match ExtraWhitespace /\s\+$/
@@ -109,9 +109,9 @@ au InsertLeave * match ExtraWhitespace /\s\+$/
 set t_Co=256
 color hvalle256mod
 "
-"highlight Normal guibg=lightyellow guifg=Black                                   
-"highlight Cursor guibg=Green guifg=black                                         
-"highlight NonText guibg=grey80 
+"highlight Normal guibg=lightyellow guifg=Black
+"highlight Cursor guibg=Green guifg=black
+"highlight NonText guibg=grey80
 " Enable syntax highlighting
 " You need to reload this file for the change to apply
 filetype off
@@ -212,106 +212,76 @@ set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 9
 set laststatus=2
 "=================================================================
 
-"                    " Fugitive for GIT
-"                    Bundle 'tpope/vim-fugitive'
-"
-"                    " NerdTree to see files in tree mode
-"                    Bundle 'scrooloose/nerdtree'
-"                    " Activate with F2
-"                    map <C-t> :NERDTreeToggle<CR>
-"                    let g:NERDTreeDirArrowExpandable = '*'
-"                    let g:NERDTreeDirArrowCollapsible = '-'
-"
-"                    " Python Mode
-"                    Bundle 'klen/python-mode'
-"
-"                    " Python
-"                    au FileType python setlocal tabstop=8 expandtab
-"                    shiftwidth=4 softtabstop=4
-"                    augroup BufNewFileFromTemplate
-"                    au!
-"                    " Python Template
-"                    autocmd BufNewFile * silent! 0r
-"                    $HOME/.vim/templates/%:e.tpl
-"                    autocmd BufNewFile * normal! G"_dd1G
-"                    autocmd BufNewFile * silent! match Todo /TODO/
-"                    augroup BufNewFileFromTemplate
-"
-"                    " Python-mode
-"                    " Activate rope
-"                    " Keys
-"                    " K             Show python docs
-"                    " <Ctrl-Space>  Rope autocomplete
-"                    " <Ctrl-c>g     Rope goto definition
-"                    " <Ctrl-c>d     Rope show documentation
-"                    " <Ctrl-c>f     Rope find occurrences
-"                    " <Leader>b     Set, unset breakpoint
-"                    (g:pymode_breakpoint enabled)
-"                    " [[            Jump on previous class or function
-"                    (normal, visual, operator mod
-"                    es)
-"                    " ]]            Jump on next class or function (normal,
-"                    visual, operator modes)
-"                    " [M            Jump on previous class or method (normal,
-"                    visual, operator modes
-"                    )
-"                    " ]M            Jump on next class or method (normal,
-"                    visual, operator modes)
-"                    " Do not use default rope, use jedi instead
-"                    let g:pymode_rope = 0
-"
-"                    " Documentation
-"                    let g:pymode_doc = 1
-"                    let g:pymode_doc_key = 'K'
-"
-"                    "Linting
-"                    let g:pymode_lint = 1
-"                    let g:pymode_lint_checker = "pyflakes,pep8"
-"                    " Auto check on save
-"                    let g:pymode_lint_write = 1
-"
-"                    " Support virtualenv
-"                    let g:pymode_virtualenv = 1
-"
-"                    " Enable breakpoints plugin
-"                    let g:pymode_breakpoint = 1
-"                    let g:pymode_breakpoint_bind = '<leader>b'
-"
-"                    " syntax highlighting
-"                    let g:pymode_syntax = 1
-"                    let g:pymode_syntax_all = 1
-"                    let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-"                    let g:pymode_syntax_space_errors = g:pymode_syntax_all
-"
-"                    " Don't autofold code mode
-"                    let g:pymode_folding = 0
-"
-"                    " Jedi code autocompletion
-"                    Bundle 'davidhalter/jedi-vim'
-"
-"                    " Commant-T -> Fast open files, tags
-"                    " Requires vim compile with Ruby
-"                    "Bundle 'wincent/command-t'
-"
-"                    "Super tab completion
-"                    Bundle 'ervandew/supertab'
-"
-"                    " Tags in right col.
-"                    " Requires Exuberant Ctags
-"                    Bundle 'majutsushi/tagbar'
 "=================================================================
-" Python File Template
+" Fugitive for GIT
+Bundle 'tpope/vim-fugitive'
 "=================================================================
-"au FileType python setlocal 	tabstop=4 expandtab shiftwidth=4 softtabstop=4
-augroup BufNewFileFromTemplate
-au!
+
+"=================================================================
+" NerdTree to see files in tree mode
+Bundle 'scrooloose/nerdtree'
+" Activate with Ctrl-T
+map <C-t> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable = '*'
+let g:NERDTreeDirArrowCollapsible = '-'
+"=================================================================
+
+"=================================================================
+" Begin Python IDE Mode
+"=================================================================
+Bundle 'klen/python-mode'
+
+" Python Template
 autocmd BufNewFile * silent! 0r $HOME/.vim/templates/%:e.tpl
 autocmd BufNewFile * normal! G"_dd1G
 autocmd BufNewFile * silent! match Todo /TODO/
 augroup BufNewFileFromTemplate
 
+" Python-mode
+" Activate rope
+"=================================================================
+" Keys
+" K             Show python docs
+" <Ctrl-Space>  Rope autocomplete
+" <Ctrl-c>g     Rope goto definition
+" <Ctrl-c>d     Rope show documentation
+" <Ctrl-c>f     Rope find occurrences
+" <Leader>b     Set, unset breakpoint (g:pymode_breakpoint enabled)
+" [[            Jump on previous class or function (normal, visual, operator mod es)
+" ]]            Jump on next class or function (normal, visual, operator modes)
+" [M            Jump on previous class or method (normal, visual, operator modes)
+" ]M            Jump on next class or method (normal, visual, operator modes)
+" Do not use default rope, use jedi instead, see below
+let g:pymode_rope = 0
+
+" Documentation
+let g:pymode_doc = 1
+let g:pymode_doc_key = 'K'
+
+"Linting
+let g:pymode_lint = 1
+let g:pymode_lint_checker = "pyflakes,pep8"
+" Auto check on save
+let g:pymode_lint_write = 1
+
+" Support virtualenv
+let g:pymode_virtualenv = 1
+
+" Enable breakpoints plugin
+let g:pymode_breakpoint = 1
+let g:pymode_breakpoint_bind = '<leader>b'
+
+" syntax highlighting
+let g:pymode_syntax = 1
+let g:pymode_syntax_all = 1
+let g:pymode_syntax_indent_errors = g:pymode_syntax_all
+let g:pymode_syntax_space_errors = g:pymode_syntax_all
+
+" Don't autofold code mode
+let g:pymode_folding = 0
+
 " Trim white spaces
-"autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
+autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
 
 "---- Options for Windows
 if has("gui_running")
@@ -338,3 +308,29 @@ map! <S-Insert> <MiddleMouse>
 
 let g:miniBufExplSplitToEdge = 0
 let g:miniBufExplVSplit = 30
+"=================================================================
+" END Python IDE Mode
+"=================================================================
+
+"=================================================================
+" Jedi code autocompletion
+Bundle 'davidhalter/jedi-vim'
+"=================================================================
+
+"=================================================================
+"Super tab completion
+Bundle 'ervandew/supertab'
+"=================================================================
+
+"=================================================================
+" Tags in right col.
+" Requires Exuberant Ctags
+" Activate with Ctrl-T
+Bundle 'majutsushi/tagbar'
+"=================================================================
+
+"=================================================================
+" C/C++ Plugin
+Bundle 'WolfgangMehner/c-support'
+let g:C_MapLeader  = ','
+"=================================================================
