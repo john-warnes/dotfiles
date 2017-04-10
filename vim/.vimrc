@@ -66,7 +66,6 @@ set ruler                   " Show the line / column number of cursor
 set showcmd                 " Show the partially completed command
 set showmode                " Display the current mode
 set number                  " Display line number"
-"set foldlevel=0
 set clipboard =unnamed
 set tw=79                   " width of document (used by gd)
 set nowrap                  " don't automatically wrap on load
@@ -325,7 +324,7 @@ Bundle 'ervandew/supertab'
 "=================================================================
 " Tags in right col.
 " Requires Exuberant Ctags
-" Activate with Ctrl-T
+" Activate with TabbarOpen
 Bundle 'majutsushi/tagbar'
 "=================================================================
 
@@ -333,4 +332,23 @@ Bundle 'majutsushi/tagbar'
 " C/C++ Plugin
 Bundle 'WolfgangMehner/c-support'
 let g:C_MapLeader  = ','
+"=================================================================
+
+"=================================================================
+" AnyFold Plugin
+" :h fold-commands: zo, zO, zc, za, etc
+" Even better to use Fold Cycling Plugin
+Bundle 'pseewald/vim-anyfold'
+let anyfold_activate=1
+set foldlevel=0
+"=================================================================
+
+"=================================================================
+" Fold Cycling Plugin
+"  provides the avility to cycle open and closed folds and
+"  nested folds
+Bundle 'arecarn/vim-fold-cycle'
+"let g:fold_cycle_default_mapping = 0 "disable default mappings
+nmap <Tab><Tab> <Plug>(fold-cycle-open)
+nmap <S-Tab><S-Tab> <Plug>(fold-cycle-close)
 "=================================================================
