@@ -24,7 +24,18 @@ set wildmode=list:longest,full " Command <Tab> completion, list matches and
                                "   complete the longest common part, then,
                                "   cycle through the matches
 set wildchar=<Tab>
+set bs=2                       " Set backspace
+" Rebind <Leader> key
+" I like to have it here becuase it is easier to reach than the default and
+" it is next to ``m`` and ``n`` which I use for navigating between tabs.
+let mapleader = ","
 
+" Bind nohl
+" Removes highlight of your last search
+" ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
+noremap <C-n> :nohl<CR>
+vnoremap <C-n> :nohl<CR>
+inoremap <C-n> :nohl<CR>
 "=================================================================
 " tags
 "=================================================================
@@ -46,6 +57,8 @@ set encoding=utf8
 set wildmenu
 set commentstring=\ #\ %s
 
+"map sort function to a key
+vnoremap <Leader>s :sort<CR> 
 "=================================================================
 " Status-line
 "=================================================================
@@ -55,6 +68,11 @@ set showmode                " Display the current mode
 set number                  " Display line number"
 "set foldlevel=0
 set clipboard =unnamed
+set tw=79                   " width of document (used by gd)
+set nowrap                  " don't automatically wrap on load
+set fo-=t                   " don't automatically wrap text when typing
+set colorcolumn=80
+highlight ColorColumn ctermbg=233
 
 "=================================================================
 " Search
@@ -78,16 +96,10 @@ set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch                  " Show matching brackets / parenthesis
 set matchtime=3                " Show matching character for .3s
 
-"=================================================================
-" Vertical indenting
-"=================================================================
-set shiftwidth=4               " Number of spaces used for autoindents
-set tabstop=4                  " Set the tab width to 4
-set softtabstop=4              
-set list                       " Visually displays tabs and EOL
-set listchars=tab:\.\          " Show tabs as a period and space
-set expandtab
-set textwidth=0
+" Show whitespace
+" MUST be inserted BEFORE the colorscheme command
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+au InsertLeave * match ExtraWhitespace /\s\+$/
 
 "=================================================================
 " Color Scheme
@@ -100,7 +112,43 @@ color hvalle256mod
 "highlight Normal guibg=lightyellow guifg=Black                                   
 "highlight Cursor guibg=Green guifg=black                                         
 "highlight NonText guibg=grey80 
+" Enable syntax highlighting
+" You need to reload this file for the change to apply
+filetype off
+filetype plugin indent on
 
+
+"=================================================================
+" Vertical indenting
+"=================================================================
+set shiftwidth=4               " Number of spaces used for autoindents
+set tabstop=4                  " Set the tab width to 4
+set softtabstop=4              
+set list                       " Visually displays tabs and EOL
+set listchars=tab:\.\          " Show tabs as a period and space
+set expandtab
+set textwidth=0
+
+"=================================================================
+" Windows and Tabs Navigations Remaping
+"     bind Ctrl+<movement> keys to move around the windows, 
+"     instead of using Ctrl+w + <movement>
+"     Every unnecessary keystroke that can be saved is good for 
+"     your health :)
+"=================================================================
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h
+" easier moving between tabs
+map <Leader>n <esc>:tabprevious<CR>
+map <Leader>m <esc>:tabnext<CR>
+
+" easier moving of code blocks
+" Try to go into visual mode (v), thenselect several lines of code here and
+" then press ``>`` several times.
+vnoremap < <gv  " better indentation
+vnoremap > >gv  " better indentation
 "=================================================================
 "augroup BufNewFileFromTemplate 
 " Misc.
@@ -110,45 +158,12 @@ filetype plugin indent on
 " Return to the last position in the file
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 
-"=================================================================
-" Python File Template
-"=================================================================
-"au FileType python setlocal 	tabstop=4 expandtab shiftwidth=4 softtabstop=4
-augroup BufNewFileFromTemplate
-au!
-autocmd BufNewFile * silent! 0r $HOME/.vim/templates/%:e.tpl
-autocmd BufNewFile * normal! G"_dd1G
-autocmd BufNewFile * silent! match Todo /TODO/
-augroup BufNewFileFromTemplate
+" Disable stupid backup and swap files - they trigger too many events
+" for file system watchers
+set nobackup
+set nowritebackup
+set noswapfile
 
-" Trim white spaces
-"autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
-
-"---- Options for Windows
-if has("gui_running")
-	"set guifont=Courier  " use this font 
-	set guifont="-bitstream-bitstream vera sans mono-bold-r-normal-*-*-80-*-*-m-*-microsoft-cp1252"
-	set lines=50         " height = 50 lines
-	set columns=100      " width = 100 columns
-	set background=dark " adapt colors for dark background
-	colorscheme kib_darktango " use this color scheme
-	set selectmode=mouse,key,cmd
-	set keymodel=
-	behave mswin
-	nmap <F5> :ls<CR>:e #
-	nmap <F1> :bp<CR>
-	nmap <F2> :bn<CR>
-else
-	set background=light  " adapt colors for dark background
-	colorscheme default  " use this color scheme
-endif
-
-" Make shift-insert work like in Xterm
-map <S-Insert> <MiddleMouse>
-map! <S-Insert> <MiddleMouse>
-
-let g:miniBufExplSplitToEdge = 0
-let g:miniBufExplVSplit = 30
 
 "=================================================================
 " PLUGINS 
@@ -189,12 +204,13 @@ augroup vimrc_autocmds
     autocmd FileType python set nowrap
 augroup END
 
+"=================================================================
 " Powerline
-"Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-"
-" Powerline setup
-"set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 9
-"set laststatus=2
+Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+
+set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 9
+set laststatus=2
+"=================================================================
 
 "                    " Fugitive for GIT
 "                    Bundle 'tpope/vim-fugitive'
@@ -283,3 +299,42 @@ augroup END
 "                    " Tags in right col.
 "                    " Requires Exuberant Ctags
 "                    Bundle 'majutsushi/tagbar'
+"=================================================================
+" Python File Template
+"=================================================================
+"au FileType python setlocal 	tabstop=4 expandtab shiftwidth=4 softtabstop=4
+augroup BufNewFileFromTemplate
+au!
+autocmd BufNewFile * silent! 0r $HOME/.vim/templates/%:e.tpl
+autocmd BufNewFile * normal! G"_dd1G
+autocmd BufNewFile * silent! match Todo /TODO/
+augroup BufNewFileFromTemplate
+
+" Trim white spaces
+"autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
+
+"---- Options for Windows
+if has("gui_running")
+	"set guifont=Courier  " use this font 
+	set guifont="-bitstream-bitstream vera sans mono-bold-r-normal-*-*-80-*-*-m-*-microsoft-cp1252"
+	set lines=50         " height = 50 lines
+	set columns=100      " width = 100 columns
+	set background=dark " adapt colors for dark background
+	colorscheme kib_darktango " use this color scheme
+	set selectmode=mouse,key,cmd
+	set keymodel=
+	behave mswin
+	nmap <F5> :ls<CR>:e #
+	nmap <F1> :bp<CR>
+	nmap <F2> :bn<CR>
+else
+	set background=light  " adapt colors for dark background
+	colorscheme default  " use this color scheme
+endif
+
+" Make shift-insert work like in Xterm
+map <S-Insert> <MiddleMouse>
+map! <S-Insert> <MiddleMouse>
+
+let g:miniBufExplSplitToEdge = 0
+let g:miniBufExplVSplit = 30
