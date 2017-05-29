@@ -1,60 +1,415 @@
-"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-"                __   _ _ _ __ ___  _ __ ___
-"               \ \ / / | '_ ` _ \| '__/ __|
-"                \ V /| | | | | | | | | (__
-"                 \_/ |_|_| |_| |_|_|  \___|
+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+"           ___ _      __   __   _ _ _ __ ___  _ __ ___
+"          |__ \ \ __ / /   \ \ / / | '_ ` _ \| '__/ __|
+"          __\ |\ V  V /     \ V /| | | | | | | | | (__
+"         \____| _/\_/       \_/ |_|_| |_| |_|_|  \___|
 "
-"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+set nocompatible              " Make vim better! (not compatible with vi)
+
+"=================================================================
+" Summary of CUSTOM KEYS 
+"=================================================================
+"
+" Most plugins use the Map Leader=','
+"
+" ==== Text Search ====
+" <Ctrl + n> Clear current search hilight
+"
+"
+" ==== Fonts (gnome-terminal only) =====
+" <F7> cycle though mono powerline fonts
+" <Ctrl + F5> to make fontsize smaller
+" <Ctrl + F6> to make fontsize bigger
+"
+"
+" ==== Theme ====
+" <F5> to switch from dark to light
+" <F6>to cycle the 3 levels of contrast
+"
+"
+" ==== Function Maping ====
+" <Leader>s Do Sort
+" <Crtl + b> Open Tree Browser
+" <Crtl + t> Open Tag Browser
+" <Tab><Tab> Cycle opening folded code blocks
+" <S-Tab><S-Tab> Cycle opening folded code blocks reverse direction
+"
+"
+" ==== Movment using vim standard keys ====
+" <Ctrl + [h,j,k,l]> Move to vim panes and tmux windows (vim-tmux-navigator)
+" <Leader>m Move next tab
+" <Leader>n Move prev tab
+"
+"
+" ==== Movment using arrow keys ==== 
+"   note: Many window managers intercept arrow key combos
+" <Ctrl + [Left,Right]> to move to next/prev tabs
+" <Ctrl + Shift+ [Left,Right,Up,Down]> to move to windows in same tab
+"
+"
+"
+" ==== Movment using arrow keys ==== 
+" <F8> Run syntax check on current file
+" <Ctrl + F8> Toggle active syntax checking
+
+
+
+
+"
+"  if has('mac') 
+"  if has('nvim')
+"
+"
+
+
 
 
 "=================================================================
-" General Settings
+" Gnome-Terminal Font Control  Note: Only Gnome-Terminal
 "=================================================================
+"" <F7> cycle though mono powerline fonts
+" <Ctrl + F5> to make fontsize smaller
+" <Ctrl + F6> to make fontsize bigger
+let g:powerlineFonts= [
+            \'DejaVu Sans Mono for Powerline',
+            \'Droid Sans Mono for Powerline',
+            \'Droid Sans Mono Dotted for Powerline',
+            \'Droid Sans Mono Slashed for Powerline',
+            \'Fria Mono for Powerline'
+            \'Go Mono for Powerline',
+            \'Hack',
+            \'Inconsolata for Powerline',
+            \'Inconsolata-dz for Powerline',
+            \'Inconsolata-g for Powerline',
+            \'Literation Mono Powerline',
+            \'Monofur for Powerline',
+            \'Noto Mono for Powerline',
+            \'NovaMono for Powerline',
+            \'Roboto Mono for Powerline',
+            \'Space Mono for Powerline'
+            \'Ubuntu Mono derivative Powerline',
+            \]
+
+let g:font="DejaVu Sans Mono for Powerline"
+let g:fontsize="11"
+
+function! GnomeTermSetFont()
+    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . " " . g:fontsize . "\'\"") 
+endfunction 
+
+function! GnomeTermCycleFont()
+    call add(g:powerlineFonts, g:font)
+    let g:font = get(g:powerlineFonts,0,'mono')
+    let g:powerlineFonts=g:powerlineFonts[1:]
+    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . " " . g:fontsize . "\'\"")
+    echom g:font
+endfunction
+
+nnoremap <C-F5> :let g:fontsize = g:fontsize + 1<CR>:call GnomeTermSetFont()<CR>:echom "Fontsize = " . g:fontsize<CR>
+nnoremap <C-F6> :let g:fontsize = g:fontsize - 1<CR>:call GnomeTermSetFont()<CR>:echom "Fontsize = " . g:fontsize<CR>
+
+nnoremap <F7> :call GnomeTermCycleFont()<CR>
+
+
+
+"=================================================================
+" Vim-Plug Plugin Manager Auto Install
+"=================================================================
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | q
+endif
+
+
+
+"=================================================================
+" Vim Color Support and Force
+"=================================================================
+
+" If trurcolor support is there this is all we need
+
+if exists('$TMUX')
+    if $COLORTERM == 'truecolor'
+        let g:gruvbox_italic=0
+    else
+        set term=screen-256color
+        set t_Co=256
+        set t_ut=
+    endif
+else
+    if $COLORTERM == 'truecolor'
+        if has("termguicolors")
+            set termguicolors
+            let g:gruvbox_italic=1
+            set t_ut= 
+        endif
+    else
+        "    "No truecolor welcome to bad times
+        set term=xterm-256color
+        set t_Co=256
+        set t_ut=
+    endif
+endif 
+
+if $TERM == 'linux'
+    "let g:gruvbox_termcolors=16
+    set t_Co=8
+endif
+
+" Disable Background Color Erase (BCE) so that color schemes
+" work properly when Vim is used inside tmux and GNU screen
+" and turecolor terminal like gnome-terminal
+"set t_ut=
+
+
+
+"=================================================================
+" Leader Key
+"=================================================================
+" Rebind <Leader> key
+" I like to have it here becuase it is easier to reach than the default and
+" it is next to ``m`` and ``n`` which I use for navigating between tabs.
+let mapleader = ","
+
+
+"=================================================================
+"                         START Plugin 
+"=================================================================
+call plug#begin('~/.vim/bundle')
+
+
+"=================================================================
+" NerdTree to see files in tree mode
+"=================================================================
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" Activate with Ctrl-B
+nnoremap <C-b> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable = '»'
+let g:NERDTreeDirArrowExpandable = '*'
+let g:NERDTreeDirArrowCollapsible = '-'
+let g:NERDTreeQuitOnOpen=0          " close NERDTree after  file is opened
+let g:NERDTreeShowHidden=1          " show hidden files in NERDTree
+let g:NERDTreeWinSize=20
+let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
+
+
+
+"=================================================================
+"" Airline Status Line Support
+"=================================================================
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+set laststatus=2
+let g:airline_powerline_fonts = 1
+let g:airline_section_c = '%F'
+
+
+
+"=================================================================
+"" Fugitive for GIT
+"=================================================================
+Plug 'tpope/vim-fugitive'
+
+
+
+"=================================================================
+" Language Support
+"=================================================================
+let g:C_CreateMenusDelayed = 'yes'
+Plug 'WolfgangMehner/c-support'
+let g:C_MapLeader  = ','
+Plug 'WolfgangMehner/bash-support'
+let g:BASH_MapLeader  = ','
+Plug 'WolfgangMehner/latex-support'
+let g:LATEX_MapLeader  = ','
+Plug 'WolfgangMehner/lua-support'
+let g:LUA_MapLeader  = ','
+Plug 'WolfgangMehner/perl-support'
+let g:PERL_MapLeader  = ','
+Plug 'WolfgangMehner/vim-support'
+let g:VIM_MapLeader  = ','
+Plug 'WolfgangMehner/python-support'
+let g:Python_MapLeader  = ','
+
+
+
+"=================================================================
+" Super tab completion
+"=================================================================
+Plug 'python-mode/python-mode'
+"Template
+augroup Python
+    autocmd!
+    autocmd BufNewFile *.py silent! 0r ~/.vim/templates/python-mode.template | cal cursor(8,4)
+augroup END
+
+
+"=================================================================
+" Super tab completion
+"=================================================================
+Plug 'ervandew/supertab'
+
+
+
+"=================================================================
+" TagBar - Requires Exuberant Ctags
+"=================================================================
+" Activate with TagbarOpen or Ctrl-T
+Plug 'majutsushi/tagbar'
+nnoremap <C-t> :TagbarToggle<CR>
+"map <Leader>y :TagbarToggle<CR>
+let g:tagbar_width = 30
+
+
+
+"=================================================================
+" AnyFold Plugin
+"=================================================================
+" :h fold-commands: zo, zO, zc, za, etc
+" Even better to use Fold Cycling Plugin
+Plug 'pseewald/vim-anyfold'
+let anyfold_activate=1
+set foldlevel=0
+set foldlevelstart=20
+augroup anyfold
+    autocmd!
+    autocmd User anyfoldLoaded normal zv
+    "autocmd BufWinEnter * normal! zR
+augroup END
+"=================================================================
+" Fold Cycling Plugin
+"=================================================================
+" provides the avility to cycle open and closed folds and
+" nested folds
+Plug 'arecarn/vim-fold-cycle'
+"let g:fold_cycle_default_mapping = 0 "disable default mappings
+nmap <Tab><Tab> <Plug>(fold-cycle-open)
+nmap <S-Tab><S-Tab> <Plug>(fold-cycle-close)
+
+
+
+"=================================================================
+" gruvbox colorschene
+"=================================================================
+Plug 'morhetz/gruvbox'
+" let g:gruvbox_italic=1
+" F5 to switch from dark to light
+" F6 to cycle the 3 levels of contrast
+
+function! GruvCycleContrast()
+    if &background == "dark"
+        if g:gruvbox_contrast_dark ==? "soft"
+            let g:gruvbox_contrast_dark="medium"
+        elseif g:gruvbox_contrast_dark ==? "medium" 
+            let g:gruvbox_contrast_dark="hard"
+        elseif g:gruvbox_contrast_dark ==? "hard" 
+            let g:gruvbox_contrast_dark="soft"
+        endif
+    else
+        if g:gruvbox_contrast_light ==? "soft"
+            let g:gruvbox_contrast_light="medium"
+        elseif g:gruvbox_contrast_light ==? "medium" 
+            let g:gruvbox_contrast_light="hard"
+        elseif g:gruvbox_contrast_light ==? "hard" 
+            let g:gruvbox_contrast_light="soft"
+        endif
+    endif
+    colorscheme gruvbox
+    "echo "SET"
+endfunction
+
+"mapping for Contrast and background changeing keys
+nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
+nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
+
+
+
+"=================================================================
+" TMUX integration
+"=================================================================
+" <Ctrl + [h,j,k,l]> Move to vim panes and tmux widows 
+Plug 'christoomey/vim-tmux-navigator'
+
+
+
+"=================================================================
+" syntastic Syntax checking Plugin
+"=================================================================
+"   Use :Erorrs to open location-list :lclose
+"   "   :lnext and :lprevious
+Plug 'vim-syntastic/syntastic'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map = {
+            \ "mode": "active",
+            \ "passive_filetypes": ["python"] }
+nnoremap <C-F8> :SyntasticToggleMode<CR>
+nnoremap <F8> :SyntasticCheck<CR>
+
+"=================================================================
+"                       END Plugin System
+"=================================================================
+call plug#end()
+
+
+
 "=================================================================
 " Behavior
 "=================================================================
 set nowritebackup              " only in case you don't want a backup file while editing
 set noswapfile                 " no swap files
-set nocompatible               " Disable strct vi compatibility
 set nobackup                   " Just overwrite the file
+set nocompatible               " Disable strct vi compatibility
 set printoptions=paper:letter,number:y,portrait:y
 set shortmess+=filmnrxoOtT     " Abbrev. of messages (avoids 'hit enter')
 set formatoptions+=tcq         " Basic formatting of text and comments
 set wildmode=list:longest,full " Command <Tab> completion, list matches and
-                               "   complete the longest common part, then,
-                               "   cycle through the matches
+"  complete the longest common part, then,
+"  cycle through the matches
 set wildchar=<Tab>
 set mouse=a                    " on OSX press ALT and click
 set bs=2                       " Set backspace
-" Rebind <Leader> key
-" I like to have it here becuase it is easier to reach than the default and
-" it is next to ``m`` and ``n`` which I use for navigating between tabs.
-let mapleader = ","
 
 " Bind nohl
 " Removes highlight of your last search
 " ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
 noremap <C-n> :nohl<CR>
 vnoremap <C-n> :nohl<CR>
-inoremap <C-n> :nohl<CR>
+noremap <C-n> <ESC>:nohl<CR>i
+
+
+
 "=================================================================
-" tags
+" Tags
 "=================================================================
-:nmap ,t :!(cd %:p:h;ctags *)&
+:nnoremap <Leader>t :!(cd %:p:h;ctags *)&
 set tags=tags;
+
 
 
 "=================================================================
 " Editing
 "=================================================================
-autocmd! bufwritepost .vimrc source % " Automatic reloading of .vimrc
+augroup reload_vimrc
+    autocmd!
+    autocmd! bufwritepost .vimrc source % " Automatic reloading of .vimrc
+augroup END
+
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline           " Stay on current char on page commands
 set visualbell              " Don't beep, flash the screen instead
-"set scrolloff=1            " Use a 1 line (horizontal) scroll offset
+set scrolloff=1             " Use a 1 line (horizontal) scroll offset
+set sidescrolloff=5         " Use a 5 Char (virtual) scroll offset
 "set splitbelow             " Put the new window below the current one
-"set term=ansi              " Make 'ansi' the terminal type for editing
-set term=xterm-256color
+
 set termencoding=utf-8
 set encoding=utf8
 set wildmenu
@@ -62,6 +417,9 @@ set commentstring=\ #\ %s
 
 "map sort function to a key
 vnoremap <Leader>s :sort<CR> 
+
+
+
 "=================================================================
 " Status-line
 "=================================================================
@@ -69,12 +427,10 @@ set ruler                   " Show the line / column number of cursor
 set showcmd                 " Show the partially completed command
 set showmode                " Display the current mode
 set number                  " Display line number"
-set clipboard =unnamed
+set clipboard=unnamedplus
 set tw=79                   " width of document (used by gd)
 set nowrap                  " don't automatically wrap on load
 set fo-=t                   " don't automatically wrap text when typing
-set colorcolumn=80
-highlight ColorColumn ctermbg=233
 
 "=================================================================
 " Search
@@ -82,42 +438,20 @@ highlight ColorColumn ctermbg=233
 set ignorecase             " Ignore case in search patterns
 set smartcase              " Don't ignore case if pattern contains it
 set incsearch              " Show the 'best match so far'
-set hlsearch               " Don't highlight all matches
+set hlsearch               " Highlight all matches
+
+
 
 "=================================================================
 " Programming
 "=================================================================
-if has("syntax")
-  syntax on                    " Enable syntax-highlighting
-endif
-
 set autoindent                 " Keep indent level on new line
-set nosmartindent                " Intelligent indenting for source code
+set nosmartindent              " Intelligent indenting for source code
 set cindent                    " Intelligent indenting for source code
 set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch                  " Show matching brackets / parenthesis
-set matchtime=3                " Show matching character for .3s
+set matchtime=5                " Show matching character for .3s
 
-" Show hitespace
-" MUST be inserted BEFORE the colorscheme command
-"autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-"au InsertLeave * match ExtraWhitespace /\s\+$/
-
-"=================================================================
-" Color Scheme
-" mkdir -p ~/.vim/colors && cd ~/.vim/colors
-" wget -O hvalle256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
-"=================================================================
-"set t_Co=256
-"color hvalle256mod
-"
-"highlight Normal guibg=lightyellow guifg=Black
-"highlight Cursor guibg=Green guifg=black
-"highlight NonText guibg=grey80
-" Enable syntax highlighting
-" You need to reload this file for the change to apply
-filetype off
-filetype plugin indent on
 
 
 "=================================================================
@@ -127,295 +461,105 @@ set shiftwidth=4               " Number of spaces used for autoindents
 set tabstop=4                  " Set the tab width to 4
 set softtabstop=4
 set list                       " Visually displays tabs and EOL
-set listchars=tab:\.\          " Show tabs as a period and space
-"set listchars=tab:\»\          " Show tabs as a symbol and space
+set listchars=tab:\»\          " Show tabs as a symbol and space
 set expandtab
 set textwidth=0
 
+
+
 "=================================================================
 " Windows and Tabs Navigations Remaping
-"     bind Ctrl+<movement> keys to move around the windows, 
-"     instead of using Ctrl+w + <movement>
 "     Every unnecessary keystroke that can be saved is good for 
 "     your health :)
+"
+"     bind Ctrl+<ArrowKeys> to move around tabs
+"     bind Ctrl+Shift+<ArrowKeys> to move around windows
+"
 "=================================================================
-map <c-j> <c-w>j
-map <c-k> <c-w>k
-map <c-l> <c-w>l
-map <c-h> <c-w>h
+
 " easier moving between tabs
-map <Leader>n <esc>:tabprevious<CR>
-map <Leader>m <esc>:tabnext<CR>
+nnoremap <Leader>n :tabprevious<CR>
+nnoremap <Leader>m :tabnext<CR>
+
+nnoremap <C-Right> :tabnext<CR>
+nnoremap <C-Left> :tabprevious<CR>
+
+if has('g:loaded_tmux_navigator')
+    nnoremap <C-S-Right> :TmuxNavigateRight<CR>
+    nnoremap <C-S-Left> :TmuxNavigateLeft<CR>
+    nnoremap <C-S-Up> :TmuxNavigateUp<CR>
+    nnoremap <C-S-Down> :TmuxNavigateDown<CR>
+else
+    nnoremap <C-S-Right> <c-w>l
+    nnoremap <C-S-Left> <c-w>h
+    nnoremap <C-S-Up> <c-w>k
+    nnoremap <C-S-Down> <c-w>j
+endif
 
 " easier moving of code blocks
 " Try to go into visual mode (v), thenselect several lines of code here and
 " then press ``>`` several times.
 vnoremap < <gv  " better indentation
 vnoremap > >gv  " better indentation
-"=================================================================
-"augroup BufNewFileFromTemplate 
-" Misc.
-"=================================================================
-filetype plugin indent on
 
+
+
+"=================================================================
 " Return to the last position in the file
-au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
-
-" Disable stupid backup and swap files - they trigger too many events
-" for file system watchers
-set nobackup
-set nowritebackup
-set noswapfile
-
-
 "=================================================================
-" PLUGINS 
-"=================================================================
-
-" Be iMproved
- set nocompatible
-"=================================================================
-" Set Bundle Manage Package
-" Install the following git product:
-" git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
-"=================================================================
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-
-"=================================================================
-" Let Vundle manage Vundle
-" 
-"  The bundles you install will be listed here:
-"  Inside vim:
-"    BundleList -> list of plugins
-"    BundleInstall -> install plugin
-"=================================================================
-Bundle 'gmarik/vundle'
-"
-filetype plugin indent on
-
-
-"=================================================================
-" Highlight excess line lenght
-"=================================================================
-augroup vimrc_autocmds
+augroup return_file_postion
     autocmd!
-    " highlight characters past column 120
-    autocmd FileType python highlight Excess ctermbg=DarkGrey guibg=Black
-    autocmd FileType python match Excess /\%120v.*/
-    autocmd FileType python set nowrap
+    au bufreadpost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
 augroup END
 
-"=================================================================
-" Airline Plugin Lean & mean status/tabline 
-"   Alternative Powerline
-"Bundle 'bling/vim-airline'
-"=================================================================
-
-"=================================================================
-" Airline Plugin Lean & mean status/tabline 
-"   Alternative Powerline
-"Bundle 'vim-airline/vim-airline-themes'
-"=================================================================
-
-"=================================================================
-" Powerline 
-Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-"set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 9
-set guifont=Inconsolata\ for\ Powerline:h15
-set laststatus=2
-let g:Powerline_symbols = 'fancy'
-set fillchars+=stl:\ ,stlnc:\
-"=================================================================
 
 
 "=================================================================
-" Fugitive for GIT
-Bundle 'tpope/vim-fugitive'
+" Color Scheme
 "=================================================================
+" mkdir -p ~/.vim/colors && cd ~/.vim/colors
+" wget -O wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
+
+if has('gui_running')
+    set background=light
+else
+    set background=dark
+endif
+
+" colorscheme wombat256mod
+" colorscheme default
+silent! colorscheme gruvbox " Colorscheme support truecolor
+
+
 
 "=================================================================
-" NerdTree to see files in tree mode
-Bundle 'scrooloose/nerdtree'
-" Activate with Ctrl-T
-map <C-t> :NERDTreeToggle<CR>
-"let g:NERDTreeDirArrowExpandable = '»'
-let g:NERDTreeDirArrowExpandable = '*'
-let g:NERDTreeDirArrowCollapsible = '-'
-let g:NERDTreeQuitOnOpen=0          " close NERDTree after  file is opened
-let g:NERDTreeShowHidden=1          " show hidden files in NERDTree
-let g:NERDTreeWinSize=20
-"let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
+" Syntax Highlighting
+"=================================================================
+if has('syntax')
+    syntax on                      " Enable syntax-highlighting
+endif
+
 
 "=================================================================
-
-"=================================================================
-" Begin Python IDE Mode
-"=================================================================
-Bundle 'klen/python-mode'
-
-" Python Template
-autocmd BufNewFile * silent! 0r $HOME/.vim/templates/%:e.tpl
-autocmd BufNewFile * normal! G"_dd1G
-autocmd BufNewFile * silent! match Todo /TODO/
-augroup BufNewFileFromTemplate
-
-" Python-mode
-" Activate rope
-"=================================================================
-" Keys
-" K             Show python docs
-" <Ctrl-Space>  Rope autocomplete
-" <Ctrl-c>g     Rope goto definition
-" <Ctrl-c>d     Rope show documentation
-" <Ctrl-c>f     Rope find occurrences
-" <Leader>b     Set, unset breakpoint (g:pymode_breakpoint enabled)
-" [[            Jump on previous class or function (normal, visual, operator mod es)
-" ]]            Jump on next class or function (normal, visual, operator modes)
-" [M            Jump on previous class or method (normal, visual, operator modes)
-" ]M            Jump on next class or method (normal, visual, operator modes)
-" Use Python3
-let g:pymode_python = 'python3'
-" Do not use default rope, use jedi instead, see below
-let g:pymode_rope = 0
-
-" Documentation
-let g:pymode_doc = 1
-let g:pymode_doc_key = 'K'
-
-"Linting
-let g:pymode_lint = 1
-let g:pymode_lint_checker = "pyflakes,pep8"
-" Auto check on save
-let g:pymode_lint_write = 1
-
-" Support virtualenv
-let g:pymode_virtualenv = 1
-
-" Enable breakpoints plugin
-let g:pymode_breakpoint = 1
-let g:pymode_breakpoint_bind = '<leader>b'
-
-" syntax highlighting
-let g:pymode_syntax = 1
-let g:pymode_syntax_all = 1
-let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-let g:pymode_syntax_space_errors = g:pymode_syntax_all
-
-" Don't autofold code mode
-let g:pymode_folding = 0
-
-" Trim white spaces
-autocmd BufWritePre *.py normal m`:%s/\s\+$//e``
-
-" Make shift-insert work like in Xterm
-map <S-Insert> <MiddleMouse>
-map! <S-Insert> <MiddleMouse>
-
-let g:miniBufExplSplitToEdge = 0
-let g:miniBufExplVSplit = 30
-"=================================================================
-" END Python IDE Mode
+" Folded Code Syntax -MUST be after enable of Syntax Highlighting
+" rmal tabnext
+"
+" rmal tabnext
+" 
 "=================================================================
 
-"=================================================================
-" Jedi code autocompletion
-Bundle 'davidhalter/jedi-vim'
-"=================================================================
+if has('g:colors_name')
+    if g:colors_name == "gruvbox"
+        "let &colorcolumn=join(range(81,999),",")
+        let &colorcolumn=join(range(81,84),",")
+        "highlight ColorColumn guibg=
+    else
+        set colorcolumn=80
+    endif
+else
+    hi clear Folded
+    hi Folded term=standout cterm=standout gui=standout
+    set colorcolumn=80
+endif
 
-"=================================================================
-"Super tab completion
-Bundle 'ervandew/supertab'
-"=================================================================
 
-"=================================================================
-" Tags in right col.
-" Requires Exuberant Ctags
-" Activate with TabbarOpen
-Bundle 'majutsushi/tagbar'
-let g:tagbar_width = 30
-"=================================================================
-
-"=================================================================
-" C/C++ Plugin
-Bundle 'WolfgangMehner/c-support'
-let g:C_MapLeader  = ','
-"=================================================================
-
-"=================================================================
-" AnyFold Plugin
-" :h fold-commands: zo, zO, zc, za, etc
-" Even better to use Fold Cycling Plugin
-Bundle 'pseewald/vim-anyfold'
-let anyfold_activate=1
-set foldlevel=0
-"=================================================================
-
-"=================================================================
-" Fold Cycling Plugin
-"  provides the avility to cycle open and closed folds and
-"  nested folds
-Bundle 'arecarn/vim-fold-cycle'
-"let g:fold_cycle_default_mapping = 0 "disable default mappings
-nmap <Tab><Tab> <Plug>(fold-cycle-open)
-nmap <S-Tab><S-Tab> <Plug>(fold-cycle-close)
-"=================================================================
-
-"=================================================================
-" Ctrlp Plugin
-" Full path fuzzy file, buffer, mru, tag, ... finder for Vim
-" Run it iwth :CtrlP
-" Bundle 'ctrlpvim/ctrlp.vim'
-"=================================================================
-
-"=================================================================
-" Bash Plugin
-Bundle 'WolfgangMehner/bash-support'
-let g:BASH_MapLeader  = ','
-"=================================================================
-
-"=================================================================
-" Perl Plugin
-Bundle 'WolfgangMehner/perl-support'
-let g:Perl_MapLeader  = ','
-"=================================================================
-
-"=================================================================
-" Latex Plugin
-Bundle 'WolfgangMehner/latex-support'
-let g:Latex_MapLeader  = ','
-"=================================================================
-
-"=================================================================
-" Syntax checking Plugin
-"   Use :Erorrs to open location-list :lclose
-"   :lnext and :lprevious
-Bundle 'vim-syntastic/syntastic'
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_mode_map = {
-        \ "mode": "active",
-        \ "passive_filetypes": ["python"] }
-"=================================================================
-
-"=================================================================
-" Solarized Colors
-Bundle 'altercation/vim-colors-solarized'
-"syntax enable
-let g:solarized_termtrans = 3
-colorscheme solarized
-nnoremap <F5> :ToggleBG<CR>
-"=================================================================
-
-"=================================================================
-" TMUX integration
-Bundle 'christoomey/vim-tmux-navigator'
-
-"=================================================================

@@ -58,6 +58,10 @@ common-aliases)
 
 source $ZSH/oh-my-zsh.sh
 
+# Python Virtual envs
+export PROJECT_HOME=$HOME/dev
+source /usr/local/bin/virtualenvwrapper.sh
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
