@@ -467,7 +467,7 @@ CreateTmuxAliasZsh()
 {
     echo "${BOLD}Creating Tmux alaises:$BLUE ~/.oh-my-zsh/lib/alias.zsh$RESET"
 
-    mkkdir -p ~./.oh-my-zsh/lib/
+    mkkdir -p ~/.oh-my-zsh/lib/
 
 printf "
 #aliases for Tmux
