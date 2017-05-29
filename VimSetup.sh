@@ -456,9 +456,9 @@ autocorrect = 1
 ui = auto
 [push]
 default = matching
-" "$name" "$email" > $VIMDIR/gitconfig 
+" "$name" "$email" > $DOTFILES/git/gitconfig 
     echo "${BOLD}Creating Sympolic link to gitconfig$RESET"
-    ln -s $VIMDIR/gitconfig ~/.gitconfig
+    ln -s $DOTFILES/git/gitconfig ~/.gitconfig
 }
 
 
@@ -496,7 +496,6 @@ ManageFilesAndLinks()
 
     if [ "$VIMDIR" != "~/.vim" ]; then    
         mkdir -p $VIMDIR
-        ln -s $VIMDIR ~/.vim
     fi
 
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"

@@ -2,20 +2,18 @@
 
 #Writen by John Warnes
 #Based on vimrc setup from Hugo Valle
-# Modify on May-29-2017 by Hugo V. to fit my setup
+# Modify on May-29-2017 by Hugo V. to fit Icarus regular user accounts
 
 #echo "arg: $@"    # Debug
 
 #Directory Setup
 DOTFILES=~/dotfiles
 VIMDIR=~/.vim
-OHMYZSH=~/.oh-my-zsh
 
 #Global Vars (Manualy Set)
 SCRIPTNAME="WSU JW-Custom VIM IDE"
 #PKGS="git exuberant-ctags vim python3-doc"
 PKGS="git vim"
-OSXPKGS="git ctags vim python3"
 
 # ID ---> https://github.com/zyga/os-release-zoo 
 SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
@@ -64,10 +62,10 @@ Remove()
     esac
 
     #links
-    rm -rf ~/.vimrc ~/.bash_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
+    rm -rf ~/.vimrc ~/.bash_aliases ~/.gitconfig
     
     #directorys
-    rm -rf $VIMDIR $OHMYZSH
+    rm -rf $VIMDIR
     
     #if .vim is syslink
     unlink ~/.vim
@@ -119,7 +117,6 @@ Init()
 
     #echo "while Args: $@"    #debug
     case $1 in
-        --administrator) ADMIN=true;;
         --remove) REMOVE=true;;
         -h | --help) PrintHelp;; *) :;;
                 esac; shift;
@@ -130,13 +127,9 @@ Init()
     fi
    
     clear
-    echo "${BOLD}Installing$GREEN $SCRIPTNAME $RESET$BOLD(vim/tmux/zsh/git)$RESET"
+    echo "${BOLD}Installing$GREEN $SCRIPTNAME $RESET$BOLD(vim/git)$RESET"
     echo ""  
     
-    if [ "$ADMIN" = true ]; then
-        echo "${BOLD}Admin Mode is:$GREEN ON"
-    fi
-
     case "$OSTYPE" in
         solaris*) OS="SOLARIS" ;;
         darwin*)  OS="OSX" ;; 
@@ -167,20 +160,6 @@ Init()
                 echo "${BOLD}Lunix Detected:$GREEN $PRETTY_NAME $RESET"
             fi
         fi
-
-    elif [ "$OS" == "OSX" ]; then
-
-        echo "${BOLD}OSX Detected $RESET"
-
-        if which brew 2> /dev/null; then
-            echo "$BOLD${YELLOW}Note!$RESET$BOLD Missing Packages will installed using BREW"
-        else
-            echo ""
-            echo "$BOLD${RED}ERROR!$RESET$BOLD OSX:$BLUE HomeBrew (https://brew.sh/)$RESET$BOLD is required."
-            echo ""
-            exit -1
-        fi
-
     fi
 
     echo ""
@@ -211,23 +190,7 @@ CheckDeps()
             fi
         done
         echo ""
-
-    elif [ "$OS" == "OSX" ]; then
-    
-        for PKG in $OSXPKGS; do
-            gotit=`which ${PKG} | grep -o "\/${PKG}"`
-            if brew list -1 | grep -q "^${PKG}\$"; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            elif [[ $gotit ]]; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            else
-                printf "$BOLD$RED $PKG$RESET"
-                ERRORFLAG=true
-            fi
-        done
-        echo ""
     fi
-
 
     if [ "$ERRORFLAG" = true ]; then
         echo ""
@@ -239,107 +202,6 @@ CheckDeps()
             exit
         fi
     fi   
-    echo ""
-}
-
-
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  Setup
-#   DESCRIPTION:  Setup function for tmux, zsh
-#    PARAMETERS:  None
-#       RETURNS:  If selected, appends package setup to OSXPKGS or PKGS
-#-------------------------------------------------------------------------------
-Setup()
-{
-    read -n 1 -p "${BOLD}Setup$BLUE tmux$RESET$BOLD (Y/n): $GREEN" choice
-    echo "$RESET"
-    case "$choice" in
-        n|N ) :;;
-        y|Y|* ) PKGS+=" tmux";OSXPKGS+=" tmux"; TMUX=true;;
-    esac
-
-    read -n 1 -p "${BOLD}Setup$BLUE zsh$RESET$BOLD (Y/n): $GREEN" choice
-    echo "$RESET"
-    case "$choice" in
-        n|N ) :;;
-        y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; ZSH=true;;
-    esac
-}
-
-
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  AdminSetup
-#   DESCRIPTION:  Administrator setup. Will required sudo access to the machine
-#    PARAMETERS:  None
-#       RETURNS:  Success or Error
-#          NOTE:  Only needed once on each computer
-#-------------------------------------------------------------------------------
-AdminSetup() 
-{
-    echo "$BLUE${BOLD}Admin Setup$RESET$BOLD ($OS)"
-
-    if [ $OS == 'LINUX' ]; then
-
-        if [ 1 -eq "$(echo "${VERSION} < 16.04" | bc)" ]; then
-            echo "$RESET${RED}ERROR!$RESET$BOLD$BLUE Dectect Verion($VERSION) Required: >16.04$RESET"
-            exit -1
-        fi
-
-        if [ "$WSU" = true ]; then
-            # Fixes for Ubuntu and IPv6 inside WSU
-            echo "$RESET${BOLD}Adding WSU firewall$BLUE IPv6 fix$RESET$BOLD"
-            sudo echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
-        fi
-
-        echo "${BOLD}Updating Available Packages$RESET"
-
-        if [ "$WSU" = true ]; then
-            sudo apt-get -o Acquire::ForceIPv4=true -o Dpkg::Progress-Fancy="1" -y update
-        else
-            sudo apt-get -o Dpkg::Progress-Fancy="1" -y update
-        fi
-
-        echo "${BOLD}Required Package List:$GREEN $PKGS $RESET"
-
-        for PKG in $PKGS; do
-            printf "${BOLD}Checking $PKG:"
-
-            if [ "$(dpkg-query -f='${Status}\n' -W $PKG | awk '{print $3;}')" = "installed" ]; then
-                echo "$GREEN Found$RESET"
-            else
-                echo "$RED Not Found"
-                echo "$YELLOW    Installing$BLUE $PKG$RESET"
-
-                if [ "$WSU" = true ]; then
-                    sudo apt-get -o Acquire::ForceIPv4=true -o Dpkg::Progress-Fancy="1" -y install $PKG
-                else
-                    sudo apt-get -o Dpkg::Progress-Fancy="1" -y install $PKG
-                fi
-            fi
-        done
-    
-    elif [ $OS == 'OSX' ]; then
-
-        echo "${BOLD}Required Package List:$GREEN $OSXPKGS $RESET"
-        echo "${BOLD}${YELLOW}Note!$RESET$BOLD When brew may appear to be fozen when installing."
-        echo "${BOLD}${YELLOW}     $RESET$BOLD Wait up to 10 mins per package before doing anything"
-        echo ""
-        for PKG in $OSXPKGS; do
-            printf "${BOLD}Checking $PKG:"
-
-            if brew list -1 | grep -q "^${PKG}\$"; then
-                echo "$GREEN Found$RESET"
-            else
-                echo "$RED Not Found"
-                echo "$YELLOW    Installing$BLUE $PKG$RESET"
-                brew install $PKG
-            fi
-        done
-
-    fi
-    echo "$BLUE${BOLD}Admin Setup$RESET$BOLD End"
     echo ""
 }
 
@@ -357,43 +219,6 @@ GetUserInfo()
     read -p "$RESET${BOLD}Enter your$BLUE Email Address$RESET$BOLD Ex\"JohnD@mail.weber.edu\": $GREEN" email
     read -p "$RESET${BOLD}Enter your$BLUE Oganization$RESET$BOLD Ex\"WSU\": $GREEN" org
     read -p "$RESET${BOLD}Enter your$BLUE Company$RESET$BOLD Ex\"WSU\": $GREEN" com
-}
-
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  InstallPowerLineFonts
-#   DESCRIPTION:  Install Powerline Fonts. This is required to display all 
-#                 special characters in the status bar inside vim. 
-#    PARAMETERS:  None
-#       RETURNS:  Success or Error
-#-------------------------------------------------------------------------------
-InstallPowerlineFonts()
-{
-    echo "$RESET"
-    # clone fonts
-    git clone https://github.com/powerline/fonts.git
-    # install fonts
-    cd fonts
-    ./install.sh
-    # clean-up a bit
-    cd ..
-    rm -rf fonts
-
-    dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font "'DejaVu Sans Mono for Powerline Book 12'"
-    dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/use-system-font "false"
-   
-    #echo "$BOLD$BLUE"
-    #printf "Powerline Fonts$RESET$BOLD Installed 
-    #Change the font of Terminal to one supporting powerline.
-    #
-    #On Ubuntu 
-    #Click [EDIT] > [Profile Preferences]
-    #Check the Custom Font option and click on the font name
-    #Select a font with the word \"Powerline\" in the name
-    #Recommend: DejaVu Sans Mono for Powerline Book"
-    #echo ""
-    #read -n 1 -p "$BOLD$GREENPress any key to continue...$RESET" -n1 -s
-    #echo "$RESET"
 }
 
 
@@ -448,39 +273,10 @@ autocorrect = 1
 ui = auto
 [push]
 default = matching
-" "$name" "$email" > $VIMDIR/gitconfig 
+" "$name" "$email" > $DOTFILES/git/gitconfig 
     echo "${BOLD}Creating Sympolic link to gitconfig$RESET"
-    ln -s $VIMDIR/gitconfig ~/.gitconfig
+    ln -s $DOTFILES/git/gitconfig ~/.gitconfig
 }
-
-
-
-CreateTmuxAliasZsh()
-{
-    echo "${BOLD}Creating Tmux alaises:$BLUE ~/.oh-my-zsh/lib/alias.zsh$RESET"
-
-    mkkdir -p ~/.oh-my-zsh/lib/
-
-printf "
-#aliases for Tmux
-alias tmux='tmux -2'
-alias ta='tmux attach -t'
-alias tnew='tmux new -s'
-alias tls='tmux ls'
-alias tkill='tmux kill-session -t'
-
-#conveience aliases for editing configs
-alias ev='vim ~/.vimrc'
-alias et='vim ~/.tmux.conf'
-alias ez='vim ~/.zshrc'
-
-#user alias here
-" > ~/.oh-my-zsh/lib/alias.zsh
-
-    echo "${BOLD}Appending Alais file to .zshrc$RESET"
-    echo "source ~/.oh-my-zsh/lib/alias.zsh" >> ~/.zshrc
-}
-
 
 
 ManageFilesAndLinks()
@@ -498,9 +294,7 @@ ManageFilesAndLinks()
     echo "${BOLD}Creating Symbolic links for .vimrc and .tmuxrcx$RESET"
     ln -s $DOTFILES/bash/bash_aliases ~/.bash_aliases
     ln -s $DOTFILES/bashrc ~/.bashrc
-    ln -s $DOTFILES/zsh/zshrc ~/.zshrc
     
-    ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
     ln -s $DOTFILES/vim/vimrc ~/.vimrc
     ln -s $DOTFILES/vim/python-mode.template $VIMDIR/templates/python-mode.template
 
@@ -522,35 +316,14 @@ main()
 {
     #Run Init
     Init "$@"     # Remeber to pass the command line args $@ 
-    Setup
     CheckDeps
-
-    if [ "$ADMIN" = true ]; then
-        AdminSetup
-    fi
 
     GetUserInfo   # Get user information
 
     ManageFilesAndLinks   #Create Dirs Copy Files and Make Links
 
-    #Install Powerline Fonts?
-    read -n 1 -p  "${BOLD}Install$BLUE PowerLine Fonts$RESET$BOLD (Y/n): $GREEN" choice
-    case "$choice" in 
-        y|Y ) InstallPowerlineFonts;;
-        n|N ) :;;
-        * ) InstallPowerlineFonts;;
-
-    esac
-    echo "$RESET"
-
     CreatePersonalTemplate
     CreateGitConfig
-
-    if [ "$ZSH" = true ]; then
-        echo "${BOLD}Downloading and installing: oh-my-zsh"
-        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"    
-        CreateTmuxAliasZsh
-    fi
 
     vim +PlugInstall +qall #Installs the vim plugin system and updates all plugins
 
