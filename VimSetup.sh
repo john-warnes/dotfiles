@@ -2,15 +2,14 @@
 
 #Writen by John Warnes
 #Based on vimrc setup from Hugo Valle
+# Modify on May-29-2017 by Hugo V. to fit my setup
 
 #echo "arg: $@"    # Debug
 
 #Directory Setup
-#DOTFILES=~/dotfiles
-#VIMDIR=$DOTFILES/vim
-
-DOTFILES=~/.vim
-VIMDIR=$DOTFILES
+DOTFILES=~/dotfiles
+VIMDIR=~/.vim
+OHMYZSH=~/.oh-my-zsh
 
 #Global Vars (Manualy Set)
 SCRIPTNAME="WSU JW-Custom VIM IDE"
@@ -30,6 +29,12 @@ ZSH=false
 OS=""
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  PrintHelp
+#   DESCRIPTION:  Help Function for script. Invoked with --help
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
 PrintHelp()
 {
     echo "$RESET${BOLD}useage: $0 [--administrator] [--remove]$RESET"
@@ -37,7 +42,13 @@ PrintHelp()
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  Remove
+#   DESCRIPTION:  Removes current setup files. Invoke with --remove
+#    PARAMETERS:  None
+#       RETURNS:  None
+#          Note:  There is NO backup. 
+#-------------------------------------------------------------------------------
 Remove()
 {
 
@@ -52,10 +63,10 @@ Remove()
     esac
 
     #links
-    rm -rf ~/.vimrc ~/.bash_aliases ~/.tmux.conf ~/.gitconfig
+    rm -rf ~/.vimrc ~/.bash_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
     
     #directorys
-    rm -rf $VIMDIR $DOTFILES
+    rm -rf $VIMDIR $OHMYZSH
     
     #if .vim is syslink
     unlink ~/.vim
@@ -66,7 +77,12 @@ Remove()
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  Init
+#   DESCRIPTION:  Iinitailzation of script. Color setup. Folder configuration.
+#    PARAMETERS:  $@ Program input choices. 
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 Init() 
 {
     # Use colors, but only if connected to a terminal, and that terminal
@@ -104,8 +120,7 @@ Init()
     case $1 in
         --administrator) ADMIN=true;;
         --remove) REMOVE=true;;
-        -h | --help) PrintHelp;;
-        *) :;;
+        -h | --help) PrintHelp;; *) :;;
                 esac; shift;
     done
 
@@ -180,7 +195,12 @@ Init()
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CheckDeps
+#   DESCRIPTION:  Verifies system dependencies
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 CheckDeps() 
 {
     echo ""
@@ -232,6 +252,12 @@ CheckDeps()
 
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  Setup
+#   DESCRIPTION:  Setup function for tmux, zsh
+#    PARAMETERS:  None
+#       RETURNS:  If selected, appends package setup to OSXPKGS or PKGS
+#-------------------------------------------------------------------------------
 Setup()
 {
     read -n 1 -p "${BOLD}Setup$BLUE tmux$RESET$BOLD (Y/n): $GREEN" choice
@@ -251,7 +277,13 @@ Setup()
 
 
 
-#Only needed once on each computer
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  AdminSetup
+#   DESCRIPTION:  Administrator setup. Will required sudo access to the machine
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#          NOTE:  Only needed once on each computer
+#-------------------------------------------------------------------------------
 AdminSetup() 
 {
     echo "$BLUE${BOLD}Admin Setup$RESET$BOLD ($OS)"
@@ -320,8 +352,14 @@ AdminSetup()
 }
 
 
-
-getUserInfo()
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  GetUserInfo
+#   DESCRIPTION:  Capture User information. This is required to setup the 
+#                 vim and git templates. 
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+GetUserInfo()
 {
     read -p "$RESET${BOLD}Enter your$BLUE Full Name$RESET$BOLD Ex\"John Doe\": $GREEN" name
     read -p "$RESET${BOLD}Enter your$BLUE Email Address$RESET$BOLD Ex\"JohnD@mail.weber.edu\": $GREEN" email
@@ -330,7 +368,13 @@ getUserInfo()
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  InstallPowerLineFonts
+#   DESCRIPTION:  Install Powerline Fonts. This is required to display all 
+#                 special characters in the status bar inside vim. 
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 InstallPowerlineFonts()
 {
     echo "$RESET"
@@ -361,7 +405,12 @@ InstallPowerlineFonts()
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CreatePersonalTemplate
+#   DESCRIPTION:  Create personal vim templates for c, perl, bash, etc 
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 CreatePersonalTemplate()
 {
     echo "${BOLD}Creaing User Template File:$BLUE $VIMDIR/templates/personal.template$RESET"
@@ -453,19 +502,14 @@ ManageFilesAndLinks()
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
     mkdir -p $VIMDIR/colors
     mkdir -p $VIMDIR/templates
-    mkdir -p $DOTFILES
-
-
-    echo "${BOLD}Coping vimrc, tmux, and Python-mode.template $RESET"
-    cp bash_aliases $DOTFILES/bash_aliases
-    cp vimrc $DOTFILES/vimrc
-    cp tmux.conf $DOTFILES/tmux.conf
-    cp python-mode.template $VIMDIR/templates/python-mode.template
 
     echo "${BOLD}Creating Symbolic links for .vimrc and .tmuxrcx$RESET"
-    ln -s $DOTFILES/bash_aliases ~/.bash_aliases
-    ln -s $DOTFILES/tmux.conf ~/.tmux.conf
-    ln -s $DOTFILES/vimrc ~/.vimrc
+    ln -s $DOTFILES/bash/bash_aliases ~/.bash_aliases
+    ln -s $DOTFILES/bashrc ~/.bashrc
+    
+    ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
+    ln -s $DOTFILES/vim/vimrc ~/.vimrc
+    ln -s $DOTFILES/vim/python-mode.template $VIMDIR/templates/python-mode.template
 
     echo "${BOLD}Downloading Colors wombat256mod.vim$RESET"
     wget -O $VIMDIR/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
@@ -475,11 +519,14 @@ ManageFilesAndLinks()
 
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  main
+#   DESCRIPTION:  This is the main driver function. 
+#    PARAMETERS:  Optional parameters: --help, --administrator, --remove
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 main()
 {
-    #MAIN START HERE!
-
     #Run Init
     Init "$@"     # Remeber to pass the command line args $@ 
     Setup
@@ -489,7 +536,7 @@ main()
         AdminSetup
     fi
 
-    getUserInfo   # Get user information
+    GetUserInfo   # Get user information
 
     ManageFilesAndLinks   #Create Dirs Copy Files and Make Links
 
