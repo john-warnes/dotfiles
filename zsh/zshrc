@@ -93,6 +93,7 @@ bindkey '^N' history-search-forward
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+source ~/.oh-my-zsh/lib/alias.zsh
 
 # if you do a 'rm *', Zsh will give you a sanity check!
 setopt RM_STAR_WAIT
