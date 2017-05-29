@@ -271,7 +271,7 @@ Setup()
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
-        y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; TMUX=true;;
+        y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; ZSH=true;;
     esac
 }
 
