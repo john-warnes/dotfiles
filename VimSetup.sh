@@ -504,7 +504,7 @@ ManageFilesAndLinks()
 
     echo "${BOLD}Creating Symbolic links for .vimrc and .tmuxrcx$RESET"
     ln -s $DOTFILES/bash/bash_aliases ~/.bash_aliases
-    ln -s $DOTFILES/bashrc ~/.bashrc
+    ln -s $DOTFILES/bash/bashrc ~/.bashrc
     
     ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
     ln -s $DOTFILES/vim/vimrc ~/.vimrc

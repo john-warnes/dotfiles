@@ -293,7 +293,7 @@ ManageFilesAndLinks()
 
     echo "${BOLD}Creating Symbolic links for .vimrc and .tmuxrcx$RESET"
     ln -s $DOTFILES/bash/bash_aliases ~/.bash_aliases
-    ln -s $DOTFILES/bashrc ~/.bashrc
+    ln -s $DOTFILES/bash/bashrc ~/.bashrc
     
     ln -s $DOTFILES/vim/vimrc ~/.vimrc
     ln -s $DOTFILES/vim/python-mode.template $VIMDIR/templates/python-mode.template
