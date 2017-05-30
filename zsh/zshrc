@@ -3,7 +3,7 @@ export PATH=$HOME/bin:/usr/local/ssl/bin:/usr/local/share:$PATH
 export PATH=/usr/local/sbin:/opt/local/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/hvalle/.oh-my-zsh
+export ZSH=~/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -53,14 +53,13 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git brew chucknorris fortune command-not-found tmux
-common-aliases)
+plugins=(git command-not-found tmux common-aliases)
 
 source $ZSH/oh-my-zsh.sh
 
 # Python Virtual envs
-export PROJECT_HOME=$HOME/dev
-source /usr/local/bin/virtualenvwrapper.sh
+#export PROJECT_HOME=$HOME/dev
+#source /usr/local/bin/virtualenvwrapper.sh
 
 # User configuration
 
