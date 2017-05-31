@@ -92,7 +92,6 @@ bindkey '^N' history-search-forward
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-source ~/.oh-my-zsh/lib/alias.zsh
 
 # if you do a 'rm *', Zsh will give you a sanity check!
 setopt RM_STAR_WAIT
@@ -106,3 +105,4 @@ setopt CORRECT
 # Set TMUX
 export TERM=xterm-256color
 [ -n "$TMUX" ] && export TERM=screen-256color
+source ~/.shell_aliases
