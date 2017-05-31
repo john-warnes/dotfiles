@@ -133,8 +133,9 @@ endif
 if exists('$TMUX')
     if $COLORTERM == 'truecolor'
         let g:gruvbox_italic=0
+        set t_ut=
     else
-        set term=screen-256color
+        "set term=screen-256color
         set t_Co=256
         set t_ut=
     endif
@@ -220,6 +221,8 @@ Plug 'tpope/vim-fugitive'
 let g:C_CreateMenusDelayed = 'yes'
 Plug 'WolfgangMehner/c-support'
 let g:C_MapLeader  = ','
+let g:C_UseTool_cmake = 'yes'
+let g:C_UseTool_doxygen = 'yes'
 Plug 'WolfgangMehner/bash-support'
 let g:BASH_MapLeader  = ','
 Plug 'WolfgangMehner/latex-support'
@@ -478,11 +481,11 @@ set textwidth=0
 "=================================================================
 
 " easier moving between tabs
-nnoremap <Leader>n :tabprevious<CR>
-nnoremap <Leader>m :tabnext<CR>
+noremap <Leader>n :tabprevious<CR>
+noremap <Leader>m :tabnext<CR>
 
-nnoremap <C-Right> :tabnext<CR>
-nnoremap <C-Left> :tabprevious<CR>
+noremap <C-Right> <ESC>:tabnext<CR>
+noremap <C-Left> <ESC>:tabprevious<CR>
 
 if has('g:loaded_tmux_navigator')
     nnoremap <C-S-Right> :TmuxNavigateRight<CR>
