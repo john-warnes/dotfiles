@@ -63,7 +63,7 @@ Remove()
     esac
 
     #links
-    rm -rf ~/.vimrc ~/.shell_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
+    rm -rf ~/.vimrc ~/.bash_aliases ~/.shell_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
     
     #directorys
     rm -rf $VIMDIR $OHMYZSH
@@ -475,31 +475,27 @@ default = matching
 #-------------------------------------------------------------------------------
 ManageFilesAndLinks()
 {
-
-    if [ "$VIMDIR" != "~/.vim" ]; then    
-        mkdir -p $VIMDIR
-        ln -s $VIMDIR ~/.vim
-    fi
-
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
     mkdir -p $VIMDIR/colors
-    mkdir -p $VIMDIR/templates
 
     echo "${BOLD}Creating Symbolic links for .vimrc, bash_alises, and .tmuxrcx$RESET"
     ln -s $DOTFILES/shell_aliases ~/.bash_aliases
     ln -s $DOTFILES/bash/bashrc ~/.bashrc
-    
+
     ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
     ln -s $DOTFILES/vim/vimrc ~/.vimrc
     ln -s $DOTFILES/templates $VIMDIR/templates
 
     echo "${BOLD}Downloading Colors wombat256mod.vim$RESET"
     wget -O $VIMDIR/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
-    # Set Zsh
-    echo "${BOLD}Appending Aliases file to ~/.zshrc $RESET"
-    rm ~/.zshrc
-    ln -s $DOTFILES/zsh/zshrc ~/.zshrc
-    echo "source $DOTFILES/shell_aliases" >> ~/.zshrc
+
+    if [ "$ZSH" = true ]; then
+        # Set Zsh
+        echo "${BOLD}Appending Aliases file to ~/.zshrc $RESET"
+        rm ~/.zshrc
+        ln -s $DOTFILES/zsh/zshrc ~/.zshrc
+        echo "source $DOTFILES/shell_aliases" >> ~/.zshrc
+    fi
 
     echo ""
 }
