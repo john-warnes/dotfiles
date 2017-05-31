@@ -438,7 +438,12 @@ SetMacro( 'LICENSE',      'GNU General Public License' )
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CreateGitConfig
+#   DESCRIPTION:  Creates basic git configuration file based on input
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 CreateGitConfig()
 {
     echo "${BOLD}Creating User Git Config:$BLUE $VIMDIR/gitconfig$RESET"
@@ -462,7 +467,12 @@ default = matching
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CreateTmuxAliasZsh
+#   DESCRIPTION:  Create alias for tmux and vim
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error.
+#-------------------------------------------------------------------------------
 CreateTmuxAliasZsh()
 {
     echo "${BOLD}Creating Tmux alaises:$BLUE ~/.oh-my-zsh/lib/alias.zsh$RESET"
@@ -476,6 +486,7 @@ alias ta='tmux attach -t'
 alias tnew='tmux new -s'
 alias tls='tmux ls'
 alias tkill='tmux kill-session -t'
+alias td='tmux detach'
 
 #conveience aliases for editing configs
 alias ev='vim ~/.vimrc'
@@ -487,10 +498,18 @@ alias ez='vim ~/.zshrc'
 
     echo "${BOLD}Appending Alais file to .zshrc$RESET"
     echo "source ~/.oh-my-zsh/lib/alias.zsh" >> ~/.zshrc
+    
+    rm ~/.zshrc
+    ln -s $DOTFILES/zsh/zshrc ~/.zshrc
 }
 
 
-
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  ManageFilesAndLinks
+#   DESCRIPTION:  Create symbolic links to your ~/dotfiles directory
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
 ManageFilesAndLinks()
 {
 
@@ -515,7 +534,6 @@ ManageFilesAndLinks()
 
     echo ""
 }
-
 
 
 #---  FUNCTION  ----------------------------------------------------------------
