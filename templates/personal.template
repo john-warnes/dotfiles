@@ -1,0 +1,19 @@
+§ =============================================================
+§  Personal Information
+§ =============================================================
+
+SetMacro( 'AUTHOR',       'Hugo Valle' )
+SetMacro( 'AUTHORREF',    '' )
+SetMacro( 'EMAIL',        'hugovalle1@weber.edu' )
+SetMacro( 'ORGANIZATION', 'WSU' )
+SetMacro( 'COMPANY',      'WSU' )
+SetMacro( 'COPYRIGHT',    'Copyright (c) |YEAR|, |AUTHOR|' )
+SetMacro( 'LICENSE',      'GNU General Public License' )
+
+§ =============================================================
+§  Date and Time Format
+§ =============================================================
+
+§SetFormat( 'DATE', '%x' )
+§SetFormat( 'TIME', '%H:%M' )
+§SetFormat( 'YEAR', '%Y' )
