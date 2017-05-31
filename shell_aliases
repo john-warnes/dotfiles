@@ -9,7 +9,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # Tmux alias
-alias tmux='tmux -2'
+#alias tmux='tmux -2'
 alias ta='tmux attach -t'
 alias tnew='tmux new -s'
 alias tls='tmux ls'
