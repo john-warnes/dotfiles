@@ -1,0 +1,136 @@
+§ =============================================================
+§  Custom Templates
+§ =============================================================
+
+§ set the template style used after loading the library
+SetStyle( 'C' )
+§SetStyle( 'CPP' )
+§SetStyle( 'Doxygen' )
+
+§ -------------------------------------------------------------
+§  A template definition is build like this:
+§    == Menu.some name == <options> ==
+§    <inserted code>
+§    == Menu.other name == <options> ==
+§    <inserted code>
+§    == ENDTEMPLATE ==
+§  A template ends with the line "== ENDTEMPLATE ==" or with
+§  the start of a new template.
+§ -------------------------------------------------------------
+
+§ -------------------------------------------------------------
+§  Statements
+§ -------------------------------------------------------------
+
+§ uncomment and edit to customize, separately for each style
+
+== USE STYLES : C, Doxygen ==
+== Statements.switch == map:ss, shortcut:s  ==
+switch ( <CURSOR> ) 
+{
+	case <-LABEL->:	
+		<SPLIT>break;
+
+	case <-LABEL->:	
+		break;
+
+	case <-LABEL->:	
+		break;
+
+	default:	
+		break;
+}				/* -----  end switch  ----- */
+== ENDTEMPLATE ==
+
+
+§ -------------------------------------------------------------
+§  Function Definition
+§ -------------------------------------------------------------
+== Comments.function == map:cfu, shortcut:f  ==
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  |?FUNCTION_NAME|
+ *  Description:  <CURSOR>
+ *   Parameters:
+ *       Return:
+ * =====================================================================================
+ */
+== ENDTEMPLATE ==
+
+§ uncomment and edit to customize, separately for each style
+== Idioms.function == map:if, shortcut:f  ==
+/*
+ * ===  FUNCTION  ======================================================================
+ *         Name:  |?FUNCTION_NAME|
+ *  Description:  
+ *   Parameters:
+ *       Return:
+ * =====================================================================================
+ */
+void |FUNCTION_NAME| ( <+argument_list+> )
+{
+    <CURSOR>
+<SPLIT><+return_value+>;
+}		/* -----  end of function |FUNCTION_NAME|  ----- */
+== ENDTEMPLATE ==
+
+
+§ -------------------------------------------------------------
+§  files, sections:
+§  Source files
+§ -------------------------------------------------------------
+== Comments.file description impl == map:cfdi, shortcut:c, start, noindent ==
+/*
+ * =====================================================================================
+ *
+ *       Filename:  |FILENAME|
+ *
+ *    Description:  <CURSOR>
+ *
+ *        Version:  1.0
+ *        Created:  |DATE| |TIME|
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  |AUTHOR| (|AUTHORREF|), |EMAIL|
+ *   Organization:  |ORGANIZATION|
+ *
+ * =====================================================================================
+ */
+#include <stdio.h>
+
+/* Prototype Definition */
+
+/* Main Program */
+int main(int argc, char *argv[])
+{
+
+    return 0;
+}
+/* Function Definition */
+
+== ENDTEMPLATE ==
+§ -------------------------------------------------------------
+§  Header files
+§ -------------------------------------------------------------
+== Comments.file description header == map:cfdh, shortcut:h, start, noindent ==
+/*
+ * =====================================================================================
+ *
+ *       Filename:  |FILENAME|
+ *
+ *    Description:  <CURSOR>
+ *
+ *        Version:  1.0
+ *        Created:  |DATE| |TIME|
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  |AUTHOR| (|AUTHORREF|), |EMAIL|
+ *   Organization:  |ORGANIZATION|
+ *
+ * =====================================================================================
+ */
+
+== ENDTEMPLATE ==
+== ENDSTYLES ==
