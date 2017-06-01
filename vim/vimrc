@@ -396,10 +396,38 @@ nnoremap <F8> :SyntasticCheck<CR>
 
 
 
+
+
+
+
+
+
+
+" Track the engine.
+Plug 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
+Plug 'honza/vim-snippets'
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" If you want :UltiSnipsEdit to split your window.
+"let g:UltiSnipsEditSplit="vertical"
+
+
+
+
+
+
 "=================================================================
 "                       END Plugin System
 "=================================================================
 call plug#end()
+
+
 
 "=================================================================
 " Behavior
@@ -678,4 +706,30 @@ if (s:CodePretty)
         augroup end
     endif
 endif
+
+
+
+
+
+
+
+ if !has("gui_running")
+    source $VIMRUNTIME/menu.vim 
+    set wildmenu                        
+    set cpoptions-=<
+    set wildcharm=<C-Z>
+    map <F4> :emenu <C-Z>
+  endif
+
+
+
+
+
+
+
+
+
+
+
+
 
