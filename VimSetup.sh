@@ -16,7 +16,7 @@ SCRIPTNAME="WSU JW-Custom VIM IDE"
 PKGS="git exuberant-ctags vim python3-doc"
 OSXPKGS="git ctags vim python3"
 
-# ID ---> https://github.com/zyga/os-release-zoo 
+# ID ---> https://github.com/zyga/os-release-zoo
 SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
 
 #Global Vars (Auto Set - Change will have BAD effects)
@@ -47,7 +47,7 @@ PrintHelp()
 #   DESCRIPTION:  Removes current setup files. Invoke with --remove
 #    PARAMETERS:  None
 #       RETURNS:  None
-#          Note:  There is NO backup. 
+#          Note:  There is NO backup.
 #-------------------------------------------------------------------------------
 Remove()
 {
@@ -62,16 +62,25 @@ Remove()
         * ) echo "${BOLD}Canceled$RESET";exit -1;;
     esac
 
-    #links
-    rm -rf ~/.vimrc ~/.bash_aliases ~/.shell_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
-    
-    #directorys
-    rm -rf $VIMDIR $OHMYZSH
-    
-    #if .vim is syslink
-    unlink ~/.vim
+    #links and files
+    rm -f ~/.vimrc ~/.bash_aliases ~/.shell_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
 
-    echo "${BOLD}Remove Complete$RESET"     
+    #directorys
+    rm -rf $OHMYZSH
+
+    #dont just delete the hole vimdirector
+    rm -rf $VIMDIR/bundle
+    rm -rf $VIMDIR/autoload
+    rm -rf $VIMDIR/colors
+
+    #auto createfile
+    rm -f $DOTFILES/git/gitconfig
+    rm -f $DOTFILES/vim/template/personal.template
+
+    #links of directroys
+    unlink ~/.vim 2>/dev/null
+
+    echo "${BOLD}Remove Complete$RESET"
     echo ""
     exit -1
 }
@@ -80,10 +89,10 @@ Remove()
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  Init
 #   DESCRIPTION:  Iinitailzation of script. Color setup. Folder configuration.
-#    PARAMETERS:  $@ Program input choices. 
+#    PARAMETERS:  $@ Program input choices.
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
-Init() 
+Init()
 {
     # Use colors, but only if connected to a terminal, and that terminal
     # supports them.
@@ -107,7 +116,7 @@ Init()
     fi
 
     if [ "$EUID" = 0 ]
-        then 
+    then
         echo "${BOLD}Do ${RED}NOT$RESET$BOLD run this script as root or with sudo$RESET"
         PrintHelp
     fi
@@ -116,29 +125,29 @@ Init()
 
     while [[ "$#" > 0 ]]; do
 
-    #echo "while Args: $@"    #debug
-    case $1 in
-        --administrator) ADMIN=true;;
-        --remove) REMOVE=true;;
-        -h | --help) PrintHelp;; *) :;;
-                esac; shift;
+        #echo "while Args: $@"    #debug
+        case $1 in
+            --administrator) ADMIN=true;;
+            --remove) REMOVE=true;;
+            -h | --help) PrintHelp;; *) :;;
+        esac; shift;
     done
 
     if [ "$REMOVE" = true ]; then
         Remove
     fi
-   
+
     clear
     echo "${BOLD}Installing$GREEN $SCRIPTNAME $RESET$BOLD(vim/tmux/zsh/git)$RESET"
-    echo ""  
-    
+    echo ""
+
     if [ "$ADMIN" = true ]; then
         echo "${BOLD}Admin Mode is:$GREEN ON"
     fi
 
     case "$OSTYPE" in
         solaris*) OS="SOLARIS" ;;
-        darwin*)  OS="OSX" ;; 
+        darwin*)  OS="OSX" ;;
         linux*)   OS="LINUX" ;;
         bsd*)     OS="BSD" ;;
         msys*)    OS="WINDOWS" ;;
@@ -149,7 +158,7 @@ Init()
 
         source /etc/os-release    #Load OS VARS
 
-        if [[ $SUPPORTEDDISTROS != *$ID* ]]; then        
+        if [[ $SUPPORTEDDISTROS != *$ID* ]]; then
             echo "$BOLD${RED}ERROR!$RESET$BOLD Undetect Linux: $ID $RESET"
             echo "${BOLD}Supported:$BLUE $SUPPORTEDDIRSTROS $RESET"
             read -n 1 -p "${BOLD}Atempt to install? $RESET$BOLD (y/N): $GREEN" choice
@@ -161,17 +170,16 @@ Init()
             esac
         else
             if [ -z "$PRETTY_NAME" ]; then
-                echo "${BOLD}Linux Detected:$GREEN $ID $RESET"       
+                echo "${BOLD}Linux Detected:$GREEN $ID $RESET"
             else
                 echo "${BOLD}Lunix Detected:$GREEN $PRETTY_NAME $RESET"
             fi
-  
+
             read -n 1 -p "$RESET${BOLD}Are you installing while on a$BLUE WSU campus$RESET netwokr (needs IPv6 fix)$RESET$BOLD (Y/n): $GREEN" choice
             echo "$RESET"
             case "$choice" in
-                y|Y ) WSU=true;;
                 n|N ) WSU=false;;
-                * ) WSU=true;;
+                y|Y|* ) WSU=true;;
             esac
 
         fi
@@ -201,7 +209,7 @@ Init()
 #    PARAMETERS:  None
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
-CheckDeps() 
+CheckDeps()
 {
     echo ""
     echo "${BOLD}Checking for Requered Packages:$RESET"
@@ -221,7 +229,7 @@ CheckDeps()
         echo ""
 
     elif [ "$OS" == "OSX" ]; then
-    
+
         for PKG in $OSXPKGS; do
             gotit=`which ${PKG} | grep -o "\/${PKG}"`
             if brew list -1 | grep -q "^${PKG}\$"; then
@@ -241,12 +249,12 @@ CheckDeps()
         echo ""
         echo "$BOLD${RED}ERROR$RESET$BOLD Required Packages Missing: RUN:$BLUE \"$FILENAME --administrator\"$RESET$BOLD to fix $RESET"
         echo ""
-        if [ "$ADMIN" = true ]; then 
+        if [ "$ADMIN" = true ]; then
             return
         else
             exit
         fi
-    fi   
+    fi
     echo ""
 }
 
@@ -284,7 +292,7 @@ Setup()
 #       RETURNS:  Success or Error
 #          NOTE:  Only needed once on each computer
 #-------------------------------------------------------------------------------
-AdminSetup() 
+AdminSetup()
 {
     echo "$BLUE${BOLD}Admin Setup$RESET$BOLD ($OS)"
 
@@ -327,7 +335,7 @@ AdminSetup()
                 fi
             fi
         done
-    
+
     elif [ $OS == 'OSX' ]; then
 
         echo "${BOLD}Required Package List:$GREEN $OSXPKGS $RESET"
@@ -354,8 +362,8 @@ AdminSetup()
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  GetUserInfo
-#   DESCRIPTION:  Capture User information. This is required to setup the 
-#                 vim and git templates. 
+#   DESCRIPTION:  Capture User information. This is required to setup the
+#                 vim and git templates.
 #    PARAMETERS:  None
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
@@ -370,8 +378,8 @@ GetUserInfo()
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  InstallPowerLineFonts
-#   DESCRIPTION:  Install Powerline Fonts. This is required to display all 
-#                 special characters in the status bar inside vim. 
+#   DESCRIPTION:  Install Powerline Fonts. This is required to display all
+#                 special characters in the status bar inside vim.
 #    PARAMETERS:  None
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
@@ -389,25 +397,12 @@ InstallPowerlineFonts()
 
     dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font "'DejaVu Sans Mono for Powerline Book 12'"
     dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/use-system-font "false"
-   
-    #echo "$BOLD$BLUE"
-    #printf "Powerline Fonts$RESET$BOLD Installed 
-    #Change the font of Terminal to one supporting powerline.
-    #
-    #On Ubuntu 
-    #Click [EDIT] > [Profile Preferences]
-    #Check the Custom Font option and click on the font name
-    #Select a font with the word \"Powerline\" in the name
-    #Recommend: DejaVu Sans Mono for Powerline Book"
-    #echo ""
-    #read -n 1 -p "$BOLD$GREENPress any key to continue...$RESET" -n1 -s
-    #echo "$RESET"
 }
 
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  CreatePersonalTemplate
-#   DESCRIPTION:  Create personal vim templates for c, perl, bash, etc 
+#   DESCRIPTION:  Create personal vim templates for c, perl, bash, etc
 #    PARAMETERS:  None
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
@@ -461,7 +456,8 @@ autocorrect = 1
 ui = auto
 [push]
 default = matching
-" "$name" "$email" > $DOTFILES/git/gitconfig 
+" "$name" "$email" > $DOTFILES/git/gitconfig
+
     echo "${BOLD}Creating Sympolic link to gitconfig$RESET"
     ln -s $DOTFILES/git/gitconfig ~/.gitconfig
 }
@@ -475,16 +471,17 @@ default = matching
 #-------------------------------------------------------------------------------
 ManageFilesAndLinks()
 {
+
+    ln -s $DOTFILES/vim ~/.vim
+
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
     mkdir -p $VIMDIR/colors
 
     echo "${BOLD}Creating Symbolic links for .vimrc, bash_alises, and .tmuxrcx$RESET"
     ln -s $DOTFILES/shell_aliases ~/.bash_aliases
-    ln -s $DOTFILES/bash/bashrc ~/.bashrc
-
+    ln -s $DOTFILES/shell_aliases ~/.zsh_aliases
     ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
     ln -s $DOTFILES/vim/vimrc ~/.vimrc
-    ln -s $DOTFILES/templates $VIMDIR/templates
 
     echo "${BOLD}Downloading Colors wombat256mod.vim$RESET"
     wget -O $VIMDIR/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
@@ -492,8 +489,6 @@ ManageFilesAndLinks()
     if [ "$ZSH" = true ]; then
         # Set Zsh
         echo "${BOLD}Appending Aliases file to ~/.zshrc $RESET"
-        rm ~/.zshrc
-        ln -s $DOTFILES/zsh/zshrc ~/.zshrc
         echo "source $DOTFILES/shell_aliases" >> ~/.zshrc
     fi
 
@@ -503,14 +498,14 @@ ManageFilesAndLinks()
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  main
-#   DESCRIPTION:  This is the main driver function. 
+#   DESCRIPTION:  This is the main driver function.
 #    PARAMETERS:  Optional parameters: --help, --administrator, --remove
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
 main()
 {
-    #Run Init
-    Init "$@"     # Remeber to pass the command line args $@ 
+#Run Init
+    Init "$@"     # Remeber to pass the command line args $@
     Setup
     CheckDeps
 
@@ -524,10 +519,9 @@ main()
 
     #Install Powerline Fonts?
     read -n 1 -p  "${BOLD}Install$BLUE PowerLine Fonts$RESET$BOLD (Y/n): $GREEN" choice
-    case "$choice" in 
-        y|Y ) InstallPowerlineFonts;;
+    case "$choice" in
         n|N ) :;;
-        * ) InstallPowerlineFonts;;
+        y|Y|* ) InstallPowerlineFonts;;
 
     esac
     echo "$RESET"
@@ -537,7 +531,7 @@ main()
 
     if [ "$ZSH" = true ]; then
         echo "${BOLD}Downloading and installing: oh-my-zsh"
-        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"    
+        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     fi
 
     vim +PlugInstall +qall #Installs the vim plugin system and updates all plugins

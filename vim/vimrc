@@ -309,11 +309,11 @@ Plug 'pseewald/vim-anyfold'
 let anyfold_activate=1
 set foldlevel=0
 set foldlevelstart=20
-augroup anyfold
-    autocmd!
-    autocmd User anyfoldLoaded normal zv
+"augroup anyfold
+    "autocmd!
+    "autocmd User anyfoldLoaded normal zv
     "autocmd BufWinEnter * normal! zR
-augroup END
+"augroup END
 
 
 
@@ -400,8 +400,6 @@ nnoremap <F8> :SyntasticCheck<CR>
 "=================================================================
 call plug#end()
 
-
-
 "=================================================================
 " Behavior
 "=================================================================
@@ -416,7 +414,7 @@ set wildmode=list:longest,full " Command <Tab> completion, list matches and
 "  complete the longest common part, then,
 "  cycle through the matches
 "set wildchar=<Tab>
-set wildchar=<Crtl-Space>
+set wildchar=<Nul>
 set mouse=a                    " on OSX press ALT and click
 set bs=2                       " Set backspace
 
@@ -629,7 +627,7 @@ if (s:ShowTrailing)
         autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
         autocmd BufWinEnter * match ExtraWhiteSpace /\s\+$/
     augroup end
-    command TrimFile silent! %s/\s\+$//g | echom 'Trailing Space(s) Trimmed'
+    command! TrimFile silent! %s/\s\+$//g | echom 'Trailing Space(s) Trimmed'
 endif
 
 
