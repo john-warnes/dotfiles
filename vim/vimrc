@@ -1,8 +1,8 @@
 "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 "           ___ _      __   __   _ _ _ __ ___  _ __ ___
 "          |__ \ \ __ / /   \ \ / / | '_ ` _ \| '__/ __|
-"          __\ |\ V  V /     \ V /| | | | | | | | | (__
-"         \____| _/\_/       \_/ |_|_| |_| |_|_|  \___|
+"          ___| \ V  V /     \ V /| | | | | | | | | (__
+"          \____|\_/\_/       \_/ |_|_| |_| |_|_|  \___|
 "
 "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 set nocompatible        " Make vim better! (not compatible with vi)
@@ -244,6 +244,7 @@ let g:airline_section_c = '%F'
 "" Fugitive for GIT
 "=================================================================
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 
 
 
@@ -271,7 +272,7 @@ let g:Python_MapLeader  = ','
 
 
 "=================================================================
-" Super tab completion
+" Python mode
 "=================================================================
 Plug 'python-mode/python-mode'
 "Template
@@ -413,8 +414,8 @@ set formatoptions+=tcq         " Basic formatting of text and comments
 set wildmode=list:longest,full " Command <Tab> completion, list matches and
 "  complete the longest common part, then,
 "  cycle through the matches
-"set wildchar=<Tab>
-set wildchar=<Nul>
+set wildchar=<Tab>
+"set wildchar=<Nul>
 set mouse=a                    " on OSX press ALT and click
 set bs=2                       " Set backspace
 
