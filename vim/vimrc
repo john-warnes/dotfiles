@@ -5,10 +5,23 @@
 "         \____| _/\_/       \_/ |_|_| |_| |_|_|  \___|
 "
 "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-set nocompatible              " Make vim better! (not compatible with vi)
+set nocompatible        " Make vim better! (not compatible with vi)
+
+
 
 "=================================================================
-" Summary of CUSTOM KEYS 
+" SETTINGS
+"=================================================================
+let s:ShowTrailing=1                "Show Tailing Spaces
+let s:ShowEol=1                     "Show EOL marker
+let s:CodePretty=1                  "Make comments/code pretty
+"   let s:container='.*Comment.*'   "Only make comments pretty
+    let s:container='ALL'           "Or Everything
+"   let s:container='NONE'          "Or NONE
+    let s:CodePrettyShowIndent=1    "Show indents
+
+"=================================================================
+" Summary of CUSTOM KEYS
 "=================================================================
 "
 " Most plugins use the Map Leader=','
@@ -42,26 +55,26 @@ set nocompatible              " Make vim better! (not compatible with vi)
 " <Leader>n Move prev tab
 "
 "
-" ==== Movment using arrow keys ==== 
+" ==== Movment using arrow keys ====
 "   note: Many window managers intercept arrow key combos
 " <Ctrl + [Left,Right]> to move to next/prev tabs
 " <Ctrl + Shift+ [Left,Right,Up,Down]> to move to windows in same tab
 "
 "
-"
-" ==== Movment using arrow keys ==== 
+" ==== Movment using arrow keys ====
 " <F8> Run syntax check on current file
 " <Ctrl + F8> Toggle active syntax checking
 
 
-
-
+" === Commands ===
+" :TrimFile " Remove all trailing writespace in file
 "
-"  if has('mac') 
+
+
+
+" ==== Notes ====
+"  if has('mac')
 "  if has('nvim')
-"
-"
-
 
 
 
@@ -95,8 +108,8 @@ let g:font="DejaVu Sans Mono for Powerline"
 let g:fontsize="11"
 
 function! GnomeTermSetFont()
-    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . " " . g:fontsize . "\'\"") 
-endfunction 
+    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . " " . g:fontsize . "\'\"")
+endfunction
 
 function! GnomeTermCycleFont()
     call add(g:powerlineFonts, g:font)
@@ -108,7 +121,6 @@ endfunction
 
 nnoremap <C-F5> :let g:fontsize = g:fontsize + 1<CR>:call GnomeTermSetFont()<CR>:echom "Fontsize = " . g:fontsize<CR>
 nnoremap <C-F6> :let g:fontsize = g:fontsize - 1<CR>:call GnomeTermSetFont()<CR>:echom "Fontsize = " . g:fontsize<CR>
-
 nnoremap <F7> :call GnomeTermCycleFont()<CR>
 
 
@@ -127,16 +139,18 @@ endif
 "=================================================================
 " Vim Color Support and Force
 "=================================================================
-
-" If trurcolor support is there this is all we need
-
 if exists('$TMUX')
     if $COLORTERM == 'truecolor'
         let g:gruvbox_italic=0
+        " Disable Background Color Erase (BCE) so that color schemes
+        " work properly when Vim is used inside tmux and GNU screen
+        " and turecolor terminal like gnome-terminal
         set t_ut=
     else
-        "set term=screen-256color
         set t_Co=256
+        " Disable Background Color Erase (BCE) so that color schemes
+        " work properly when Vim is used inside tmux and GNU screen
+        " and turecolor terminal like gnome-terminal
         set t_ut=
     endif
 else
@@ -144,25 +158,24 @@ else
         if has("termguicolors")
             set termguicolors
             let g:gruvbox_italic=1
-            set t_ut= 
+            " Disable Background Color Erase (BCE) so that color schemes
+            " work properly when Vim is used inside tmux and GNU screen
+            " and turecolor terminal like gnome-terminal
+            set t_ut=
         endif
     else
-        "    "No truecolor welcome to bad times
+        " No truecolor welcome to bad times
+        " Hope term supports 256 colors
         set term=xterm-256color
         set t_Co=256
         set t_ut=
     endif
-endif 
-
-if $TERM == 'linux'
-    "let g:gruvbox_termcolors=16
-    set t_Co=8
 endif
 
-" Disable Background Color Erase (BCE) so that color schemes
-" work properly when Vim is used inside tmux and GNU screen
-" and turecolor terminal like gnome-terminal
-"set t_ut=
+if $TERM == 'linux'
+    " If Term is linux then we are in a 9 color envermonet
+    set t_Co=8
+endif
 
 
 
@@ -175,10 +188,12 @@ endif
 let mapleader = ","
 
 
+
 "=================================================================
-"                         START Plugin 
+"                         START Plugin
 "=================================================================
 call plug#begin('~/.vim/bundle')
+
 
 
 "=================================================================
@@ -187,13 +202,30 @@ call plug#begin('~/.vim/bundle')
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Activate with Ctrl-B
 nnoremap <C-b> :NERDTreeToggle<CR>
-let g:NERDTreeDirArrowExpandable = '»'
-let g:NERDTreeDirArrowExpandable = '*'
-let g:NERDTreeDirArrowCollapsible = '-'
 let g:NERDTreeQuitOnOpen=0          " close NERDTree after  file is opened
 let g:NERDTreeShowHidden=1          " show hidden files in NERDTree
 let g:NERDTreeWinSize=20
 let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
+
+
+
+"=================================================================
+" NerdTree git plugin
+"=================================================================
+Plug 'Xuyuanp/nerdtree-git-plugin'
+let g:NERDTreeIndicatorMapCustom = {
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ 'Ignored'   : '☒',
+            \ "Unknown"   : "?"
+            \ }
+"let g:NERDTreeShowIgnoredStatus = 1 "Heavy feature can be SLOW
 
 
 
@@ -249,6 +281,7 @@ augroup Python
 augroup END
 
 
+
 "=================================================================
 " Super tab completion
 "=================================================================
@@ -281,6 +314,9 @@ augroup anyfold
     autocmd User anyfoldLoaded normal zv
     "autocmd BufWinEnter * normal! zR
 augroup END
+
+
+
 "=================================================================
 " Fold Cycling Plugin
 "=================================================================
@@ -305,17 +341,17 @@ function! GruvCycleContrast()
     if &background == "dark"
         if g:gruvbox_contrast_dark ==? "soft"
             let g:gruvbox_contrast_dark="medium"
-        elseif g:gruvbox_contrast_dark ==? "medium" 
+        elseif g:gruvbox_contrast_dark ==? "medium"
             let g:gruvbox_contrast_dark="hard"
-        elseif g:gruvbox_contrast_dark ==? "hard" 
+        elseif g:gruvbox_contrast_dark ==? "hard"
             let g:gruvbox_contrast_dark="soft"
         endif
     else
         if g:gruvbox_contrast_light ==? "soft"
             let g:gruvbox_contrast_light="medium"
-        elseif g:gruvbox_contrast_light ==? "medium" 
+        elseif g:gruvbox_contrast_light ==? "medium"
             let g:gruvbox_contrast_light="hard"
-        elseif g:gruvbox_contrast_light ==? "hard" 
+        elseif g:gruvbox_contrast_light ==? "hard"
             let g:gruvbox_contrast_light="soft"
         endif
     endif
@@ -332,7 +368,7 @@ nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
 "=================================================================
 " TMUX integration
 "=================================================================
-" <Ctrl + [h,j,k,l]> Move to vim panes and tmux widows 
+" <Ctrl + [h,j,k,l]> Move to vim panes and tmux widows
 Plug 'christoomey/vim-tmux-navigator'
 
 
@@ -357,6 +393,8 @@ let g:syntastic_mode_map = {
 nnoremap <C-F8> :SyntasticToggleMode<CR>
 nnoremap <F8> :SyntasticCheck<CR>
 
+
+
 "=================================================================
 "                       END Plugin System
 "=================================================================
@@ -377,24 +415,27 @@ set formatoptions+=tcq         " Basic formatting of text and comments
 set wildmode=list:longest,full " Command <Tab> completion, list matches and
 "  complete the longest common part, then,
 "  cycle through the matches
-set wildchar=<Tab>
+"set wildchar=<Tab>
+set wildchar=<Crtl-Space>
 set mouse=a                    " on OSX press ALT and click
 set bs=2                       " Set backspace
 
 " Bind nohl
 " Removes highlight of your last search
 " ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
-noremap <C-n> :nohl<CR>
-vnoremap <C-n> :nohl<CR>
-noremap <C-n> <ESC>:nohl<CR>i
+noremap <C-n> <Esc>:nohl<CR>
+inoremap <C-n> <Esc>:nohl<CR>i
 
 
 
 "=================================================================
 " Tags
 "=================================================================
-:nnoremap <Leader>t :!(cd %:p:h;ctags *)&
-set tags=tags;
+nnoremap <Leader>t
+    \ :silent execute '!(ctags -R -f %:p:h/tags *)&'<CR>
+    \ :redraw!<CR>
+    \ :echom 'Generating cTags'<CR>
+execute 'set tags=./tags;~/.vim/tags;tags;'
 
 
 
@@ -412,14 +453,13 @@ set visualbell              " Don't beep, flash the screen instead
 set scrolloff=1             " Use a 1 line (horizontal) scroll offset
 set sidescrolloff=5         " Use a 5 Char (virtual) scroll offset
 "set splitbelow             " Put the new window below the current one
-
 set termencoding=utf-8
 set encoding=utf8
 set wildmenu
 set commentstring=\ #\ %s
 
 "map sort function to a key
-vnoremap <Leader>s :sort<CR> 
+vnoremap <Leader>s :sort<CR>
 
 
 
@@ -435,6 +475,8 @@ set tw=79                   " width of document (used by gd)
 set nowrap                  " don't automatically wrap on load
 set fo-=t                   " don't automatically wrap text when typing
 
+
+
 "=================================================================
 " Search
 "=================================================================
@@ -449,8 +491,8 @@ set hlsearch               " Highlight all matches
 " Programming
 "=================================================================
 set autoindent                 " Keep indent level on new line
-set nosmartindent              " Intelligent indenting for source code
-set cindent                    " Intelligent indenting for source code
+"set nosmartindent              " Intelligent indenting for source code
+"set cindent                    " Intelligent indenting for source code
 set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch                  " Show matching brackets / parenthesis
 set matchtime=5                " Show matching character for .3s
@@ -463,8 +505,6 @@ set matchtime=5                " Show matching character for .3s
 set shiftwidth=4               " Number of spaces used for autoindents
 set tabstop=4                  " Set the tab width to 4
 set softtabstop=4
-set list                       " Visually displays tabs and EOL
-set listchars=tab:\»\          " Show tabs as a symbol and space
 set expandtab
 set textwidth=0
 
@@ -472,39 +512,41 @@ set textwidth=0
 
 "=================================================================
 " Windows and Tabs Navigations Remaping
-"     Every unnecessary keystroke that can be saved is good for 
+"     Every unnecessary keystroke that can be saved is good for
 "     your health :)
 "
 "     bind Ctrl+<ArrowKeys> to move around tabs
 "     bind Ctrl+Shift+<ArrowKeys> to move around windows
-"
 "=================================================================
-
 " easier moving between tabs
-noremap <Leader>n :tabprevious<CR>
-noremap <Leader>m :tabnext<CR>
+noremap <Leader>n <Esc>:tabprevious<CR>
+noremap <Leader>m <Esc>:tabnext<CR>
 
-noremap <C-Right> <ESC>:tabnext<CR>
-noremap <C-Left> <ESC>:tabprevious<CR>
+
+" Arrow Keys
+noremap <C-Right> <Esc>:tabnext<CR>
+noremap <C-Left>  <Esc>:tabprevious<CR>
+
+inoremap <C-Right> <Esc>:tabnext<CR>i
+inoremap <C-Left>  <Esc>:tabprevious<CR>i
 
 if has('g:loaded_tmux_navigator')
-    nnoremap <C-S-Right> :TmuxNavigateRight<CR>
-    nnoremap <C-S-Left> :TmuxNavigateLeft<CR>
-    nnoremap <C-S-Up> :TmuxNavigateUp<CR>
-    nnoremap <C-S-Down> :TmuxNavigateDown<CR>
+    noremap <C-S-Right> <Esc>:TmuxNavigateRight<CR>
+    noremap <C-S-Left> <Esc>:TmuxNavigateLeft<CR>
+    noremap <C-S-Up> <Esc>:TmuxNavigateUp<CR>
+    noremap <C-S-Down> <Esc>:TmuxNavigateDown<CR>
 else
-    nnoremap <C-S-Right> <c-w>l
-    nnoremap <C-S-Left> <c-w>h
-    nnoremap <C-S-Up> <c-w>k
-    nnoremap <C-S-Down> <c-w>j
+    noremap <C-S-Right> <Esc><c-w>l
+    noremap <C-S-Left> <Esc><c-w>h
+    noremap <C-S-Up> <Esc><c-w>k
+    noremap <C-S-Down> <Esc><c-w>j
 endif
 
 " easier moving of code blocks
 " Try to go into visual mode (v), thenselect several lines of code here and
 " then press ``>`` several times.
-vnoremap < <gv  " better indentation
-vnoremap > >gv  " better indentation
-
+vnoremap < <gv
+vnoremap > >gv
 
 
 "=================================================================
@@ -541,28 +583,100 @@ silent! colorscheme gruvbox " Colorscheme support truecolor
 if has('syntax')
     syntax on                      " Enable syntax-highlighting
 endif
+filetype plugin indent on
+
 
 
 "=================================================================
-" Folded Code Syntax -MUST be after enable of Syntax Highlighting
-" rmal tabnext
-"
-" rmal tabnext
-" 
+" Folded Code Syntax
+"   - Must be below setting the colorscheme and syntax
 "=================================================================
-
 if has('g:colors_name')
     if g:colors_name == "gruvbox"
         "let &colorcolumn=join(range(81,999),",")
         let &colorcolumn=join(range(81,84),",")
-        "highlight ColorColumn guibg=
     else
         set colorcolumn=80
     endif
 else
-    hi clear Folded
-    hi Folded term=standout cterm=standout gui=standout
+    highlight clear Folded
+    highlight Folded term=standout cterm=standout gui=standout
     set colorcolumn=80
+    " highlight ColorColumn guibg=
 endif
 
+
+"=================================================================
+" Highlighting/Showing of hidden whitespace and others
+"   - Must be below setting the colorscheme and syntax
+"=================================================================
+set list                       " Visually displays tabs and EOL
+set listchars=tab:\»\ ,nbsp:␣,trail:·,extends:»,precedes:« " Show tabs as a symbol and space
+
+if (s:ShowEol)
+    set listchars+=eol:↲
+endif
+
+"highlight ExtraWhitespace gui=standout cterm=standout term=standout
+highlight clear ExtraWhiteSpace
+highlight link ExtraWhiteSpace GruvboxRedBold
+
+if (s:ShowTrailing)
+    augroup show_extra_white_space
+        autocmd!
+        autocmd ColorScheme gruvbox highlight clear ExtraWhiteSpace | highlight link ExtraWhiteSpace GruvboxRedBold
+        autocmd InsertEnter * match ExtraWhiteSpace /\s\+\%#\@<!$/
+        autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
+        autocmd BufWinEnter * match ExtraWhiteSpace /\s\+$/
+    augroup end
+    command TrimFile silent! %s/\s\+$//g | echom 'Trailing Space(s) Trimmed'
+endif
+
+
+
+"=================================================================
+" Make code have some pretty charatures for the fun of it.
+"=================================================================
+
+if (1 <= 2)
+    :
+endif
+
+if (s:CodePretty)
+    if !exists('g:no_vim_conceal') && has('conceal') && &enc=='utf-8'
+" != <= >= x^2 y^3 1^2 pi 44^2 pie
+        function! CodePrettyColors()
+            highlight clear Conceal
+            highlight link Conceal GruvboxGray
+        endfunction
+
+        function! CodePretty()
+            call CodePrettyColors()
+
+            let Spaces = &l:shiftwidth == 0 ? &l:tabstop : &l:shiftwidth
+
+            execute 'syntax match Operator "<=" conceal cchar=≤ contained containedin='.s:container
+            execute 'syntax match Operator ">=" conceal cchar=≥ contained containedin='.s:container
+            execute 'syntax match Operator "!=" conceal cchar=≠ contained containedin='.s:container
+            execute 'syntax match Operator /\s\@<=pi\s\@=/ conceal cchar=π contained containedin='.s:container
+            execute 'syntax match Operator /\w\@<=\^2/ conceal cchar=² contained containedin='.s:container
+            execute 'syntax match Operator /\w\@<=\^3/ conceal cchar=³ contained containedin='.s:container
+
+            if (s:CodePrettyShowIndent)    "Show indents
+                execute 'syntax match Indent /\v^\s+/ containedin=ALL contains=IndentLevel'
+                execute 'syntax match IndentLevel /\v^@<=\s(\s{'.(Spaces-1).'})@=/ conceal cchar=¦ contained containedin=Indent'
+                execute 'syntax match IndentLevel /\v(^(\s{'.(Spaces).'})+)@<=\s(\s{'.(Spaces-1).'})@=/ conceal cchar=¦ contained containedin=Indent'
+            endif
+
+            setlocal conceallevel=1
+
+        endfunction
+
+        augroup code_prettyer
+            autocmd!
+            autocmd BufReadPost,FileReadPost,BufNewFile * call CodePretty()
+            autocmd ColorScheme gruvbox call CodePrettyColors()
+        augroup end
+    endif
+endif
 
