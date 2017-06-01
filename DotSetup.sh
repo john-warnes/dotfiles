@@ -175,7 +175,7 @@ Init()
                 echo "${BOLD}Lunix Detected:$GREEN $PRETTY_NAME $RESET"
             fi
 
-            read -n 1 -p "$RESET${BOLD}Are you installing while on a$BLUE WSU campus$RESET netwokr (needs IPv6 fix)$RESET$BOLD (Y/n): $GREEN" choice
+            read -n 1 -p "$RESET${BOLD}Are you installing while on a$BLUE WSU campus$RESET$BOLD network (needs IPv6 fix)$RESET$BOLD (Y/n): $GREEN" choice
             echo "$RESET"
             case "$choice" in
                 n|N ) WSU=false;;
