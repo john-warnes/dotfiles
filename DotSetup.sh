@@ -445,17 +445,30 @@ CreateGitConfig()
 
 printf "
 [user]
-name = %s
-email = %s
+    name = %s
+    email = %s
 [core]
-editor = vim
-autocrlf= input
+    editor = vim
+    autocrlf= input
+[diff]
+    tool = vimdiff
 [help]
-autocorrect = 1
+    autocorrect = 1
 [color]
-ui = auto
+    ui = auto
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
 [push]
-default = matching
+    default = matching
+[alias]
+    export = archive -o latest.tar.gz -9 --prefix=latest/
+    amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
+    details = log -n1 -p --format=fuller
+    logpretty = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset -%C(auto)%h %d%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset' --abbrev-commit
+[url \"https://github.com/\"]
+    insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
 
     echo "${BOLD}Creating Sympolic link to gitconfig$RESET"
