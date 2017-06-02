@@ -75,6 +75,8 @@ let s:CodePretty=1                  "Make comments/code pretty
 " ==== Notes ====
 "  if has('mac')
 "  if has('nvim')
+" in insert mode Hit Crtl-k then push button to see the vim mapping of the key
+
 
 
 
@@ -325,8 +327,8 @@ set foldlevelstart=20
 " nested folds
 Plug 'arecarn/vim-fold-cycle'
 "let g:fold_cycle_default_mapping = 0 "disable default mappings
-nmap <Tab><Tab> <Plug>(fold-cycle-open)
-nmap <S-Tab><S-Tab> <Plug>(fold-cycle-close)
+nmap <S-f> <Plug>(fold-cycle-open)
+nmap <S-d> <Plug>(fold-cycle-close)
 
 
 
@@ -459,10 +461,11 @@ inoremap <C-n> <Esc>:nohl<CR>i
 " Tags
 "=================================================================
 nnoremap <Leader>t
-    \ :silent execute '!(ctags -R -f %:p:h/tags *)&'<CR>
-    \ :redraw!<CR>
-    \ :echom 'Generating cTags'<CR>
+            \ :silent execute '!(ctags -R -f %:p:h/tags *)&'<CR>
+            \ :redraw!<CR>
+            \ :echom 'Generating cTags'<CR>
 execute 'set tags=./tags;~/.vim/tags;tags;'
+
 
 
 
@@ -714,8 +717,8 @@ endif
 
 
  if !has("gui_running")
-    source $VIMRUNTIME/menu.vim 
-    set wildmenu                        
+    source $VIMRUNTIME/menu.vim
+    set wildmenu
     set cpoptions-=<
     set wildcharm=<C-Z>
     map <F4> :emenu <C-Z>

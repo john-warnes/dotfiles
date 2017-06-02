@@ -450,8 +450,6 @@ printf "
 [core]
     editor = vim
     autocrlf= input
-[diff]
-    tool = vimdiff
 [help]
     autocorrect = 1
 [color]
