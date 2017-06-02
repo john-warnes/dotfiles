@@ -1,0 +1,29 @@
+# enable color support of ls and also add handy aliases
+alias ls='ls -GFh --color=auto'
+alias ll='ls -GFhl --color=auto'
+alias la='ls -GFha --color=auto'
+alias lr='ls -Gfhlrt --color=auto'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Tmux alias
+#alias tmux='tmux -2'
+alias ta='tmux attach -t'
+alias tnew='tmux new -s'
+alias tls='tmux ls'
+alias tkill='tmux kill-session -t'
+
+# conveience alias for editing configs
+alias ev='vim ~/.vimrc'
+alias et='vim ~/.tmux.conf'
+alias ez='vim ~/.zshrc'
+alias vim='vim -p'
+alias vimno='vim -u NONE'
+
+
+#Colorize GCC output
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+source Personal_Aliases
