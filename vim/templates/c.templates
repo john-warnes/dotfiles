@@ -26,18 +26,18 @@ SetStyle( 'C' )
 
 == USE STYLES : C, Doxygen ==
 == Statements.switch == map:ss, shortcut:s  ==
-switch ( <CURSOR> ) 
+switch ( <CURSOR> )
 {
-	case <-LABEL->:	
+	case <-LABEL->:
 		<SPLIT>break;
 
-	case <-LABEL->:	
+	case <-LABEL->:
 		break;
 
-	case <-LABEL->:	
+	case <-LABEL->:
 		break;
 
-	default:	
+	default:
 		break;
 }				/* -----  end switch  ----- */
 == ENDTEMPLATE ==
@@ -47,7 +47,7 @@ switch ( <CURSOR> )
 §  Function Definition
 § -------------------------------------------------------------
 == Comments.function == map:cfu, shortcut:f  ==
-/* 
+/**
  * ===  FUNCTION  ======================================================================
  *         Name:  |?FUNCTION_NAME|
  *  Description:  <CURSOR>
@@ -59,10 +59,10 @@ switch ( <CURSOR> )
 
 § uncomment and edit to customize, separately for each style
 == Idioms.function == map:if, shortcut:f  ==
-/*
+/**
  * ===  FUNCTION  ======================================================================
  *         Name:  |?FUNCTION_NAME|
- *  Description:  
+ *  Description:
  *   Parameters:
  *       Return:
  * =====================================================================================
@@ -80,7 +80,7 @@ void |FUNCTION_NAME| ( <+argument_list+> )
 §  Source files
 § -------------------------------------------------------------
 == Comments.file description impl == map:cfdi, shortcut:c, start, noindent ==
-/*
+/**
  * =====================================================================================
  *
  *       Filename:  |FILENAME|
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 §  Header files
 § -------------------------------------------------------------
 == Comments.file description header == map:cfdh, shortcut:h, start, noindent ==
-/*
+/**
  * =====================================================================================
  *
  *       Filename:  |FILENAME|

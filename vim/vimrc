@@ -233,6 +233,25 @@ let g:NERDTreeIndicatorMapCustom = {
 
 
 
+
+"=================================================================
+" Syntex Checking Plugin
+"=================================================================
+let g:airline#extensions#ale#enabled = 1
+Plug 'w0rp/ale'
+let g:ale_sign_column_always = 1
+"let g:ale_sign_error = '>>'
+"let g:ale_sign_warning = '--'
+"
+"highlight clear ALEErrorSign
+"highlight clear ALEWarningSign
+
+augroup signcolumn
+    autocmd!
+    autocmd ColorScheme Gruvbox highlight clear SignColumn
+    
+augroup end
+
 "=================================================================
 " Airline Status Line
 "=================================================================
@@ -265,19 +284,22 @@ Plug 'tpope/vim-rhubarb'
 "=================================================================
 let g:C_CreateMenusDelayed = 'yes'
 Plug 'WolfgangMehner/c-support'
-let g:C_MapLeader  = ','
-let g:C_UseTool_cmake = 'yes'
+let g:C_UseToolbox = 'yes'
 let g:C_UseTool_doxygen = 'yes'
+let g:C_UseTool_cmake = 'yes'
+
+
+let g:C_MapLeader  = ','
 Plug 'WolfgangMehner/bash-support'
-let g:BASH_MapLeader  = ','
+let g:Bash_MapLeader  = ','
 Plug 'WolfgangMehner/latex-support'
-let g:LATEX_MapLeader  = ','
+let g:Latex_MapLeader  = ','
 Plug 'WolfgangMehner/lua-support'
-let g:LUA_MapLeader  = ','
+let g:Lua_MapLeader  = ','
 Plug 'WolfgangMehner/perl-support'
-let g:PERL_MapLeader  = ','
+let g:Perl_MapLeader  = ','
 Plug 'WolfgangMehner/vim-support'
-let g:VIM_MapLeader  = ','
+let g:Vim_MapLeader  = ','
 Plug 'WolfgangMehner/python-support'
 let g:Python_MapLeader  = ','
 
@@ -389,27 +411,33 @@ Plug 'christoomey/vim-tmux-navigator'
 "=================================================================
 " syntastic Syntax checking Plugin
 "=================================================================
-"   Use :Erorrs to open location-list :lclose
-"   "   :lnext and :lprevious
-Plug 'vim-syntastic/syntastic'
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" Use :Erorrs to open location-list :lclose
+" :lnext and :lprevious
+"Plug 'vim-syntastic/syntastic'
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+"let g:syntastic_mode_map = {
+"            \ "mode": "active",
+"            \ "passive_filetypes": ["python"] }
+"nnoremap <C-F8> :SyntasticToggleMode<CR>
+"nnoremap <F8> :SyntasticCheck<CR>
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_mode_map = {
-            \ "mode": "active",
-            \ "passive_filetypes": ["python"] }
-nnoremap <C-F8> :SyntasticToggleMode<CR>
-nnoremap <F8> :SyntasticCheck<CR>
+
+
+
+
+
 
 
 
 "=================================================================
-" syntastic Syntax checking Plugin
+" Code Snippits
 "=================================================================
 " Track the engine.
 Plug 'SirVer/ultisnips'
@@ -547,7 +575,11 @@ set matchtime=5                " Show matching character for .3s
 " Clipboard
 "=================================================================
 if has('clipboard')
-    set clipboard=unnamedplus   " Have Vim use system clipboard
+    if has('mac')
+        set clipboard=unnamed
+    else
+        set clipboard=unnamedplus   " Have Vim use system clipboard
+    endif
 endif
 
 
@@ -723,7 +755,7 @@ endif
 
 
 "=================================================================
-" Testing Area for now stuff
+" Testing Area for new stuff
 "=================================================================
 " Allow the menu in Term mode
 if !has("gui_running")
@@ -734,5 +766,10 @@ if !has("gui_running")
     map <F4> :emenu <C-Z>
 endif
 
+
+
+"c-support
+"
+call mmtemplates#config#Add ( 'C', '~/.vim/bundle/c-support/c-support/templates/doxygen.templates', 'Doxygen', 'ntd' )
 
 
