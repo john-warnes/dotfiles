@@ -11,9 +11,12 @@ DOTFILES=~/dotfiles
 VIMDIR=~/.vim
 OHMYZSH=~/.oh-my-zsh
 
+# TODO Needed DEP CHK on vim package
+#      In this recommed order: vim-gnome vim-gtk vim-athena vim-nox vim
+
 #Global Vars (Manualy Set)
 SCRIPTNAME="WSU JW-Custom VIM IDE"
-PKGS="git exuberant-ctags vim python3-doc"
+PKGS="git exuberant-ctags vim-gnome python3-doc"
 OSXPKGS="git ctags vim python3"
 
 # ID ---> https://github.com/zyga/os-release-zoo
@@ -51,7 +54,6 @@ PrintHelp()
 #-------------------------------------------------------------------------------
 Remove()
 {
-
     echo "$RESET$BOLD${RED}REMOVE$RESET$BOLD Selected$RESET"
     echo "${BOLD}NOTE: Their is not backup are you sure?$RESET"
     read -n 1 -p "$RESET$BLUE${BOLD}Remove all configuration and files? $RESET$BOLD (y/N): $GREEN" choice
@@ -198,7 +200,6 @@ Init()
         fi
 
     fi
-
     echo ""
 }
 
@@ -489,8 +490,10 @@ ManageFilesAndLinks()
     mkdir -p $VIMDIR/colors
 
     echo "${BOLD}Creating Symbolic links for .vimrc, bash_alises, and .tmuxrcx$RESET"
-    ln -s $DOTFILES/shell_aliases ~/.bash_aliases
-    ln -s $DOTFILES/shell_aliases ~/.zsh_aliases
+    ln -s $DOTFILES/shell/shell_aliases ~/.bash_aliases
+    ln -s $DOTFILES/shell/shell_aliases ~/.zsh_aliases
+    ln -s $DOTFILES/shell/personal_aliases ~/.personal_aliases
+    ln -s $DOTFILES/shell/personal_aliases ~/.personal_aliases
     ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
     ln -s $DOTFILES/vim/vimrc ~/.vimrc
 
