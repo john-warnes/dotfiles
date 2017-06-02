@@ -65,7 +65,7 @@ Remove()
     esac
 
     #links and files
-    rm -f ~/.vimrc ~/.bash_aliases ~/.shell_aliases  ~/.zshrc ~/.tmux.conf ~/.gitconfig
+    rm -f ~/.vimrc ~/.bash_aliases ~/.zsh_aliases ~/.zshrc ~/.tmux.conf ~/.gitconfig ~/.personal_aliases
 
     #directorys
     rm -rf $OHMYZSH
@@ -503,7 +503,7 @@ ManageFilesAndLinks()
     if [ "$ZSH" = true ]; then
         # Set Zsh
         echo "${BOLD}Appending Aliases file to ~/.zshrc $RESET"
-        echo "source $DOTFILES/shell_aliases" >> ~/.zshrc
+        echo "source ~/.zsh_aliases" >> ~/.zshrc
     fi
 
     echo ""
