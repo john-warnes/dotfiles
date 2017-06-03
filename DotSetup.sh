@@ -463,13 +463,12 @@ printf "
     default = matching
 [alias]
     export = archive -o latest.tar.gz -9 --prefix=latest/
-    amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
+    amend = !git log -n 1 --pretty=tformat:%%s%%n%%n%%b | git commit -F - --amend
     details = log -n1 -p --format=fuller
-    logpretty = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset -%C(auto)%h %d%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset' --abbrev-commit
+    logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
-
     echo "${BOLD}Creating Sympolic link to gitconfig$RESET"
     ln -s $DOTFILES/git/gitconfig ~/.gitconfig
 }

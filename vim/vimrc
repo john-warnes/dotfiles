@@ -7,27 +7,6 @@
 "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 set nocompatible    " Make vim better!   (not compatible with vi)
 
-
-
-"=================================================================
-" SETTINGS
-"=================================================================
-let g:vimDir="~/.vim"
-
-
-let s:ShowTrailing=1                "Show Tailing Spaces
-let s:ShowEol=1                     "Show EOL marker
-let s:CodePretty=1                  "Make comments/code pretty
-"let s:container='.*Comment.*'      "Only make comments pretty
-let s:container='ALL'               "Or Everything
-"let s:container='NONE'             "Or NONE
-let s:CodePrettyShowIndent=1        "Show indents
-
-let s:UsePresistent_Undo=1          "Keep undo presistent on file
-"close and open
-
-
-
 "=================================================================
 " Summary of CUSTOM KEYS
 "=================================================================
@@ -69,7 +48,6 @@ let s:UsePresistent_Undo=1          "Keep undo presistent on file
 "
 " === Commands ===
 " :TrimFile " Remove all trailing writespace in file
-"
 "
 " <F2> Toggle showing Indent Guides and Pretty Chars
 
@@ -202,6 +180,14 @@ call plug#begin('~/.vim/bundle')
 "=================================================================
 " NerdTree to see files in tree mode
 "=================================================================
+let g:JV_showEol=1                                "Show EOL marker
+Plug 'john-warnes/jvim'
+
+
+
+"=================================================================
+" NerdTree to see files in tree mode
+"=================================================================
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Activate with Ctrl-B
 nnoremap <C-b> :NERDTreeToggle<CR>
@@ -217,7 +203,7 @@ let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
 "=================================================================
 "Show git file status when browsing
 Plug 'Xuyuanp/nerdtree-git-plugin'
-let g:NERDTreeIndicatorMapCustom = {
+        let g:NERDTreeIndicatorMapCustom = {
             \ "Modified"  : "✹",
             \ "Staged"    : "✚",
             \ "Untracked" : "✭",
@@ -235,22 +221,19 @@ let g:NERDTreeIndicatorMapCustom = {
 
 
 "=================================================================
-" Syntex Checking Plugin
+" ALE Syntax Checking Plugin
 "=================================================================
-let g:airline#extensions#ale#enabled = 1
-Plug 'w0rp/ale'
-let g:ale_sign_column_always = 1
+"let g:airline#extensions#ale#enabled = 1
+"Plug 'w0rp/ale'
+"let g:ale_sign_column_always = 1
 "let g:ale_sign_error = '>>'
 "let g:ale_sign_warning = '--'
 "
-"highlight clear ALEErrorSign
-"highlight clear ALEWarningSign
+"augroup signcolumn
+"    autocmd!
+"    autocmd ColorScheme Gruvbox highlight clear SignColumn    
+"augroup end
 
-augroup signcolumn
-    autocmd!
-    autocmd ColorScheme Gruvbox highlight clear SignColumn
-    
-augroup end
 
 "=================================================================
 " Airline Status Line
@@ -340,15 +323,15 @@ let g:tagbar_width = 30
 "=================================================================
 " :h fold-commands: zo, zO, zc, za, etc
 " Even better to use Fold Cycling Plugin
-Plug 'pseewald/vim-anyfold'
-let anyfold_activate=1
-set foldlevel=0
-set foldlevelstart=20
-augroup anyfold
-autocmd!
-    autocmd User anyfoldLoaded normal zv
+"Plug 'pseewald/vim-anyfold'
+"let anyfold_activate=1
+"set foldlevel=0
+"set foldlevelstart=20
+"augroup anyfold
+"autocmd!
+"    autocmd User anyfoldLoaded normal zv
 "    autocmd BufWinEnter * normal! zR
-augroup END
+"augroup END
 
 
 
@@ -357,10 +340,10 @@ augroup END
 "=================================================================
 " provides the avility to cycle open and closed folds and
 " nested folds
-Plug 'arecarn/vim-fold-cycle'
+"Plug 'arecarn/vim-fold-cycle'
 "let g:fold_cycle_default_mapping = 0 "disable default mappings
-nmap <S-f> <Plug>(fold-cycle-open)
-nmap <S-d> <Plug>(fold-cycle-close)
+"nmap <Tab><Tab> <Plug>(fold-cycle-open)
+"nmap <S-Tab><S-Tab> <Plug>(fold-cycle-close)
 
 
 
@@ -391,7 +374,6 @@ function! GruvCycleContrast()
         endif
     endif
     colorscheme gruvbox
-    "echo "SET"
 endfunction
 
 "mapping for Contrast and background changeing keys
@@ -413,20 +395,20 @@ Plug 'christoomey/vim-tmux-navigator'
 "=================================================================
 " Use :Erorrs to open location-list :lclose
 " :lnext and :lprevious
-"Plug 'vim-syntastic/syntastic'
-"set statusline+=%#warningmsg#
+Plug 'vim-syntastic/syntastic'
+set statusline+=%#warningmsg#
 "set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
+set statusline+=%*
 "
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-"let g:syntastic_mode_map = {
-"            \ "mode": "active",
-"            \ "passive_filetypes": ["python"] }
-"nnoremap <C-F8> :SyntasticToggleMode<CR>
-"nnoremap <F8> :SyntasticCheck<CR>
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_mode_map = {
+            \ "mode": "active",
+            \ "passive_filetypes": ["python"] }
+nnoremap <C-F8> :SyntasticToggleMode<CR>
+nnoremap <F8> :SyntasticCheck<CR>
 
 
 
@@ -445,8 +427,8 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsJumpForwardTrigger="<C-j>"
+let g:UltiSnipsJumpBackwardTrigger="<C-S-j>"
 " If you want :UltiSnipsEdit to split your window.
 "let g:UltiSnipsEditSplit="vertical"
 
@@ -456,7 +438,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 "=####################= END Plugin System =######################=
 "=================================================================
 call plug#end()
-
+set synmaxcol=1000      " Only syntax hightlight 1000 columns right
 
 
 "=================================================================
@@ -489,6 +471,8 @@ set formatoptions+=tcq         " Basic formatting of text and comments
 set wildmode=list:longest,full " Command <Tab> completion, list matches and
 "  complete the longest common part, then,
 "  cycle through the matches
+set history=1000
+set spell
 set wildchar=<Tab>
 "set wildchar=<Nul>
 set mouse=a                    " on OSX press ALT and click
@@ -499,6 +483,7 @@ set bs=2                       " Set backspace
 " ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
 noremap <C-n> <Esc>:nohl<CR>
 inoremap <C-n> <Esc>:nohl<CR>i
+
 
 
 
@@ -526,7 +511,7 @@ set nostartofline           " Stay on current char on page commands
 set visualbell              " Don't beep, flash the screen instead
 set scrolloff=1             " Use a 1 line (horizontal) scroll offset
 set sidescrolloff=5         " Use a 5 Char (virtual) scroll offset
-"set splitbelow             " Put the new window below the current one
+set virtualedit=onemore
 set termencoding=utf-8
 set encoding=utf8
 set wildmenu
@@ -571,16 +556,6 @@ set matchtime=5                " Show matching character for .3s
 
 
 
-"=================================================================
-" Clipboard
-"=================================================================
-if has('clipboard')
-    if has('mac')
-        set clipboard=unnamed
-    else
-        set clipboard=unnamedplus   " Have Vim use system clipboard
-    endif
-endif
 
 
 
@@ -607,32 +582,6 @@ set noshowmode
 noremap <Leader>n <Esc>:tabprevious<CR>
 noremap <Leader>m <Esc>:tabnext<CR>
 
-" Mappings for Arrow Keys Tabs
-noremap <C-Right> <Esc>:tabnext<CR>
-noremap <C-Left>  <Esc>:tabprevious<CR>
-inoremap <C-Right> <Esc>:tabnext<CR>i
-inoremap <C-Left>  <Esc>:tabprevious<CR>i
-
-if has('g:loaded_tmux_navigator')
-    noremap <C-S-Right> <Esc>:TmuxNavigateRight<CR>
-    noremap <C-S-Left> <Esc>:TmuxNavigateLeft<CR>
-    noremap <C-S-Up> <Esc>:TmuxNavigateUp<CR>
-    noremap <C-S-Down> <Esc>:TmuxNavigateDown<CR>
-else
-    nmap <C-S-Right> <Esc><c-w>l
-    nmap <C-S-Left> <Esc><c-w>h
-    nmap <C-S-Up> <Esc><c-w>k
-    nmap <C-S-Down> <Esc><c-w>j
-endif
-
-" Easier moving of code block indents Try to go into
-" visual mode (v), then select several lines of code here and
-" then press ``>`` several times.
-vnoremap < <gv
-vnoremap > >gv
-
-
-
 "=================================================================
 " Return to the last position in the file
 "=================================================================
@@ -644,132 +593,10 @@ augroup END
 
 
 
-"=================================================================
-" Folded Code Syntax
-"   - Must be below setting the colorscheme and syntax
-"=================================================================
-if exists('g:colors_name')
-    if (g:colors_name == 'gruvbox')
-        "let &colorcolumn=join(range(81,999),',')
-        let &colorcolumn=join(range(81,83),',')
-        "set colorcolumn=80
-    else
-        set colorcolumn=80
-    endif
-else
-    highlight clear Folded
-    highlight Folded term=standout cterm=standout gui=standout
-    set colorcolumn=80
-    " highlight ColorColumn guibg=
-endif
 
-
-
-"=================================================================
-" Highlighting/Showing of hidden whitespace and others
-"   - Must be below setting the colorscheme and syntax
-"=================================================================
-set list    " Enable display of hidden characters
-" Show some hidden characters as visible symbols
-set listchars=tab:\»\ ,nbsp:␣,trail:·,extends:»,precedes:«
-
-" Show EOL
-if (s:ShowEol)
-    set listchars+=eol:↲
-endif
-
-highlight clear ExtraWhiteSpace
-highlight link ExtraWhiteSpace GruvboxRedBold
-
-if (s:ShowTrailing)
-    augroup show_extra_white_space
-        autocmd!
-        autocmd ColorScheme gruvbox highlight clear ExtraWhiteSpace
-                    \ highlight link ExtraWhiteSpace GruvboxRedBold
-        autocmd InsertEnter * match ExtraWhiteSpace /\s\+\%#\@<!$/
-        autocmd InsertLeave * match ExtraWhiteSpace /\s\+$/
-        autocmd BufWinEnter * match ExtraWhiteSpace /\s\+$/
-    augroup end
-    command! TrimFile silent! %s/\s\+$//g | echom 'Trailing Space(s) Trimmed'
-endif
-
-
-
-"=================================================================
-" Show some characters as prettier, Indent guides
-"=================================================================
-if (s:CodePretty)
-    if !exists('g:no_vim_conceal') && has('conceal') && &enc=='utf-8'
-
-        " Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie
-        function! CodePrettyColors()
-            highlight clear Conceal
-            highlight link Conceal GruvboxGray
-        endfunction
-
-        function! CodePretty()
-            call CodePrettyColors()
-            let Spaces = &l:shiftwidth == 0 ? &l:tabstop : &l:shiftwidth
-
-            " Swap some charcters as prettier ones
-            execute 'syntax match Operator "<=" conceal cchar=≤ contained containedin='.s:container
-            execute 'syntax match Operator ">=" conceal cchar=≥ contained containedin='.s:container
-            execute 'syntax match Operator "!=" conceal cchar=≠ contained containedin='.s:container
-            execute 'syntax match Operator /\s\@<=pi\s\@=/ conceal cchar=π contained containedin='.s:container
-            execute 'syntax match Operator /\w\@<=\^2/ conceal cchar=² contained containedin='.s:container
-            execute 'syntax match Operator /\w\@<=\^3/ conceal cchar=³ contained containedin='.s:container
-
-            " Indent Guides
-            if (s:CodePrettyShowIndent)
-                execute 'syntax match Indent /\v^\s+/ containedin=ALL contains=IndentLevel'
-                execute 'syntax match IndentLevel /\v^@<=\s(\s{'.(Spaces-1).'})@=/ conceal cchar=¦ contained containedin=Indent'
-                execute 'syntax match IndentLevel /\v(^(\s{'.(Spaces).'})+)@<=\s(\s{'.(Spaces-1).'})@=/ conceal cchar=¦ contained containedin=Indent'
-            endif
-
-            setlocal conceallevel=1
-            nnoremap <silent> <F2> :let &conceallevel = ( &conceallevel == 1 ? 0 : 1 )<CR>
-        endfunction
-
-        augroup code_prettyer
-            autocmd!
-            autocmd BufReadPost,FileReadPost,BufNewFile * call CodePretty()
-            autocmd ColorScheme gruvbox call CodePrettyColors()
-        augroup end
-    endif
-endif
-
-
-
-"=================================================================
-" Presistent_Undo Settings
-"=================================================================
-if exists('s:UsePresistent_Undo') && has('persistent_undo') && exists("*mkdir")
-    "colorscheme default
-    let &undodir= expand(vimDir.'/undo')
-    silent! call mkdir(&undodir)      " Create dir if needed
-    set undolevels=1000         " How many undos
-    set undoreload=5000         " number of lines to save for undo
-    set undofile                " Use a undofile
-endif
-
-
-
-"=================================================================
-" Testing Area for new stuff
-"=================================================================
-" Allow the menu in Term mode
-if !has("gui_running")
-    source $VIMRUNTIME/menu.vim
-    set wildmenu
-    set cpoptions-=<
-    set wildcharm=<C-Z>
-    map <F4> :emenu <C-Z>
-endif
-
-
+"set transparency=5
 
 "c-support
-"
-call mmtemplates#config#Add ( 'C', '~/.vim/bundle/c-support/c-support/templates/doxygen.templates', 'Doxygen', 'ntd' )
+"call mmtemplates#config#Add ( 'C', '~/.vim/bundle/c-support/c-support/templates/doxygen.templates', 'Doxygen', 'ntd' )
 
 
