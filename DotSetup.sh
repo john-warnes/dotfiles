@@ -11,6 +11,8 @@ DOTFILES=~/dotfiles
 VIMDIR=~/.vim
 OHMYZSH=~/.oh-my-zsh
 
+LOCALBIN=~/.local/bin
+
 # TODO Needed DEP CHK on vim package
 #      In this recommed order: vim-gnome vim-gtk vim-athena vim-nox vim
 
@@ -66,6 +68,7 @@ Remove()
 
     #links and files
     rm -f ~/.vimrc ~/.bash_aliases ~/.zsh_aliases ~/.zshrc ~/.tmux.conf ~/.gitconfig ~/.personal_aliases
+    rm $LOCALBIN/git_diff_wrapper.sh
 
     #directorys
     rm -rf $OHMYZSH
@@ -451,6 +454,10 @@ printf "
 [core]
     editor = vim
     autocrlf= input
+[diff]
+    external = git_diff_wrapper.sh
+[pager]
+    diff =
 [help]
     autocorrect = 1
 [color]
@@ -466,6 +473,7 @@ printf "
     amend = !git log -n 1 --pretty=tformat:%%s%%n%%n%%b | git commit -F - --amend
     details = log -n1 -p --format=fuller
     logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
+    s = status
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
@@ -487,6 +495,12 @@ ManageFilesAndLinks()
 
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
     mkdir -p $VIMDIR/colors
+
+
+    #User PATH location
+    mkdir -p $LOCALBIN
+    ln -s $DOTFILES/local/bin/git_diff_wrapper.sh $LOCALBIN/git_diff_wrapper.sh
+
 
     echo "${BOLD}Creating Symbolic links for .vimrc, bash_alises, and .tmuxrcx$RESET"
     ln -s $DOTFILES/shell/shell_aliases ~/.bash_aliases
