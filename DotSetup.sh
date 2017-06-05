@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#Writen by John Warnes
-#Based on vimrc setup from Hugo Valle
+# Written by John Warnes
+# Based on vimrc setup from Hugo Valle
 # Modify on May-29-2017 by Hugo V. to fit my setup
 
 #echo "arg: $@"    # Debug
@@ -13,18 +13,27 @@ OHMYZSH=~/.oh-my-zsh
 
 LOCALBIN=~/.local/bin
 
-# TODO Needed DEP CHK on vim package
-#      In this recommed order: vim-gnome vim-gtk vim-athena vim-nox vim
+# TODO Needed dependency checking of the vim package
+# Recommended any vim package in this order: vim-gnome vim-gtk vim-athena vim-nox vim
 
-#Global Vars (Manualy Set)
+#Packages Lists (Manually Set)
+OPTIONALPKGS="clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip"
+# == Recommanded ==
+#SQL              sqlint      gem install sqlint
+#VIML,Vim         vlit        pip install vim-vint
+#Multi,Others     proselint   pip install proselint
+
+
+#Global Vars (Manually Set)
 SCRIPTNAME="WSU JW-Custom VIM IDE"
 PKGS="git exuberant-ctags vim-gnome python3-doc"
 OSXPKGS="git ctags vim python3"
 
-# ID ---> https://github.com/zyga/os-release-zoo
+# IDs help ---> https://github.com/zyga/os-release-zoo
 SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
 
-#Global Vars (Auto Set - Change will have BAD effects)
+
+#Global Vars (Auto Set - Changing will have BAD effects)
 REMOVE=false
 FILENAME=$0
 ADMIN=false
@@ -32,6 +41,7 @@ WSU=false
 TMUX=false
 ZSH=false
 OS=""
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -45,6 +55,7 @@ PrintHelp()
     echo "$RESET${BOLD}useage: $0 [--administrator] [--remove]$RESET"
     exit -1
 }
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -91,9 +102,10 @@ Remove()
 }
 
 
+
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  Init
-#   DESCRIPTION:  Iinitailzation of script. Color setup. Folder configuration.
+#   DESCRIPTION:  Initialization of script. Color setup. Folder configuration.
 #    PARAMETERS:  $@ Program input choices.
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
@@ -164,7 +176,7 @@ Init()
         source /etc/os-release    #Load OS VARS
 
         if [[ $SUPPORTEDDISTROS != *$ID* ]]; then
-            echo "$BOLD${RED}ERROR!$RESET$BOLD Undetect Linux: $ID $RESET"
+            echo "$BOLD${RED}ERROR:$RESET$BOLD Undetect Linux: $ID $RESET"
             echo "${BOLD}Supported:$BLUE $SUPPORTEDDIRSTROS $RESET"
             read -n 1 -p "${BOLD}Atempt to install? $RESET$BOLD (y/N): $GREEN" choice
             echo "$RESET"
@@ -197,7 +209,7 @@ Init()
             echo "$BOLD${YELLOW}Note!$RESET$BOLD Missing Packages will installed using BREW"
         else
             echo ""
-            echo "$BOLD${RED}ERROR!$RESET$BOLD OSX:$BLUE HomeBrew (https://brew.sh/)$RESET$BOLD is required."
+            echo "$BOLD${RED}ERROR:$RESET$BOLD OSX:$BLUE HomeBrew (https://brew.sh/)$RESET$BOLD is required."
             echo ""
             exit -1
         fi
@@ -205,6 +217,63 @@ Init()
     fi
     echo ""
 }
+
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CheckOptional
+#   DESCRIPTION:  Check for recommended but optional packages
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+CheckOptional()
+{
+    printf "${BOLD}Checking for Recommended Optional Packages:$RESET"
+    ERRORFLAG=false
+
+    if [ "$OS" == "LINUX" ]; then
+
+        for PKG in $OPTIONALPKGS; do
+
+            if [ "$(dpkg-query -f='${Status}\n' -W $PKG 2> /dev/null | awk '{print $3;}' 2> /dev/null )" = "installed" ]; then
+                printf "$BOLD$GREEN $PKG$RESET"
+            else
+                printf "$BOLD$YELLOW $PKG$RESET"
+                ERRORFLAG=true
+            fi
+        done
+        echo ""
+
+    elif [ "$OS" == "OSX" ]; then
+
+        for PKG in $OPTIONALPKS; do
+            gotit=`which ${PKG} | grep -o "\/${PKG}"`
+            if brew list -1 | grep -q "^${PKG}\$"; then
+                printf "$BOLD$GREEN $PKG$RESET"
+            elif [[ $gotit ]]; then
+                printf "$BOLD$GREEN $PKG$RESET"
+            else
+                printf "$BOLD$YELLOW $PKG$RESET"
+                ERRORFLAG=true
+            fi
+        done
+        echo ""
+    fi
+
+    if [ "$ERRORFLAG" = true ]; then
+        echo "$BOLD${YELLOW}Note:$RESET$BOLD Recommended but not required Packages Missing."
+        unset ERRORFLAG
+    fi
+printf "$BOLD
+== Other Recommended Untested for packages ==
+$BLUE= Langage =    $YELLOW = package =        $GREEN = command = $RESET$BOLD
+  SQL             sqlint              gem install sqlint
+  Vim, VimL       vim-vint            pip3 install vim-vint
+  Many, Others    proselint           pip3 install proselint
+$RESET"
+    echo ""
+}
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -215,15 +284,14 @@ Init()
 #-------------------------------------------------------------------------------
 CheckDeps()
 {
-    echo ""
-    echo "${BOLD}Checking for Requered Packages:$RESET"
+    printf "${BOLD}Checking for Required Packages:$RESET"
     ERRORFLAG=false
 
     if [ "$OS" == "LINUX" ]; then
 
         for PKG in $PKGS; do
 
-            if [ "$(dpkg-query -f='${Status}\n' -W $PKG | awk '{print $3;}')" = "installed" ]; then
+            if [ "$(dpkg-query -f='${Status}\n' -W $PKG 2> /dev/null | awk '{print $3;}' 2> /dev/null )" = "installed" ]; then
                 printf "$BOLD$GREEN $PKG$RESET"
             else
                 printf "$BOLD$RED $PKG$RESET"
@@ -248,10 +316,9 @@ CheckDeps()
         echo ""
     fi
 
-
     if [ "$ERRORFLAG" = true ]; then
         echo ""
-        echo "$BOLD${RED}ERROR$RESET$BOLD Required Packages Missing: RUN:$BLUE \"$FILENAME --administrator\"$RESET$BOLD to fix $RESET"
+        echo "$BOLD${RED}ERROR:$RESET$BOLD Required Packages Missing: RUN:$BLUE \"$FILENAME --administrator\"$RESET$BOLD to fix $RESET"
         echo ""
         if [ "$ADMIN" = true ]; then
             return
@@ -285,6 +352,7 @@ Setup()
         n|N ) :;;
         y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; ZSH=true;;
     esac
+    echo ""
 }
 
 
@@ -303,7 +371,7 @@ AdminSetup()
     if [ $OS == 'LINUX' ]; then
 
         if [ 1 -eq "$(echo "${VERSION} < 16.04" | bc)" ]; then
-            echo "$RESET${RED}ERROR!$RESET$BOLD$BLUE Dectect Verion($VERSION) Required: >16.04$RESET"
+            echo "$RESET${RED}ERROR:$RESET$BOLD$BLUE Dectect Verion($VERSION) Required: >16.04$RESET"
             exit -1
         fi
 
@@ -364,6 +432,7 @@ AdminSetup()
 }
 
 
+
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  GetUserInfo
 #   DESCRIPTION:  Capture User information. This is required to setup the
@@ -378,6 +447,7 @@ GetUserInfo()
     read -p "$RESET${BOLD}Enter your$BLUE Oganization$RESET$BOLD Ex\"WSU\": $GREEN" org
     read -p "$RESET${BOLD}Enter your$BLUE Company$RESET$BOLD Ex\"WSU\": $GREEN" com
 }
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -402,6 +472,7 @@ InstallPowerlineFonts()
     dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font "'DejaVu Sans Mono for Powerline Book 12'"
     dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/use-system-font "false"
 }
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -435,6 +506,7 @@ SetMacro( 'LICENSE',      'GNU General Public License' )
 §SetFormat( 'YEAR', '%%Y' )
 " "$name" "$email" "$org" "$com" > $VIMDIR/templates/personal.template
 }
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -482,6 +554,7 @@ printf "
 }
 
 
+
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  ManageFilesAndLinks
 #   DESCRIPTION:  Create symbolic links to your ~/dotfiles directory
@@ -490,17 +563,14 @@ printf "
 #-------------------------------------------------------------------------------
 ManageFilesAndLinks()
 {
-
     ln -s $DOTFILES/vim ~/.vim
 
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
     mkdir -p $VIMDIR/colors
 
-
     #User PATH location
     mkdir -p $LOCALBIN
     ln -s $DOTFILES/local/bin/git_diff_wrapper.sh $LOCALBIN/git_diff_wrapper.sh
-
 
     echo "${BOLD}Creating Symbolic links for .vimrc, bash_alises, and .tmuxrcx$RESET"
     ln -s $DOTFILES/shell/shell_aliases ~/.bash_aliases
@@ -523,6 +593,7 @@ ManageFilesAndLinks()
 }
 
 
+
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  main
 #   DESCRIPTION:  This is the main driver function.
@@ -534,6 +605,7 @@ main()
 #Run Init
     Init "$@"     # Remeber to pass the command line args $@
     Setup
+    CheckOptional
     CheckDeps
 
     if [ "$ADMIN" = true ]; then
