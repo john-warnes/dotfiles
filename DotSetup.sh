@@ -602,8 +602,7 @@ ManageFilesAndLinks()
     ln -s $DOTFILES/vim ~/.vim
 
     #User PATH location
-    echo "$RESET${BOLD}Setting up git diff to use$GREEN vimdiff$RESET$BOLD:$BLUE $LOCALBIN/git_diff_wrapper.sh"
-$RESET"
+    echo "$RESET${BOLD}Setting up git diff to use$GREEN vimdiff$RESET$BOLD:$BLUE $LOCALBIN/git_diff_wrapper.sh$RESET"
     mkdir -p $LOCALBIN
     ln -s $DOTFILES/local/bin/git_diff_wrapper.sh $LOCALBIN/git_diff_wrapper.sh
 
@@ -643,7 +642,7 @@ $RESET"
 #-------------------------------------------------------------------------------
 PatchPlugs()
 {
-    echo "$RESET${BOLD}Patching NerdTree:$RESET$BOLD:$BLUE $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim"
+    echo "$RESET${BOLD}Patching NerdTree:$RESET$BOLD:$BLUE $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim$RESET"
     mkdir -p $VIMDIR/bundle/nerdtree/nerdtree_plugin
     ln -s $VIMDIR/patches/NerdTreePatch.vim $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim
     echo ""
