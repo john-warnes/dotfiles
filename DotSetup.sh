@@ -52,7 +52,7 @@ OS=""
 #-------------------------------------------------------------------------------
 PrintHelp()
 {
-    echo "$RESET${BOLD}useage: $0 [--administrator] [--remove]$RESET"
+    echo "$RESET${BOLD}useage: $0 [--administrator] [--remove] [--upgrade]$RESET"
     exit -1
 }
 
@@ -102,6 +102,18 @@ Remove()
 }
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  Upgrade
+#   DESCRIPTION:  Upgrade current setup after doing a git pull --upgrade
+#    PARAMETERS:  None
+#       RETURNS:  None
+#          Note:  Might just do a Plug clean install etc
+#-------------------------------------------------------------------------------
+Upgrade()
+{
+    vim +PlugClean +PlugInstall +PlugUpdate +qall
+}
+
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  Init
@@ -146,12 +158,18 @@ Init()
         case $1 in
             --administrator) ADMIN=true;;
             --remove) REMOVE=true;;
-            -h | --help) PrintHelp;; *) :;;
-        esac; shift;
+            --upgrade) UPGRADE=true;;
+            -h | --help | *) PrintHelp;;
+        esac;
+        shift;
     done
 
     if [ "$REMOVE" = true ]; then
         Remove
+    fi
+
+    if [ "$UPGRADE" = true ]; then
+        Upgrade
     fi
 
     clear
