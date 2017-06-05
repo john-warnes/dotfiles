@@ -22,10 +22,13 @@ alias ez='vim ~/.zshrc'
 alias vim='vim -p'
 alias vimno='vim -u NONE'
 
-
 #Colorize GCC output
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 if [ -f ~/.personal_aliases ]; then
     source "$HOME/.personal_aliases"
 fi
+
+#git
+alias gits='git status'
+alias gita='git status'
