@@ -568,6 +568,9 @@ ManageFilesAndLinks()
     echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
     mkdir -p $VIMDIR/colors
 
+    mkdir -p $VIMDIR/bundle/nerdtree/nerdtree_plugin
+    ln -s $VIMDIR/patches/NerdTreePatch.vim $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim 
+
     #User PATH location
     mkdir -p $LOCALBIN
     ln -s $DOTFILES/local/bin/git_diff_wrapper.sh $LOCALBIN/git_diff_wrapper.sh
