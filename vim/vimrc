@@ -5,9 +5,10 @@
 "          \____|\_/\_/       \_/ |_|_| |_| |_|_|  \___|
 "
 "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-set nocompatible    " Make vim better!   (not compatible with vi)
+"set nocompatible    " Make vim better!   (not compatible with vi)
 
 " Local file settings
+scriptencoding=utf-8
 setlocal foldmarker={,}
 setlocal foldmethod=marker
 setlocal foldcolumn=1
@@ -90,18 +91,18 @@ let g:powerlineFonts= [
             \'Ubuntu Mono derivative Powerline',
             \]
 
-let g:font="DejaVu Sans Mono for Powerline"
-let g:fontsize="11"
+let g:font='DejaVu Sans Mono for Powerline'
+let g:fontsize='11'
 
 function! GnomeTermSetFont()
-    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . " " . g:fontsize . "\'\"")
+    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . ' ' . g:fontsize . "\'\"")
 endfunction
 
 function! GnomeTermCycleFont()
     call add(g:powerlineFonts, g:font)
     let g:font = get(g:powerlineFonts,0,'mono')
     let g:powerlineFonts=g:powerlineFonts[1:]
-    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . " " . g:fontsize . "\'\"")
+    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . ' ' . g:fontsize . "\'\"")
     echom g:font
 endfunction
 
@@ -117,7 +118,9 @@ nnoremap <F7> :call GnomeTermCycleFont()<CR>
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
                 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | q
+    augroup plugmanager
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | q
+    augroup end
 endif
 
 
@@ -126,7 +129,7 @@ endif
 " Vim Color Support and Force
 "=================================================================
 if exists('$TMUX')
-    if $COLORTERM == 'truecolor'
+    if $COLORTERM ==? 'truecolor'
         let g:gruvbox_italic=0
         " Disable Background Color Erase (BCE) so that color schemes
         " work properly when Vim is used inside tmux and GNU screen
@@ -140,8 +143,8 @@ if exists('$TMUX')
         set t_ut=
     endif
 else
-    if $COLORTERM == 'truecolor'
-        if has("termguicolors")
+    if $COLORTERM ==? 'truecolor'
+        if has('termguicolors')
             set termguicolors
             let g:gruvbox_italic=1
             " Disable Background Color Erase (BCE) so that color schemes
@@ -158,7 +161,7 @@ else
     endif
 endif
 
-if $TERM == 'linux'
+if $TERM ==? 'linux'
     " If Term is linux then we are in a 9 color envermonet
     set t_Co=8
 endif
@@ -171,7 +174,7 @@ endif
 " Rebind <Leader> key
 " I like to have it here becuase it is easier to reach than the default and
 " it is next to ``m`` and ``n`` which I use for navigating between tabs.
-let mapleader = ","
+let g:mapleader = ','
 
 
 
@@ -199,7 +202,7 @@ nnoremap <C-b> :NERDTreeToggle<CR>
 let g:NERDTreeQuitOnOpen=0          " close NERDTree after  file is opened
 let g:NERDTreeShowHidden=1          " show hidden files in NERDTree
 let g:NERDTreeWinSize=20
-let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
+let g:NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
 
 
 
@@ -209,16 +212,16 @@ let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
 "Show git file status when browsing
 Plug 'Xuyuanp/nerdtree-git-plugin'
             let g:NERDTreeIndicatorMapCustom = {
-            \ "Modified"  : "✹",
-            \ "Staged"    : "✚",
-            \ "Untracked" : "✭",
-            \ "Renamed"   : "➜",
-            \ "Unmerged"  : "═",
-            \ "Deleted"   : "✖",
-            \ "Dirty"     : "✗",
-            \ "Clean"     : "✔︎",
+            \ 'Modified'  : '✹',
+            \ 'Staged'    : '✚',
+            \ 'Untracked' : '✭',
+            \ 'Renamed'   : '➜',
+            \ 'Unmerged'  : '═',
+            \ 'Deleted'   : '✖',
+            \ 'Dirty'     : '✗',
+            \ 'Clean'     : '✔︎',
             \ 'Ignored'   : '☒',
-            \ "Unknown"   : "?"
+            \ 'Unknown'   : '?'
             \ }
 "let g:NERDTreeShowIgnoredStatus = 1 "Heavy feature can be SLOW
 
@@ -234,16 +237,19 @@ let g:ale_sign_column_always = 1
 let g:ale_sign_error = '>>'
 let g:ale_sign_warning = '--'
 
+let g:ale_c_cppcheck_options = '--enable=style' " --suppress=memleak:src/file1.cpp src/
+let g:ale_history_log_output=1  " use ALEInfo to see the full output if needed
+
 
 " Write this in your vimrc file
-let g:ale_set_loclist = 1
-" let g:ale_set_quickfix = 1
+"let g:ale_set_loclist = 1
+"let g:ale_set_quickfix = 1
 
-let g:ale_open_list = 1
+"let g:ale_open_list = 1
 " Set this if you want to.
 " " This can be useful if you are combining ALE with
 " " some other plugin which sets quickfix errors, etc.
-let g:ale_keep_list_window_open = 0
+"let g:ale_keep_list_window_open = 0
 
 augroup signcolumn
     autocmd!
@@ -264,7 +270,7 @@ let g:airline_section_c = '%F'
 "let g:airline_theme='murmur'
 "let g:airline_theme='powerlineish'
 let g:airline#extensions#tmuxline#enabled = 1
-let airline#extensions#tmuxline#color_template = 'insert'
+let g:airline#extensions#tmuxline#color_template = 'insert'
 Plug 'edkolev/tmuxline.vim'     "have airline theme the tmux bar
 
 
@@ -373,21 +379,21 @@ Plug 'morhetz/gruvbox'
 " F6 to cycle the 3 levels of contrast
 
 function! GruvCycleContrast()
-    if &background == "dark"
-        if g:gruvbox_contrast_dark ==? "soft"
-            let g:gruvbox_contrast_dark="medium"
-        elseif g:gruvbox_contrast_dark ==? "medium"
-            let g:gruvbox_contrast_dark="hard"
-        elseif g:gruvbox_contrast_dark ==? "hard"
-            let g:gruvbox_contrast_dark="soft"
+    if &background ==? 'dark'
+        if g:gruvbox_contrast_dark ==? 'soft'
+            let g:gruvbox_contrast_dark='medium'
+        elseif g:gruvbox_contrast_dark ==? 'medium'
+            let g:gruvbox_contrast_dark='hard'
+        elseif g:gruvbox_contrast_dark ==? 'hard'
+            let g:gruvbox_contrast_dark='soft'
         endif
     else
-        if g:gruvbox_contrast_light ==? "soft"
-            let g:gruvbox_contrast_light="medium"
-        elseif g:gruvbox_contrast_light ==? "medium"
-            let g:gruvbox_contrast_light="hard"
-        elseif g:gruvbox_contrast_light ==? "hard"
-            let g:gruvbox_contrast_light="soft"
+        if g:gruvbox_contrast_light ==? 'soft'
+            let g:gruvbox_contrast_light='medium'
+        elseif g:gruvbox_contrast_light ==? 'medium'
+            let g:gruvbox_contrast_light='hard'
+        elseif g:gruvbox_contrast_light ==? 'hard'
+            let g:gruvbox_contrast_light='soft'
         endif
     endif
     colorscheme gruvbox
@@ -437,9 +443,9 @@ Plug 'SirVer/ultisnips'
 " Snippets are separated from the engine. Add this if you want them:
 Plug 'honza/vim-snippets'
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<C-j>"
-let g:UltiSnipsJumpBackwardTrigger="<C-S-j>"
+let g:UltiSnipsExpandTrigger='<tab>'
+let g:UltiSnipsJumpForwardTrigger='<C-j>'
+let g:UltiSnipsJumpBackwardTrigger='<C-S-j>'
 " If you want :UltiSnipsEdit to split your window.
 "let g:UltiSnipsEditSplit="vertical"
 
@@ -475,7 +481,6 @@ silent! colorscheme gruvbox " colorscheme support truecolor
 set nowritebackup              " only in case you don't want a backup file while editing
 set noswapfile                 " no swap files
 set nobackup                   " Just overwrite the file
-set nocompatible               " Disable strct vi compatibility
 set printoptions=paper:letter,number:y,portrait:y
 set shortmess+=filmnrxoOtT     " Abbrev. of messages (avoids 'hit enter')
 set formatoptions+=tcq         " Basic formatting of text and comments
@@ -485,7 +490,7 @@ set wildmode=list:longest,full " Command <Tab> completion, list matches and
 set wildchar=<Tab>
 "set wildchar=<Nul>
 set mouse=a                    " on OSX press ALT and click
-set bs=2                       " Set backspace
+set backspace=2                       " Set backspace
 
 " Bind nohl
 " Removes highlight of your last search
@@ -518,11 +523,10 @@ augroup END
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline           " Stay on current char on page commands
 set visualbell              " Don't beep, flash the screen instead
-set scrolloff=1             " Use a 1 line (horizontal) scroll offset
+set scrolloff=3             " Use a 1 line (horizontal) scroll offset
 set sidescrolloff=5         " Use a 5 Char (virtual) scroll offset
 set virtualedit=onemore
 set termencoding=utf-8
-set encoding=utf8
 set wildmenu
 set commentstring=\ #\ %s
 
@@ -537,9 +541,9 @@ vnoremap <Leader>s :sort<CR>
 set ruler                   " Show the line / column number of cursor
 set showcmd                 " Show the partially completed command
 set number                  " Display line number"
-set tw=79                   " width of document (used by gd)
+set textwidth=79                   " width of document (used by gd)
 set nowrap                  " don't automatically wrap on load
-set fo-=t                   " don't automatically wrap text when typing
+set formatoptions-=t                   " don't automatically wrap text when typing
 
 
 
