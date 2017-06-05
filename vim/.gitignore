@@ -1,5 +1,15 @@
 colors
-bundle
 autoload
 tags
 templates/personal.template
+
+
+bundle/*
+!bundle/nerdtree/
+
+bundle/nerdtree/*
+!bundle/nerdtree/nerdtree_plugin
+
+bundle/nerdtree/nerdtree_plugin/*
+!bundle/nerdtree/nerdtree_plugin/NerdTreeMappingFix.vim
+

@@ -1,5 +1,5 @@
 
-" ~/.vim/plugged/nerdtree/nerdtree_plugin/mymapping.vim
+" ~/.vim/bundle/nerdtree/nerdtree_plugin/mymapping.vim
 
 call NERDTreeAddKeyMap({
   \ 'key': '<CR>',

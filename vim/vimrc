@@ -223,16 +223,16 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 "=================================================================
 " ALE Syntax Checking Plugin
 "=================================================================
-"let g:airline#extensions#ale#enabled = 1
-"Plug 'w0rp/ale'
-"let g:ale_sign_column_always = 1
-"let g:ale_sign_error = '>>'
-"let g:ale_sign_warning = '--'
-"
-"augroup signcolumn
-"    autocmd!
-"    autocmd ColorScheme Gruvbox highlight clear SignColumn    
-"augroup end
+let g:airline#extensions#ale#enabled = 1
+Plug 'w0rp/ale'
+let g:ale_sign_column_always = 1
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '--'
+
+augroup signcolumn
+    autocmd!
+    autocmd ColorScheme Gruvbox highlight clear SignColumn    
+augroup end
 
 
 "=================================================================
@@ -395,20 +395,20 @@ Plug 'christoomey/vim-tmux-navigator'
 "=================================================================
 " Use :Erorrs to open location-list :lclose
 " :lnext and :lprevious
-Plug 'vim-syntastic/syntastic'
-set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-"
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_mode_map = {
-            \ "mode": "active",
-            \ "passive_filetypes": ["python"] }
-nnoremap <C-F8> :SyntasticToggleMode<CR>
-nnoremap <F8> :SyntasticCheck<CR>
+"Plug 'vim-syntastic/syntastic'
+"set statusline+=%#warningmsg#
+""set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+""
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+"let g:syntastic_mode_map = {
+"            \ "mode": "active",
+"            \ "passive_filetypes": ["python"] }
+"nnoremap <C-F8> :SyntasticToggleMode<CR>
+"nnoremap <F8> :SyntasticCheck<CR>
 
 
 
@@ -471,8 +471,6 @@ set formatoptions+=tcq         " Basic formatting of text and comments
 set wildmode=list:longest,full " Command <Tab> completion, list matches and
 "  complete the longest common part, then,
 "  cycle through the matches
-set history=1000
-set spell
 set wildchar=<Tab>
 "set wildchar=<Nul>
 set mouse=a                    " on OSX press ALT and click
