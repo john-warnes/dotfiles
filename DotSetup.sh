@@ -461,10 +461,11 @@ AdminSetup()
 #-------------------------------------------------------------------------------
 GetUserInfo()
 {
-    read -p "$RESET${BOLD}Enter your$BLUE Full Name$RESET$BOLD Ex\"John Doe\": $GREEN" name
-    read -p "$RESET${BOLD}Enter your$BLUE Email Address$RESET$BOLD Ex\"JohnD@mail.weber.edu\": $GREEN" email
-    read -p "$RESET${BOLD}Enter your$BLUE Oganization$RESET$BOLD Ex\"WSU\": $GREEN" org
-    read -p "$RESET${BOLD}Enter your$BLUE Company$RESET$BOLD Ex\"WSU\": $GREEN" com
+    read -p "$RESET${BOLD}Enter $BLUE Full Name$RESET$BOLD Ex\"John Doe\": $GREEN" name
+    read -p "$RESET${BOLD}Enter $BLUE Author Ref$RESET$BOLD Ex\"jdoe\": $GREEN" ref
+    read -p "$RESET${BOLD}Enter $BLUE Email Address$RESET$BOLD Ex\"JohnD@mail.weber.edu\": $GREEN" email
+    read -p "$RESET${BOLD}Enter $BLUE Oganization$RESET$BOLD Ex\"WSU\": $GREEN" org
+    read -p "$RESET${BOLD}Enter $BLUE Company$RESET$BOLD Ex\"WSU\": $GREEN" com
 }
 
 
@@ -509,7 +510,7 @@ printf "§ =============================================================
 § =============================================================
 
 SetMacro( 'AUTHOR',       '%s' )
-SetMacro( 'AUTHORREF',    '' )
+SetMacro( 'AUTHORREF',    '%s' )
 SetMacro( 'EMAIL',        '%s' )
 SetMacro( 'ORGANIZATION', '%s' )
 SetMacro( 'COMPANY',      '%s' )
@@ -523,7 +524,7 @@ SetMacro( 'LICENSE',      'GNU General Public License' )
 §SetFormat( 'DATE', '%%x' )
 §SetFormat( 'TIME', '%%H:%%M' )
 §SetFormat( 'YEAR', '%%Y' )
-" "$name" "$email" "$org" "$com" > $VIMDIR/templates/personal.template
+" "$name" "$ref" "$email" "$org" "$com" > $VIMDIR/templates/personal.template
 }
 
 
