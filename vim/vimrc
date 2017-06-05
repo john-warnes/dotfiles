@@ -7,6 +7,11 @@
 "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 set nocompatible    " Make vim better!   (not compatible with vi)
 
+" Local file settings
+setlocal foldmarker={,}
+setlocal foldmethod=marker
+setlocal foldcolumn=1
+
 "=================================================================
 " Summary of CUSTOM KEYS
 "=================================================================
@@ -203,7 +208,7 @@ let NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
 "=================================================================
 "Show git file status when browsing
 Plug 'Xuyuanp/nerdtree-git-plugin'
-        let g:NERDTreeIndicatorMapCustom = {
+            let g:NERDTreeIndicatorMapCustom = {
             \ "Modified"  : "✹",
             \ "Staged"    : "✚",
             \ "Untracked" : "✭",
@@ -219,20 +224,32 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 
 
-
 "=================================================================
 " ALE Syntax Checking Plugin
 "=================================================================
+set noshowmode
 let g:airline#extensions#ale#enabled = 1
 Plug 'w0rp/ale'
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = '>>'
 let g:ale_sign_warning = '--'
 
+
+" Write this in your vimrc file
+let g:ale_set_loclist = 1
+" let g:ale_set_quickfix = 1
+
+let g:ale_open_list = 1
+" Set this if you want to.
+" " This can be useful if you are combining ALE with
+" " some other plugin which sets quickfix errors, etc.
+let g:ale_keep_list_window_open = 0
+
 augroup signcolumn
     autocmd!
     autocmd ColorScheme Gruvbox highlight clear SignColumn    
 augroup end
+
 
 
 "=================================================================
@@ -412,12 +429,6 @@ Plug 'christoomey/vim-tmux-navigator'
 
 
 
-
-
-
-
-
-
 "=================================================================
 " Code Snippits
 "=================================================================
@@ -554,9 +565,6 @@ set matchtime=5                " Show matching character for .3s
 
 
 
-
-
-
 "=================================================================
 " Vertical indenting
 "=================================================================
@@ -567,7 +575,6 @@ set expandtab
 set textwidth=0
 
 
-set noshowmode
 
 "=================================================================
 " Mappings and Keybindings
@@ -591,9 +598,7 @@ augroup END
 
 
 
-
 "set transparency=5
-
 "c-support
 "call mmtemplates#config#Add ( 'C', '~/.vim/bundle/c-support/c-support/templates/doxygen.templates', 'Doxygen', 'ntd' )
 
