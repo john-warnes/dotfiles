@@ -246,7 +246,7 @@ CheckOptional()
 
     elif [ "$OS" == "OSX" ]; then
 
-        for PKG in $OPTIONALPKS; do
+        for PKG in $OPTIONALPKGS; do
             gotit=`which ${PKG} | grep -o "\/${PKG}"`
             if brew list -1 | grep -q "^${PKG}\$"; then
                 printf "$BOLD$GREEN $PKG$RESET"
@@ -266,10 +266,10 @@ CheckOptional()
     fi
 printf "$BOLD
 == Other Recommended Untested for packages ==
-$BLUE= Langage =    $YELLOW = package =        $GREEN = command = $RESET$BOLD
-  SQL             sqlint              gem install sqlint
-  Vim, VimL       vim-vint            pip3 install vim-vint
-  Many, Others    proselint           pip3 install proselint
+$BLUE= Langage =    $YELLOW = package =   $GREEN= Command linux =           = Command OSX =$RESET$BOLD
+  SQL             sqlint        gem install sqlint          ?
+  Vim, VimL       vim-vint      pip3 install vim-vint       /usr/local/bin/pip install vim-vint
+  Many, Others    proselint     pip3 install proselint      /usr/local/bin/pip install proselint
 $RESET"
     echo ""
 }
