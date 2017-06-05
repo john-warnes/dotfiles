@@ -53,7 +53,7 @@ OS=""
 PrintHelp()
 {
     echo "$RESET${BOLD}useage: $0 [--administrator] [--remove] [--upgrade]$RESET"
-    exit -1
+    exit 0 
 }
 
 
@@ -73,8 +73,8 @@ Remove()
     echo ""
     case "$choice" in
         y|Y ) :;;
-        n|N ) echo "${BOLD}Canceled$RESET";exit -1;;
-        * ) echo "${BOLD}Canceled$RESET";exit -1;;
+        n|N ) echo "${BOLD}Canceled$RESET";exit 0;;
+        * ) echo "${BOLD}Canceled$RESET";exit 0;;
     esac
 
     #links and files
@@ -112,6 +112,7 @@ Remove()
 Upgrade()
 {
     vim +PlugClean +PlugInstall +PlugUpdate +qall
+    exit 0
 }
 
 
