@@ -598,35 +598,54 @@ printf "
 #-------------------------------------------------------------------------------
 ManageFilesAndLinks()
 {
+    echo "$RESET${BOLD}Creating$GREEN ~/.vim symlink$RESET$BOLD to:$BLUE $VIMDIR$RESET"
     ln -s $DOTFILES/vim ~/.vim
 
-    echo "$RESET${BOLD}Creating Diectory in:$BLUE $VIMDIR$RESET"
-    mkdir -p $VIMDIR/colors
-
-    mkdir -p $VIMDIR/bundle/nerdtree/nerdtree_plugin
-    ln -s $VIMDIR/patches/NerdTreePatch.vim $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim 
-
     #User PATH location
+    echo "$RESET${BOLD}Setting up git diff to use$GREEN vimdiff$RESET$BOLD:$BLUE $LOCALBIN/git_diff_wrapper.sh"
+$RESET"
     mkdir -p $LOCALBIN
     ln -s $DOTFILES/local/bin/git_diff_wrapper.sh $LOCALBIN/git_diff_wrapper.sh
 
-    echo "${BOLD}Creating Symbolic links for .vimrc, bash_alises, and .tmuxrcx$RESET"
+    printf "${BOLD}Creating Symbolic links: $GREEN"
+    printf ".bash_aliases "
     ln -s $DOTFILES/shell/shell_aliases ~/.bash_aliases
+    printf ".zsh_aliases "
     ln -s $DOTFILES/shell/shell_aliases ~/.zsh_aliases
+    printf ".personal_aliases "
     ln -s $DOTFILES/shell/personal_aliases ~/.personal_aliases
-    ln -s $DOTFILES/shell/personal_aliases ~/.personal_aliases
+    printf ".tmux.conf "
     ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
+    printf ".vimrc "
     ln -s $DOTFILES/vim/vimrc ~/.vimrc
+    echo "$RESET"
 
     echo "${BOLD}Downloading Colors wombat256mod.vim$RESET"
+    mkdir -p $VIMDIR/colors
     wget -O $VIMDIR/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 
     if [ "$ZSH" = true ]; then
         # Set Zsh
-        echo "${BOLD}Appending Aliases file to ~/.zshrc $RESET"
+        echo "${BOLD}Appending soruces to$GREEN ~/.zshrc$RESET"
         echo "source ~/.zsh_aliases" >> ~/.zshrc
     fi
 
+    echo ""
+}
+
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  ManageFilesAndLinks
+#   DESCRIPTION:  Create symbolic links to your ~/dotfiles directory
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+PatchPlugs()
+{
+    echo "$RESET${BOLD}Patching NerdTree:$RESET$BOLD:$BLUE $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim"
+    mkdir -p $VIMDIR/bundle/nerdtree/nerdtree_plugin
+    ln -s $VIMDIR/patches/NerdTreePatch.vim $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim
     echo ""
 }
 
@@ -672,6 +691,8 @@ main()
     fi
 
     vim +PlugInstall +qall #Installs the vim plugin system and updates all plugins
+
+    PatchPlugs
 
     echo ""
     echo "$BOLD${GREEN} $SCRIPTNAME $RESET$BOLD DONE: Enjoy a better$BLUE vim$RESET$BOLD experince.$RESET"
