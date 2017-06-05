@@ -15,6 +15,6 @@ function! OpenInNewTab(node)
      else
          call a:node.activate({'where': 't'})
          " call g:NERDTreeCreator.CreateMirror()
-         wincmd l
+         " wincmd l
      endif
 endfunction
