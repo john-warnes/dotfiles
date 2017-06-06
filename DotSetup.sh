@@ -665,24 +665,39 @@ AddToEnvironment()
 
     if [[ -f ~/.profile ]]; then
         if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.profile"; then
-            CFILE="~/.profile"
+            RCFILE="~/.profile"
         fi
     fi
 
-    if [[ -z $FILE ]] && [[ -f ~/.bashrc ]]; then
+    if [[ -z $RCFILE ]] && [[ -f ~/.bash_profile ]]; then
+        if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.bash_profile"; then
+            RCFILE="~/.bash_profile"
+        fi
+    fi
+
+    if [[ -z $RCFILE ]] && [[ -f ~/.bashrc ]]; then
         if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.profile"; then
             RCFILE="~/.bashrc"
         fi
     fi
 
+    if [ $OS == 'OSX' ] && [[ -z $RCFILE ]]; then
+        touch ~/.bash_profile
+    	RCFILE="~/.bash_profile"
+    fi
+    
 
-    if [[ -z $FILE ]]; then
+
+    if ! [[ -z $FILE ]]; then
         echo "${BOLD}Adding to file:$RESET$BOLD$GREEN $RCFILE$RESET"
         echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
         echo 'export PATH="$PATH:$DOTFILES/scripts"' >> $RCFILE
     else 
         echo "$YELLOW${BOLD}Environment Variable already exists$RESET"
     fi
+
+    export DOTFILES="$DOTFILES"
+    export PATH="$PATH:$DOTFILES/scripts"
     echo ""
 }
 
@@ -702,6 +717,9 @@ DecryptSecure()
         n|N|* ) return;;
     esac
     echo ""
+
+    export DOTFILES="$DOTFILES"
+    export PATH="$PATH:$DOTFILES/scripts"
 
     (exec $DOTFILES/scripts/unlock.sh)
     return

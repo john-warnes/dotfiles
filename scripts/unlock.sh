@@ -43,7 +43,7 @@ else
 fi
 
 echo "$BOLD${BLUE}Decompressing tar.zx to files$RESET"
-(cd $SECURE && exec tar --overwrite --xz -xf secure.tar.xz)
+(cd $SECURE && exec tar -xf secure.tar.xz)
 
 echo "$BOLD${BLUE}Shredding$RESET$BOLD old tar.xz file$RESET"
 (shred -n 9 -uzf $SECURE/secure.tar.xz)
