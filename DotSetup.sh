@@ -7,7 +7,7 @@
 #echo "arg: $@"    # Debug
 
 #Directory Setup
-DOTFILES=~/dotfiles
+DOTFILES=$HOME/dotfiles
 VIMDIR=~/.vim
 OHMYZSH=~/.oh-my-zsh
 
@@ -52,7 +52,7 @@ OS=""
 #-------------------------------------------------------------------------------
 PrintHelp()
 {
-    echo "$RESET${BOLD}useage: $0 [--administrator] [--remove] [--upgrade]$RESET"
+    echo "$RESET${BOLD}useage: $0 [--administrator] [--remove] [--upgrade] [--decrypt]$RESET"
     exit 0 
 }
 
@@ -160,6 +160,7 @@ Init()
             --administrator) ADMIN=true;;
             --remove) REMOVE=true;;
             --upgrade) UPGRADE=true;;
+            --decrypt) DecryptSecure; exit 0;;
             -h | --help | *) PrintHelp;;
         esac;
         shift;
@@ -650,6 +651,64 @@ PatchPlugs()
 
 
 
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  AddToEnvironment
+#   DESCRIPTION:  Add need variables to environment
+#    PARAMETERS:  none
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+AddToEnvironment()
+{
+
+    echo "$RESET${BOLD}Adding Environment Variables:$RESET$BOLD$BLUE \$DOTFILES=$DOTFILES & \$PATH$RESET"
+
+    if [[ -f ~/.profile ]]; then
+        if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.profile"; then
+            CFILE="~/.profile"
+        fi
+    fi
+
+    if [[ -z $FILE ]] && [[ -f ~/.bashrc ]]; then
+        if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.profile"; then
+            RCFILE="~/.bashrc"
+        fi
+    fi
+
+
+    if [[ -z $FILE ]]; then
+        echo "${BOLD}Adding to file:$RESET$BOLD$GREEN $RCFILE$RESET"
+        echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
+        echo 'export PATH="$PATH:$DOTFILES/scripts"' >> $RCFILE
+    else 
+        echo "$YELLOW${BOLD}Environment Variable already exists$RESET"
+    fi
+    echo ""
+}
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  DecryptSecure
+#   DESCRIPTION:  Decrypt secure file NOTE Must be called after AddToEnvironment
+#    PARAMETERS:  none
+#       RETURNS:  Success or none
+#-------------------------------------------------------------------------------
+DecryptSecure()
+{
+    read -n 1 -p "$BLUE${BOLD}Decrypt Secure File$RESET$BOLD (You probably want to say NO) (y/N): $GREEN" DECRYPT
+    echo "$RESET"
+    case "$DECRYPT" in
+        y|Y ) :;;
+        n|N|* ) return;;
+    esac
+    echo ""
+
+    (exec $DOTFILES/scripts/unlock.sh)
+    return
+}
+
+
+
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  main
 #   DESCRIPTION:  This is the main driver function.
@@ -661,6 +720,7 @@ main()
 #Run Init
     Init "$@"     # Remeber to pass the command line args $@
     Setup
+    AddToEnvironment
     CheckOptional
     CheckDeps
 
@@ -696,6 +756,9 @@ main()
     echo ""
     echo "$BOLD${GREEN} $SCRIPTNAME $RESET$BOLD DONE: Enjoy a better$BLUE vim$RESET$BOLD experince.$RESET"
     echo ""
+
+
+    DecryptSecure
 }
 
 main "$@"     #remember to pass all command line args
