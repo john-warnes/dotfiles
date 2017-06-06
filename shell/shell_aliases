@@ -32,3 +32,6 @@ fi
 #git
 alias gits='git status'
 alias gita='git status'
+
+EXPORT PATH="$BATH:~/.local/bin"
+
