@@ -1,4 +1,4 @@
-#!/bin/bash -
+#!/bin/bash
 #===============================================================================
 #
 #          FILE: autorun.sh
@@ -16,8 +16,7 @@
 #       CREATED: 06/06/2017 04:35:35 PM
 #      REVISION:  ---
 #===============================================================================
-
-set -o nounset                              # Treat unset variables as an error
+set +o nounset #DO NOT MOVE LEAVE AS FIRST LINE
 
 VirtualEnvWrapper()
 {
@@ -35,32 +34,31 @@ VirtualEnvWrapper()
 
     #what python to use
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-    set +o nounset                              # Ignore unset variables
     source /usr/local/bin/virtualenvwrapper.sh
-    set -o nounset                              # Treat unset variables as an error
 }
 VirtualEnvWrapper
+
+
 
 RunShellAliases()
 {
     # Set Dir for env configs
     if [[ -e $DOTIFLES/shell/shellaliases ]]; then
-        set +o nounset                              # Ignore unset variables
         source $DOTFILES/shell/shellaliases         # Source shellAliases
-        set -o nounset                              # Treat unset variables as an error
     fi
 }
-RunShellAliases
+#RunShellAliases
 
 
 PersonalAliases()
 {
     # Set Dir for env configs
     if [[ -e $DOTFILES/secure/personal.aliases.sh ]]; then
-        set +o nounset                              # Ignore unset variables
         source $DOTFILES/secure/personal.aliases.sh # Source shellAliases
-        set -o nounset                              # Treat unset variables as an error
     fi
 }
-ShellAliases
+#ShellAliases
 
+echo "autorun"
+
+set +o nounset   #DO NOT MOVE LEAVE AS LAST LINE - Can add anytihng above if needed

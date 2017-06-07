@@ -15,6 +15,9 @@ clear
 
 DetectOS()
 {
+    # IDs help ---> https://github.com/zyga/os-release-zoo
+    SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
+
     source /etc/os-release    #Load OS VARS
     case "$OSTYPE" in
         solaris*) OS="SOLARIS" ;;
@@ -24,8 +27,45 @@ DetectOS()
         msys*)    OS="WINDOWS" ;;
         *)        OS="unknown: $OSTYPE" ;;
     esac
+
+    if [[  $OS == 'LINUX' ]]; then
+        if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
+            echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
+            echo "Supported:$BOLD$BLUE $SUPPORTEDDIRSTROS $RESET"
+            read -n 1 -p "Atempt to install? $RESET (y/N): $GREEN" choice
+            echo "$RESET"
+            case "$choice" in
+                y|Y ) :;;
+                n|N|* ) echo "$RESET";exit -1;;
+            esac
+        else
+            if [[  -z "$PRETTY_NAME" ]]; then
+                echo "Linux Detected:$BOLD$GREEN $ID $RESET"
+            else
+                echo "Lunix Detected:$BOLD$GREEN $PRETTY_NAME $RESET"
+            fi
+        fi
+
+    elif [[  "$OS" == "OSX" ]]; then
+        echo "OSX Detected $RESET"
+        if which brew 2> /dev/null; then
+            echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using BREW"
+            BREW=1;
+        else
+            BREW=0
+            echo "$BOLD${YELLOW}Note:$RESET OSX:$BOLD$BLUE HomeBrew (https://brew.sh/)$RESET is required for auto install."
+            echo "$BOLD${YELLOW}Note:$RESET Missing Packages will be listed."
+        fi
+    fi
+
+
+    if [[ $OS == 'LINUX' ]]; then
+        APTCMD='sudo apt-get -o Dpkg::Progress-Fancy="1" -y install'
+    elif [[ $OS == 'OSX' ]]; then
+        APTCMD='brew install'
+    fi
+
 }
-DetectOS
 
 
 
@@ -36,7 +76,7 @@ DetectOS
 #       RETURNS:  None
 #-------------------------------------------------------------------------------
 ScriptSettings()
-{
+        {
     SCRIPTNAME="WSU JCustom VIM IDE"
 
     #Directory Setup
@@ -45,17 +85,14 @@ ScriptSettings()
     ENV_FILES=($HOME/.profile $HOME/.bash_profile $HOME/.bashrc $HOME/.zshrc $HOME/.bash_login)
 
     #Optional
-    OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc'
+    OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags'
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper'
 
-    if [[ $OS == 'LINUX' ]]; then  #LINUX
-        PKGS='git ctags vim python3'
-    elif [[ $OS == 'OSX' ]]; then  #OSX
-        PKGS='git ctags vim python3'
+    if [[  $OS == 'LINUX' ]]; then  #LINUX
+        PKGS='git vim python3 curl'
+    elif [[  $OS == 'OSX' ]]; then  #OSX
+        PKGS='git vim python3 curl'
     fi
-
-    # IDs help ---> https://github.com/zyga/os-release-zoo
-    SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/shell/shell_aliases $DOTFILES/shell/shell_aliases \
         $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
@@ -63,12 +100,11 @@ ScriptSettings()
                     ~/.tmux.conf             ~/.vimrc            ~/.gitconfig)
 
     #Global Vars (Auto Set - Changing will have BAD effects)
-    ADMIN=false
-    WSU=false
-    TMUX=false
-    ZSH=false
+    ADMIN=0
+    WSU=0
+    TMUX=0
+    ZSH=0
 }
-ScriptSettings
 
 
 
@@ -80,7 +116,7 @@ ScriptSettings
 #-------------------------------------------------------------------------------
 PrintHelp()
 {
-    echo "$RESETuseage: $0 [--administrator] [--remove] [--upgrade] [--decrypt]$RESET"
+    echo "${RESET}usage: $0 [--administrator] [--remove] [--upgrade] [--decrypt]$RESET"
     exit 0
 }
 
@@ -172,20 +208,18 @@ DecryptSecure()
 #-------------------------------------------------------------------------------
 Init()
 {
-    source ./scripts/colors.sh
-
     #Check if running as sudo
     # TODO look into sudo -H
-    if [ "$EUID" = 0 ]
+    if [[  "$EUID" == 0 ]]
     then
         echo "Do ${RED}NOT$RESET run this script as root or with sudo$RESET"
         PrintHelp
     fi
 
     #Check and process command line arguments
-    while [[ "$#" > 0 ]]; do
+    while [[  "$#" > 0 ]]; do
         case $1 in
-            --administrator) ADMIN=true;;
+            --administrator) ADMIN=1;;
             --remove) Remove;;
             --upgrade) Upgrade;;
             --decrypt) DecryptSecure;;
@@ -196,47 +230,10 @@ Init()
 
     echo "Installing$BOLD$BLUE $SCRIPTNAME$RESET"
 
-    if [[ "$ADMIN" = true ]]; then
+    if [[ $ADMIN == 1 ]]; then
         echo "Admin Mode is:$BOLD$GREEN ON $RESET"
     fi
 
-    if [[ $OS == 'LINUX' ]]; then
-        if [[ $SUPPORTEDDISTROS != *$ID* ]]; then
-            echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
-            echo "Supported:$BOLD$BLUE $SUPPORTEDDIRSTROS $RESET"
-            read -n 1 -p "Atempt to install? $RESET (y/N): $GREEN" choice
-            echo "$RESET"
-            case "$choice" in
-                y|Y ) :;;
-                n|N|* ) echo "$RESET";exit -1;;
-            esac
-        else
-            if [[ -z "$PRETTY_NAME" ]]; then
-                echo "Linux Detected:$BOLD$GREEN $ID $RESET"
-            else
-                echo "Lunix Detected:$BOLD$GREEN $PRETTY_NAME $RESET"
-            fi
-	    echo ""
-            read -n 1 -p "Use/Install$BOLD$BLUE WSU campus$RESET network IPv6 fix$RESET (Y/n): $GREEN" choice
-            echo "$RESET"
-            case "$choice" in
-                n|N ) WSU=false;;
-                y|Y|* ) WSU=true;;
-            esac
-        fi
-    elif [[ "$OS" == "OSX" ]]; then
-        echo "OSX Detected $RESET"
-        if which brew 2> /dev/null; then
-            echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using BREW"
-	    echo ""
-            BREW=1;
-        else
-            BREW=0
-            echo "$BOLD${YELLOW}Note:$RESET OSX:$BOLD$BLUE HomeBrew (https://brew.sh/)$RESET is required for auto install."
-            echo "$BOLD${YELLOW}Note:$RESET Missing Packages will be listed."
-            exit -1
-        fi
-    fi
 }
 
 
@@ -249,23 +246,19 @@ Init()
 #-------------------------------------------------------------------------------
 CheckOptional()
 {
-    printf "Checking for optional packages:$RESET"
+    echo -n "Checking for optional packages:$RESET"
     ERRFLAG=false
 
-    if [[ $OS == 'LINUX' ]]; then
-
-        for PKG in $OPTPKGS; do
-            if [[ $(which $PKG | grep -o "$PKG") ]]; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            else
-                printf "$BOLD$YELLOW $PKG$RESET"
-                ERRFLAG=true
-            fi
-        done
-        echo ""
-    fi
-
-    if [[ $ERRFLAG ]]; then
+    for PKG in $OPTPKGS; do
+        if which $PKG 1>/dev/null 2>/dev/null; then
+            echo -n "$BOLD$GREEN $PKG$RESET"
+        else
+            echo -n "$BOLD$YELLOW $PKG$RESET"
+            ERRFLAG=true
+        fi
+    done
+    echo ""
+    if [[  $ERRFLAG ]]; then
         echo "$BOLD${YELLOW}Note:$RESET Recommended$BOLD$YELLOW NOT$RESET required package missing."
         unset ERRFLAG
     fi
@@ -283,25 +276,24 @@ CheckOptional()
 CheckDeps()
 {
     printf "Checking for Required Packages:$RESET"
-    ERRFLAG=false
+    ERRFLAG=0
 
     for PKG in $PKGS; do
-        if [[ $(which $PKG | grep -o "$PKG") ]]; then
+        if which $PKG 1>/dev/null 2>/dev/null; then
             printf "$BOLD$GREEN $PKG$RESET"
         else
-            printf "$RED $PKG$RESET"
-            ERRFLAG=true
+            printf "$BOLD$RED $PKG$RESET"
+            ERRFLAG=1
         fi
     done
     echo ""
 
-    if [[ $ERRFLAG ]]; then
-        if [[ ! $ADMIN ]]; then
+    #if [[ $ERRFLAG == 1 ]] && [[ $ADMIN == 0 ]]; then
+    if (( $ERRFLAG )) && (( ! $ADMIN )); then
             echo ""
-            echo "${RED}ERROR:$RESET Missing Required Package: RUN:$BOLD$BLUE \"$0 --administrator\"$RESET attempt to fix $RESET"
+            echo "$BOLD${RED}ERROR:$RESET Missing Required Package: RUN:$BOLD$BLUE \"$0 --administrator\"$RESET attempt to fix $RESET"
             echo ""
             exit -1
-        fi
     fi
     echo ""
 }
@@ -314,33 +306,33 @@ CheckDeps()
 #    PARAMETERS:  None
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
-CheckVim()
-{
-
-    VIMS=(vim-gnome vim-gtk vim-athena vim-nox vim)
-
-    printf "Checking vim:$RESET"
-    ERRFLAG=false
-
-    for PKG in $PKGS; do
-        if [[ $(which $PKG | grep -o "$PKG") ]]; then
-            printf "$BOLD$GREEN $PKG$RESET"
-        else
-            printf "$RED $PKG$RESET"
-            ERRFLAG=true
-        fi
-    done
-    echo ""
-
-    if [[ $ERRFLAG ]]; then
-        if [[ ! $ADMIN ]]; then
-            echo ""
-            echo "${RED}ERROR:$RESET Missing Required Package: RUN:$BOLD$BLUE \"$0 --administrator\"$RESET attempt to fix $RESET"
-            echo ""
-            exit -1
-        fi
-    fi
-}
+#CheckVim()
+#{
+#
+#    VIMS=(vim-gnome vim-gtk vim-athena vim-nox vim)
+#
+#    printf "Checking vim:$RESET"
+#    ERRFLAG=false
+#
+#    for PKG in $PKGS; do
+#        if [[  $(which $PKG | grep -o "$PKG") ]]; then
+#            printf "$BOLD$GREEN $PKG$RESET"
+#        else
+#            printf "$RED $PKG$RESET"
+#            ERRFLAG=true
+#        fi
+#    done
+#    echo ""
+#
+#    if [[  $ERRFLAG ]]; then
+#        if  $ADMIN != 1 ]]; then
+#            echo ""
+#            echo "${RED}ERROR:$RESET Missing Required Package: RUN:$BOLD$BLUE \"$0 --administrator\"$RESET attempt to fix $RESET"
+#            echo ""
+#            exit -1
+#        fi
+#    fi
+#}
 
 
 
@@ -352,6 +344,15 @@ CheckVim()
 #-------------------------------------------------------------------------------
 Setup()
 {
+    if [[ $OS == 'LINUX' ]]; then
+        read -n 1 -p "Use/Install$BOLD$BLUE WSU campus$RESET network IPv6 fix$RESET (Y/n): $GREEN" choice
+        echo "$RESET"
+        case "$choice" in
+            n|N ) WSU=false;;
+            y|Y|* ) WSU=true;;
+        esac
+    fi
+
     read -n 1 -p "Setup$BOLD$BLUE tmux$RESET (Y/n): $GREEN" choice
     echo "$RESET"
     case "$choice" in
@@ -379,68 +380,50 @@ Setup()
 #-------------------------------------------------------------------------------
 AdminSetup()
 {
-    echo "$BOLD$BLUEAdmin Setup$RESET ($OS)"
+    echo "$BOLD${BLUE}Admin Setup$RESET ($OS)"
+    ERRFLAG=false
+    APTOPT=''
 
-    if [ $OS == 'LINUX' ]; then
-
-        if [ 1 -eq "$(echo "${VERSION} < 16.04" | bc)" ]; then
-            echo "$RESET${RED}ERROR:$RESET$BOLD$BLUE Dectect Verion($VERSION) Required: >16.04$RESET"
-            exit -1
-        fi
-
-        if [ "$WSU" = true ]; then
+    # Fix for apt-get linuxes and wsu ipv6 firewall 
+    if [[  $OS == 'LINUX' ]]; then
+        if [[ "$WSU" == true ]]; then
             # Fixes for Ubuntu and IPv6 inside WSU
-            echo "$RESETAdding WSU firewall$BOLD$BLUE IPv6 fix$RESET"
-            sudo echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+            echo "Adding WSU firewall$BOLD$BLUE IPv6 fix$RESET"
+            echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+            APTOPT='-o Acquire::ForceIPv4=true'
         fi
-
-        echo "Updating Available Packages$RESET"
-
-        if [ "$WSU" = true ]; then
-            sudo apt-get -o Acquire::ForceIPv4=true -o Dpkg::Progress-Fancy="1" -y update
-        else
-            sudo apt-get -o Dpkg::Progress-Fancy="1" -y update
-        fi
-
-        echo "Required Package List:$BOLD$GREEN $PKGS $RESET"
-
-        for PKG in $PKGS; do
-            printf "Checking $PKG:"
-
-            if [ "$(dpkg-query -f='${Status}\n' -W $PKG | awk '{print $3;}')" = "installed" ]; then
-                echo "$BOLD$GREEN Found$RESET"
-            else
-                echo "$RED Not Found"
-                echo "$BOLD$YELLOW    Installing$BOLD$BLUE $PKG$RESET"
-
-                if [ "$WSU" = true ]; then
-                    sudo apt-get -o Acquire::ForceIPv4=true -o Dpkg::Progress-Fancy="1" -y install $PKG
-                else
-                    sudo apt-get -o Dpkg::Progress-Fancy="1" -y install $PKG
-                fi
-            fi
-        done
-
-    elif [ $OS == 'OSX' ]; then
-
-        echo "Required Package List:$BOLD$BOLD$GREEN $OSXPKGS $RESET"
-        echo "$BOLD${YELLOW}Note!$RESET When brew may appear to be fozen when installing."
-        echo "$BOLD${YELLOW}     $RESET Wait up to 10 mins per package before doing anything"
-        echo ""
-        for PKG in $OSXPKGS; do
-            printf "Checking $PKG:"
-
-            if brew list -1 | grep -q "^${PKG}\$"; then
-                echo "$BOLD$GREEN Found$RESET"
-            else
-                echo "$RED Not Found"
-                echo "$BOLD$YELLOW    Installing$BOLD$BLUE $PKG$RESET"
-                brew install $PKG
-            fi
-        done
-
     fi
-    echo "$BOLD${BLUE}Admin Setup$RESET End"
+
+    echo -n "$BOLD${BLUE}Installing Packages: $RESET"
+    for PKG in $PKGS; do
+        if which $PKG 1>/dev/null 2>/dev/null; then
+            echo -n "$BOLD$GREEN $PKG$RESET"
+        else
+            echo "$BOLD$YELLOW $PKG$RESET"
+            $APTCMD $APTOPT $PKG
+        fi
+    done
+    echo ""
+
+    read -n 1 -p "Try to install$BOLD$BLUE Optional$RESET Packages (y/N): $GREEN" choice
+    echo "$RESET"
+    case "$choice" in
+        y|Y ) :;;
+        n|N|* ) echo ""; echo ""; return;;
+    esac
+
+    echo -n "$BOLD${BLUE}Installing Optional Packages: $RESET"
+    for PKG in $OPTPKGS; do
+        if which $PKG 1>/dev/null 2>/dev/null; then
+            echo -n "$BOLD$GREEN $PKG$RESET"
+        else
+            echo "$BOLD$YELLOW $PKG$RESET"
+            $APTCMD $APTOPT $PKG
+        fi
+    done
+
+    echo ""
+    echo ""
 }
 
 
@@ -460,7 +443,7 @@ GetUserInfo()
     read -p "${RESET}Enter$BOLD$BLUE Oganization$RESET ex\"WSU\": $GREEN" org
     read -p "${RESET}Enter$BOLD$BLUE Company$RESET ex\"WSU\": $GREEN" com
     read -p "${RESET}Enter$BOLD$BLUE Default License$RESET (hit enter for default): $GREEN" license
-    if [[ -z "$license" ]]; then
+    if [[  -z "$license" ]]; then
         license='this program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program.  If not, see <http://www.gnu.org/licenses/>\n.'
     fi
     printf "$RESET"
@@ -590,7 +573,7 @@ ManageFilesAndLinks()
     mkdir -p $DOTFILES/vim/colors
     wget -O $DOTFILES/vim/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 
-    if [[ -f ~/.zshrc && $ZSH = true ]]; then
+    if [[  -f ~/.zshrc && $ZSH == true ]]; then
         echo "Appending soruces to$BOLD$GREEN ~/.zshrc$RESET"
         echo "source ~/.zsh_aliases" >> ~/.zshrc
     fi
@@ -628,7 +611,7 @@ AddToEnvironment()
 
     for RCFILE in "${ENV_FILES[@]}"
     do
-        if [[ -e ${RCFILE} ]]; then
+        if [[  -e ${RCFILE} ]]; then
             if grep -q "export DOTFILES=" "$RCFILE" 2>/dev/null; then
                 echo "$BOLD$GREEN $RCFILE$RESET:$BOLD$BLUE Already added$RESET skipping"
             else
@@ -646,7 +629,7 @@ AddToEnvironment()
         fi
    done
 
-    if [[ $OS == 'OSX' ]]; then
+    if [[  $OS == 'OSX' ]]; then
         touch ~/.bash_profile
         RCFILE="~/.bash_profile"
         echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
@@ -670,20 +653,22 @@ AddToEnvironment()
 #-------------------------------------------------------------------------------
 main()
 {
-    #Run Init
-    Init "$@"     # Remeber to pass the command line args $@
+    source ./scripts/colors.sh
+    DetectOS
+    ScriptSettings
+    Init "$@"     # Remember to pass the command line args $@
     Setup
-    AddToEnvironment
-    CheckOptional
     CheckDeps
 
-    if [ "$ADMIN" = true ]; then
+    if [[ $ADMIN == 1 ]]; then
+	CheckOptional
         AdminSetup
     fi
-
+    
     GetUserInfo   # Get user information
 
     ManageFilesAndLinks   #Create Dirs Copy Files and Make Links
+    AddToEnvironment
 
     #Install Powerline Fonts?
     read -n 1 -p  "Install$BOLD$BLUE PowerLine Fonts$RESET (Y/n): $GREEN" choice
@@ -697,7 +682,7 @@ main()
     CreatePersonalTemplate
     CreateGitConfig
 
-    if [ "$ZSH" = true ]; then
+    if [[ "$ZSH" == true ]]; then
         echo "Downloading and installing: oh-my-zsh"
         sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     fi
