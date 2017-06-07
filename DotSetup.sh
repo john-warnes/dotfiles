@@ -4,43 +4,71 @@
 # Based on vimrc setup from Hugo Valle
 # Modify on May-29-2017 by Hugo V. to fit my setup
 
-#echo "arg: $@"    # Debug
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  DetectOS
+#   DESCRIPTION:  Set variables detecting the OS type
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
+set -o nounset
+clear
 
-#Directory Setup
-DOTFILES=$HOME/dotfiles
-VIMDIR=~/.vim
-OHMYZSH=~/.oh-my-zsh
-
-LOCALBIN=~/.local/bin
-
-# TODO Needed dependency checking of the vim package
-# Recommended any vim package in this order: vim-gnome vim-gtk vim-athena vim-nox vim
-
-#Packages Lists (Manually Set)
-OPTIONALPKGS="clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip"
-# == Recommanded ==
-#SQL              sqlint      gem install sqlint
-#VIML,Vim         vlit        pip install vim-vint
-#Multi,Others     proselint   pip install proselint
-
-
-#Global Vars (Manually Set)
-SCRIPTNAME="WSU JW-Custom VIM IDE"
-PKGS="git exuberant-ctags vim-gnome python3-doc"
-OSXPKGS="git ctags vim python3"
-
-# IDs help ---> https://github.com/zyga/os-release-zoo
-SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
+DetectOS()
+{
+    source /etc/os-release    #Load OS VARS
+    case "$OSTYPE" in
+        solaris*) OS="SOLARIS" ;;
+        darwin*)  OS="OSX" ;;
+        linux*)   OS="LINUX" ;;
+        bsd*)     OS="BSD" ;;
+        msys*)    OS="WINDOWS" ;;
+        *)        OS="unknown: $OSTYPE" ;;
+    esac
+}
+DetectOS
 
 
-#Global Vars (Auto Set - Changing will have BAD effects)
-REMOVE=false
-FILENAME=$0
-ADMIN=false
-WSU=false
-TMUX=false
-ZSH=false
-OS=""
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  ScriptSettings
+#   DESCRIPTION:  Setup the settings for this script
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
+ScriptSettings()
+{
+    SCRIPTNAME="WSU JCustom VIM IDE"
+
+    #Directory Setup
+    DOTFILES=$HOME/dotfiles
+    LOCALBIN=~/.local/bin
+    ENV_FILES=($HOME/.profile $HOME/.bash_profile $HOME/.bashrc $HOME/.zshrc $HOME/.bash_login)
+
+    #Optional
+    OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc'
+    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper'
+
+    if [[ $OS == 'LINUX' ]]; then  #LINUX
+        PKGS='git ctags vim python3'
+    elif [[ $OS == 'OSX' ]]; then  #OSX
+        PKGS='git ctags vim python3'
+    fi
+
+    # IDs help ---> https://github.com/zyga/os-release-zoo
+    SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
+
+    FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/shell/shell_aliases $DOTFILES/shell/shell_aliases \
+        $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
+    LINKS=(           ~/.vimrc        ~/.vim               ~/.bash_aliases               ~/.zsh_aliases \
+                    ~/.tmux.conf             ~/.vimrc            ~/.gitconfig)
+
+    #Global Vars (Auto Set - Changing will have BAD effects)
+    ADMIN=false
+    WSU=false
+    TMUX=false
+    ZSH=false
+}
+ScriptSettings
 
 
 
@@ -52,8 +80,8 @@ OS=""
 #-------------------------------------------------------------------------------
 PrintHelp()
 {
-    echo "$RESET${BOLD}useage: $0 [--administrator] [--remove] [--upgrade] [--decrypt]$RESET"
-    exit 0 
+    echo "$RESETuseage: $0 [--administrator] [--remove] [--upgrade] [--decrypt]$RESET"
+    exit 0
 }
 
 
@@ -67,39 +95,37 @@ PrintHelp()
 #-------------------------------------------------------------------------------
 Remove()
 {
-    echo "$RESET$BOLD${RED}REMOVE$RESET$BOLD Selected$RESET"
-    echo "${BOLD}NOTE: Their is not backup are you sure?$RESET"
-    read -n 1 -p "$RESET$BLUE${BOLD}Remove all configuration and files? $RESET$BOLD (y/N): $GREEN" choice
+    echo "$RESET${RED}REMOVE$RESET Selected$RESET"
+    echo "NOTE: There is no backup make are you sure?$RESET"
+    read -n 1 -p "$BOLD${BLUE}Remove all configuration and files?$RESET (y/N): $GREEN" choice
     echo ""
     case "$choice" in
         y|Y ) :;;
-        n|N ) echo "${BOLD}Canceled$RESET";exit 0;;
-        * ) echo "${BOLD}Canceled$RESET";exit 0;;
+        n|N ) echo "Canceled$RESET";exit 0;;
+        * ) echo "Canceled$RESET";exit 0;;
     esac
 
-    #links and files
-    rm -f ~/.vimrc ~/.bash_aliases ~/.zsh_aliases ~/.zshrc ~/.tmux.conf ~/.gitconfig ~/.personal_aliases
-    rm $LOCALBIN/git_diff_wrapper.sh
 
-    #directorys
-    rm -rf $OHMYZSH
+    #Unlimk FILES
+    for LINK in ${LINKS[@]}
+    do
+        unlink $LINK 2>/dev/null
+    done
 
-    #dont just delete the hole vimdirector
-    rm -rf $VIMDIR/bundle
-    rm -rf $VIMDIR/autoload
-    rm -rf $VIMDIR/colors
+    #Delete generated DIRS
+    rm -rf $DOTFILES/vim/bundle
+    rm -rf $DOTFILES/vim/autoload
+    rm -rf $DOTFILES/vim/colors
 
-    #auto createfile
+    #Detete FILE created by the setup
     rm -f $DOTFILES/git/gitconfig
     rm -f $DOTFILES/vim/template/personal.template
 
-    #links of directroys
-    unlink ~/.vim 2>/dev/null
-
-    echo "${BOLD}Remove Complete$RESET"
+    echo "Remove Complete$RESET"
     echo ""
     exit -1
 }
+
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -116,6 +142,28 @@ Upgrade()
 }
 
 
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  DecryptSecure
+#   DESCRIPTION:  Decrypt secure file NOTE Must be called after AddToEnvironment
+#    PARAMETERS:  none
+#       RETURNS:  Success(0) or none
+#-------------------------------------------------------------------------------
+DecryptSecure()
+{
+    read -n 1 -p "$BOLD${BLUE}Decrypt Secure File$RESET (You probably want to say$BOLD NO$RESET) (y/N): $GREEN" DECRYPT
+    echo "$RESET"
+    case "$DECRYPT" in
+        y|Y ) :;;
+        n|N|* ) return;;
+    esac
+    echo ""
+    (exec $DOTFILES/scripts/unlock.sh)
+    exit 0
+}
+
+
+
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  Init
 #   DESCRIPTION:  Initialization of script. Color setup. Folder configuration.
@@ -124,118 +172,71 @@ Upgrade()
 #-------------------------------------------------------------------------------
 Init()
 {
-    # Use colors, but only if connected to a terminal, and that terminal
-    # supports them.
-    if which tput >/dev/null 2>&1; then
-        ncolors=$(tput colors)
-    fi
-    if [ -t 1 ] && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
-        RED="$(tput setaf 1)"
-        GREEN="$(tput setaf 2)"
-        YELLOW="$(tput setaf 3)"
-        BLUE="$(tput setaf 4)"
-        BOLD="$(tput bold)"
-        RESET="$(tput sgr0)"
-    else
-        RED=""
-        GREEN=""
-        YELLOW=""
-        BLUE=""
-        BOLD=""
-        RESET=""
-    fi
+    source ./scripts/colors.sh
 
+    #Check if running as sudo
+    # TODO look into sudo -H
     if [ "$EUID" = 0 ]
     then
-        echo "${BOLD}Do ${RED}NOT$RESET$BOLD run this script as root or with sudo$RESET"
+        echo "Do ${RED}NOT$RESET run this script as root or with sudo$RESET"
         PrintHelp
     fi
 
-    #echo "Function Args: $@"    #debug
-
+    #Check and process command line arguments
     while [[ "$#" > 0 ]]; do
-
-        #echo "while Args: $@"    #debug
         case $1 in
             --administrator) ADMIN=true;;
-            --remove) REMOVE=true;;
-            --upgrade) UPGRADE=true;;
-            --decrypt) DecryptSecure; exit 0;;
+            --remove) Remove;;
+            --upgrade) Upgrade;;
+            --decrypt) DecryptSecure;;
             -h | --help | *) PrintHelp;;
         esac;
         shift;
     done
 
-    if [ "$REMOVE" = true ]; then
-        Remove
+    echo "Installing$BOLD$BLUE $SCRIPTNAME$RESET"
+
+    if [[ "$ADMIN" = true ]]; then
+        echo "Admin Mode is:$BOLD$GREEN ON $RESET"
     fi
 
-    if [ "$UPGRADE" = true ]; then
-        Upgrade
-    fi
-
-    clear
-    echo "${BOLD}Installing$GREEN $SCRIPTNAME $RESET$BOLD(vim/tmux/zsh/git)$RESET"
-    echo ""
-
-    if [ "$ADMIN" = true ]; then
-        echo "${BOLD}Admin Mode is:$GREEN ON"
-    fi
-
-    case "$OSTYPE" in
-        solaris*) OS="SOLARIS" ;;
-        darwin*)  OS="OSX" ;;
-        linux*)   OS="LINUX" ;;
-        bsd*)     OS="BSD" ;;
-        msys*)    OS="WINDOWS" ;;
-        *)        OS="unknown: $OSTYPE" ;;
-    esac
-
-    if [ "$OS" == "LINUX" ]; then
-
-        source /etc/os-release    #Load OS VARS
-
+    if [[ $OS == 'LINUX' ]]; then
         if [[ $SUPPORTEDDISTROS != *$ID* ]]; then
-            echo "$BOLD${RED}ERROR:$RESET$BOLD Undetect Linux: $ID $RESET"
-            echo "${BOLD}Supported:$BLUE $SUPPORTEDDIRSTROS $RESET"
-            read -n 1 -p "${BOLD}Atempt to install? $RESET$BOLD (y/N): $GREEN" choice
+            echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
+            echo "Supported:$BOLD$BLUE $SUPPORTEDDIRSTROS $RESET"
+            read -n 1 -p "Atempt to install? $RESET (y/N): $GREEN" choice
             echo "$RESET"
             case "$choice" in
                 y|Y ) :;;
-                n|N ) echo "$RESET";exit -1;;
-                * ) echo "$RESET";exit -1;;
+                n|N|* ) echo "$RESET";exit -1;;
             esac
         else
-            if [ -z "$PRETTY_NAME" ]; then
-                echo "${BOLD}Linux Detected:$GREEN $ID $RESET"
+            if [[ -z "$PRETTY_NAME" ]]; then
+                echo "Linux Detected:$BOLD$GREEN $ID $RESET"
             else
-                echo "${BOLD}Lunix Detected:$GREEN $PRETTY_NAME $RESET"
+                echo "Lunix Detected:$BOLD$GREEN $PRETTY_NAME $RESET"
             fi
-
-            read -n 1 -p "$RESET${BOLD}Are you installing while on a$BLUE WSU campus$RESET$BOLD network (needs IPv6 fix)$RESET$BOLD (Y/n): $GREEN" choice
+	    echo ""
+            read -n 1 -p "Use/Install$BOLD$BLUE WSU campus$RESET network IPv6 fix$RESET (Y/n): $GREEN" choice
             echo "$RESET"
             case "$choice" in
                 n|N ) WSU=false;;
                 y|Y|* ) WSU=true;;
             esac
-
         fi
-
-    elif [ "$OS" == "OSX" ]; then
-
-        echo "${BOLD}OSX Detected $RESET"
-
+    elif [[ "$OS" == "OSX" ]]; then
+        echo "OSX Detected $RESET"
         if which brew 2> /dev/null; then
-            echo "$BOLD${YELLOW}Note!$RESET$BOLD Missing Packages will installed using BREW"
+            echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using BREW"
+	    echo ""
+            BREW=1;
         else
-            echo ""
-            echo "$BOLD${RED}ERROR:$RESET$BOLD OSX:$BLUE HomeBrew (https://brew.sh/)$RESET$BOLD is required."
-            echo ""
+            BREW=0
+            echo "$BOLD${YELLOW}Note:$RESET OSX:$BOLD$BLUE HomeBrew (https://brew.sh/)$RESET is required for auto install."
+            echo "$BOLD${YELLOW}Note:$RESET Missing Packages will be listed."
             exit -1
         fi
-
     fi
-    echo ""
 }
 
 
@@ -248,49 +249,26 @@ Init()
 #-------------------------------------------------------------------------------
 CheckOptional()
 {
-    printf "${BOLD}Checking for Recommended Optional Packages:$RESET"
-    ERRORFLAG=false
+    printf "Checking for optional packages:$RESET"
+    ERRFLAG=false
 
-    if [ "$OS" == "LINUX" ]; then
+    if [[ $OS == 'LINUX' ]]; then
 
-        for PKG in $OPTIONALPKGS; do
-
-            if [ "$(dpkg-query -f='${Status}\n' -W $PKG 2> /dev/null | awk '{print $3;}' 2> /dev/null )" = "installed" ]; then
+        for PKG in $OPTPKGS; do
+            if [[ $(which $PKG | grep -o "$PKG") ]]; then
                 printf "$BOLD$GREEN $PKG$RESET"
             else
                 printf "$BOLD$YELLOW $PKG$RESET"
-                ERRORFLAG=true
-            fi
-        done
-        echo ""
-
-    elif [ "$OS" == "OSX" ]; then
-
-        for PKG in $OPTIONALPKGS; do
-            gotit=`which ${PKG} | grep -o "\/${PKG}"`
-            if brew list -1 | grep -q "^${PKG}\$"; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            elif [[ $gotit ]]; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            else
-                printf "$BOLD$YELLOW $PKG$RESET"
-                ERRORFLAG=true
+                ERRFLAG=true
             fi
         done
         echo ""
     fi
 
-    if [ "$ERRORFLAG" = true ]; then
-        echo "$BOLD${YELLOW}Note:$RESET$BOLD Recommended but not required Packages Missing."
-        unset ERRORFLAG
+    if [[ $ERRFLAG ]]; then
+        echo "$BOLD${YELLOW}Note:$RESET Recommended$BOLD$YELLOW NOT$RESET required package missing."
+        unset ERRFLAG
     fi
-printf "$BOLD
-== Other Recommended Untested for packages ==
-$BLUE= Langage =    $YELLOW = package =   $GREEN= Command linux =           = Command OSX =$RESET$BOLD
-  SQL             sqlint        gem install sqlint          ?
-  Vim, VimL       vim-vint      pip3 install vim-vint       /usr/local/bin/pip install vim-vint
-  Many, Others    proselint     pip3 install proselint      /usr/local/bin/pip install proselint
-$RESET"
     echo ""
 }
 
@@ -304,49 +282,64 @@ $RESET"
 #-------------------------------------------------------------------------------
 CheckDeps()
 {
-    printf "${BOLD}Checking for Required Packages:$RESET"
-    ERRORFLAG=false
+    printf "Checking for Required Packages:$RESET"
+    ERRFLAG=false
 
-    if [ "$OS" == "LINUX" ]; then
-
-        for PKG in $PKGS; do
-
-            if [ "$(dpkg-query -f='${Status}\n' -W $PKG 2> /dev/null | awk '{print $3;}' 2> /dev/null )" = "installed" ]; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            else
-                printf "$BOLD$RED $PKG$RESET"
-                ERRORFLAG=true
-            fi
-        done
-        echo ""
-
-    elif [ "$OS" == "OSX" ]; then
-
-        for PKG in $OSXPKGS; do
-            gotit=`which ${PKG} | grep -o "\/${PKG}"`
-            if brew list -1 | grep -q "^${PKG}\$"; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            elif [[ $gotit ]]; then
-                printf "$BOLD$GREEN $PKG$RESET"
-            else
-                printf "$BOLD$RED $PKG$RESET"
-                ERRORFLAG=true
-            fi
-        done
-        echo ""
-    fi
-
-    if [ "$ERRORFLAG" = true ]; then
-        echo ""
-        echo "$BOLD${RED}ERROR:$RESET$BOLD Required Packages Missing: RUN:$BLUE \"$FILENAME --administrator\"$RESET$BOLD to fix $RESET"
-        echo ""
-        if [ "$ADMIN" = true ]; then
-            return
+    for PKG in $PKGS; do
+        if [[ $(which $PKG | grep -o "$PKG") ]]; then
+            printf "$BOLD$GREEN $PKG$RESET"
         else
-            exit
+            printf "$RED $PKG$RESET"
+            ERRFLAG=true
+        fi
+    done
+    echo ""
+
+    if [[ $ERRFLAG ]]; then
+        if [[ ! $ADMIN ]]; then
+            echo ""
+            echo "${RED}ERROR:$RESET Missing Required Package: RUN:$BOLD$BLUE \"$0 --administrator\"$RESET attempt to fix $RESET"
+            echo ""
+            exit -1
         fi
     fi
     echo ""
+}
+
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  CheckVim
+#   DESCRIPTION:  Verifies a good vim
+#    PARAMETERS:  None
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+CheckVim()
+{
+
+    VIMS=(vim-gnome vim-gtk vim-athena vim-nox vim)
+
+    printf "Checking vim:$RESET"
+    ERRFLAG=false
+
+    for PKG in $PKGS; do
+        if [[ $(which $PKG | grep -o "$PKG") ]]; then
+            printf "$BOLD$GREEN $PKG$RESET"
+        else
+            printf "$RED $PKG$RESET"
+            ERRFLAG=true
+        fi
+    done
+    echo ""
+
+    if [[ $ERRFLAG ]]; then
+        if [[ ! $ADMIN ]]; then
+            echo ""
+            echo "${RED}ERROR:$RESET Missing Required Package: RUN:$BOLD$BLUE \"$0 --administrator\"$RESET attempt to fix $RESET"
+            echo ""
+            exit -1
+        fi
+    fi
 }
 
 
@@ -359,14 +352,14 @@ CheckDeps()
 #-------------------------------------------------------------------------------
 Setup()
 {
-    read -n 1 -p "${BOLD}Setup$BLUE tmux$RESET$BOLD (Y/n): $GREEN" choice
+    read -n 1 -p "Setup$BOLD$BLUE tmux$RESET (Y/n): $GREEN" choice
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
         y|Y|* ) PKGS+=" tmux";OSXPKGS+=" tmux"; TMUX=true;;
     esac
 
-    read -n 1 -p "${BOLD}Setup$BLUE zsh$RESET$BOLD (Y/n): $GREEN" choice
+    read -n 1 -p "Setup$BOLD$BLUE zsh$RESET (Y/n): $GREEN" choice
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
@@ -386,7 +379,7 @@ Setup()
 #-------------------------------------------------------------------------------
 AdminSetup()
 {
-    echo "$BLUE${BOLD}Admin Setup$RESET$BOLD ($OS)"
+    echo "$BOLD$BLUEAdmin Setup$RESET ($OS)"
 
     if [ $OS == 'LINUX' ]; then
 
@@ -397,11 +390,11 @@ AdminSetup()
 
         if [ "$WSU" = true ]; then
             # Fixes for Ubuntu and IPv6 inside WSU
-            echo "$RESET${BOLD}Adding WSU firewall$BLUE IPv6 fix$RESET$BOLD"
+            echo "$RESETAdding WSU firewall$BOLD$BLUE IPv6 fix$RESET"
             sudo echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
         fi
 
-        echo "${BOLD}Updating Available Packages$RESET"
+        echo "Updating Available Packages$RESET"
 
         if [ "$WSU" = true ]; then
             sudo apt-get -o Acquire::ForceIPv4=true -o Dpkg::Progress-Fancy="1" -y update
@@ -409,16 +402,16 @@ AdminSetup()
             sudo apt-get -o Dpkg::Progress-Fancy="1" -y update
         fi
 
-        echo "${BOLD}Required Package List:$GREEN $PKGS $RESET"
+        echo "Required Package List:$BOLD$GREEN $PKGS $RESET"
 
         for PKG in $PKGS; do
-            printf "${BOLD}Checking $PKG:"
+            printf "Checking $PKG:"
 
             if [ "$(dpkg-query -f='${Status}\n' -W $PKG | awk '{print $3;}')" = "installed" ]; then
-                echo "$GREEN Found$RESET"
+                echo "$BOLD$GREEN Found$RESET"
             else
                 echo "$RED Not Found"
-                echo "$YELLOW    Installing$BLUE $PKG$RESET"
+                echo "$BOLD$YELLOW    Installing$BOLD$BLUE $PKG$RESET"
 
                 if [ "$WSU" = true ]; then
                     sudo apt-get -o Acquire::ForceIPv4=true -o Dpkg::Progress-Fancy="1" -y install $PKG
@@ -430,25 +423,24 @@ AdminSetup()
 
     elif [ $OS == 'OSX' ]; then
 
-        echo "${BOLD}Required Package List:$GREEN $OSXPKGS $RESET"
-        echo "${BOLD}${YELLOW}Note!$RESET$BOLD When brew may appear to be fozen when installing."
-        echo "${BOLD}${YELLOW}     $RESET$BOLD Wait up to 10 mins per package before doing anything"
+        echo "Required Package List:$BOLD$BOLD$GREEN $OSXPKGS $RESET"
+        echo "$BOLD${YELLOW}Note!$RESET When brew may appear to be fozen when installing."
+        echo "$BOLD${YELLOW}     $RESET Wait up to 10 mins per package before doing anything"
         echo ""
         for PKG in $OSXPKGS; do
-            printf "${BOLD}Checking $PKG:"
+            printf "Checking $PKG:"
 
             if brew list -1 | grep -q "^${PKG}\$"; then
-                echo "$GREEN Found$RESET"
+                echo "$BOLD$GREEN Found$RESET"
             else
                 echo "$RED Not Found"
-                echo "$YELLOW    Installing$BLUE $PKG$RESET"
+                echo "$BOLD$YELLOW    Installing$BOLD$BLUE $PKG$RESET"
                 brew install $PKG
             fi
         done
 
     fi
-    echo "$BLUE${BOLD}Admin Setup$RESET$BOLD End"
-    echo ""
+    echo "$BOLD${BLUE}Admin Setup$RESET End"
 }
 
 
@@ -462,26 +454,16 @@ AdminSetup()
 #-------------------------------------------------------------------------------
 GetUserInfo()
 {
-    read -p "$RESET${BOLD}Enter $BLUE Full Name$RESET$BOLD Ex\"John Doe\": $GREEN" name
-    read -p "$RESET${BOLD}Enter $BLUE Author Ref$RESET$BOLD Ex\"jdoe\": $GREEN" ref
-    read -p "$RESET${BOLD}Enter $BLUE Email Address$RESET$BOLD Ex\"JohnD@mail.weber.edu\": $GREEN" email
-    read -p "$RESET${BOLD}Enter $BLUE Oganization$RESET$BOLD Ex\"WSU\": $GREEN" org
-    read -p "$RESET${BOLD}Enter $BLUE Company$RESET$BOLD Ex\"WSU\": $GREEN" com
-    read -p "$RESET${BOLD}Enter $BLUE Default License$RESET$BOLD (hit enter for default): $GREEN" license
-    if [ -z license ]; then
-        license = 'this program is free software: you can redistribute it and/or modify\n
-                   it under the terms of the GNU General Public License as published by\n
-                   the Free Software Foundation, either version 3 of the License, or\n
-                   (at your option) any later version.\n
-
-                   This program is distributed in the hope that it will be useful,\n
-                   but WITHOUT ANY WARRANTY; without even the implied warranty of\n
-                   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n
-                   GNU General Public License for more details.\n
-
-                   You should have received a copy of the GNU General Public License\n
-                   along with this program.  If not, see <http://www.gnu.org/licenses/>\n.'
+    read -p "${RESET}Enter$BOLD$BLUE Full Name$RESET ex\"John Doe\": $GREEN" name
+    read -p "${RESET}Enter$BOLD$BLUE Author Ref$RESET ex\"jdoe\": $GREEN" ref
+    read -p "${RESET}Enter$BOLD$BLUE Email Address$RESET ex\"JohnD@mail.weber.edu\": $GREEN" email
+    read -p "${RESET}Enter$BOLD$BLUE Oganization$RESET ex\"WSU\": $GREEN" org
+    read -p "${RESET}Enter$BOLD$BLUE Company$RESET ex\"WSU\": $GREEN" com
+    read -p "${RESET}Enter$BOLD$BLUE Default License$RESET (hit enter for default): $GREEN" license
+    if [[ -z "$license" ]]; then
+        license='this program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program.  If not, see <http://www.gnu.org/licenses/>\n.'
     fi
+    printf "$RESET"
 }
 
 
@@ -519,7 +501,7 @@ InstallPowerlineFonts()
 #-------------------------------------------------------------------------------
 CreatePersonalTemplate()
 {
-    echo "${BOLD}Creaing User Template File:$BLUE $VIMDIR/templates/personal.template$RESET"
+    echo "Creaing User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template$RESET"
 
 printf "§ =============================================================
 §  Personal Information
@@ -540,7 +522,7 @@ SetMacro( 'LICENSE',      '%s' )
 §SetFormat( 'DATE', '%%x' )
 §SetFormat( 'TIME', '%%H:%%M' )
 §SetFormat( 'YEAR', '%%Y' )
-" "$name" "$ref" "$email" "$org" "$com" > $VIMDIR/templates/personal.template
+" "$name" "$ref" "$email" "$org" "$com" > $DOTFILES/vim/templates/personal.template
 }
 
 
@@ -553,9 +535,9 @@ SetMacro( 'LICENSE',      '%s' )
 #-------------------------------------------------------------------------------
 CreateGitConfig()
 {
-    echo "${BOLD}Creating User Git Config:$BLUE $VIMDIR/gitconfig$RESET"
+    echo "Creating User Git Config:$BOLD$BLUE $DOTFILES/git/gitconfig$RESET"
 
-printf "
+    printf "
 [user]
     name = %s
     email = %s
@@ -585,8 +567,6 @@ printf "
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
-    echo "${BOLD}Creating Sympolic link to gitconfig$RESET"
-    ln -s $DOTFILES/git/gitconfig ~/.gitconfig
 }
 
 
@@ -599,34 +579,19 @@ printf "
 #-------------------------------------------------------------------------------
 ManageFilesAndLinks()
 {
-    echo "$RESET${BOLD}Creating$GREEN ~/.vim symlink$RESET$BOLD to:$BLUE $VIMDIR$RESET"
-    ln -s $DOTFILES/vim ~/.vim
+    echo "Creating$BOLD$GREEN symlinks$RESET"
+    for ((i=0; i<=${#LINKS[@]}-1;i++))
+    do
+        echo "Linked$BOLD$GREEN ${LINKS[${i}]} $RESET->$BOLD$BLUE ${FILES[${i}]} $RESET"
+        ln -s ${FILES[${i}]} ${LINKS[${i}]}
+    done
 
-    #User PATH location
-    echo "$RESET${BOLD}Setting up git diff to use$GREEN vimdiff$RESET$BOLD:$BLUE $LOCALBIN/git_diff_wrapper.sh$RESET"
-    mkdir -p $LOCALBIN
-    ln -s $DOTFILES/local/bin/git_diff_wrapper.sh $LOCALBIN/git_diff_wrapper.sh
+    echo "Downloading Colors wombat256mod.vim"
+    mkdir -p $DOTFILES/vim/colors
+    wget -O $DOTFILES/vim/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 
-    printf "${BOLD}Creating Symbolic links: $GREEN"
-    printf ".bash_aliases "
-    ln -s $DOTFILES/shell/shell_aliases ~/.bash_aliases
-    printf ".zsh_aliases "
-    ln -s $DOTFILES/shell/shell_aliases ~/.zsh_aliases
-    printf ".personal_aliases "
-    ln -s $DOTFILES/shell/personal_aliases ~/.personal_aliases
-    printf ".tmux.conf "
-    ln -s $DOTFILES/tmux/tmux.conf ~/.tmux.conf
-    printf ".vimrc "
-    ln -s $DOTFILES/vim/vimrc ~/.vimrc
-    echo "$RESET"
-
-    echo "${BOLD}Downloading Colors wombat256mod.vim$RESET"
-    mkdir -p $VIMDIR/colors
-    wget -O $VIMDIR/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
-
-    if [ "$ZSH" = true ]; then
-        # Set Zsh
-        echo "${BOLD}Appending soruces to$GREEN ~/.zshrc$RESET"
+    if [[ -f ~/.zshre && $ZSH = true ]]; then
+        echo "Appending soruces to$BOLD$GREEN ~/.zshrc$RESET"
         echo "source ~/.zsh_aliases" >> ~/.zshrc
     fi
 
@@ -636,19 +601,18 @@ ManageFilesAndLinks()
 
 
 #---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  ManageFilesAndLinks
-#   DESCRIPTION:  Create symbolic links to your ~/dotfiles directory
+#          NAME:  PatchPlugs
+#   DESCRIPTION:  Patch Plugins
 #    PARAMETERS:  None
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
 PatchPlugs()
 {
-    echo "$RESET${BOLD}Patching NerdTree:$RESET$BOLD:$BLUE $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim$RESET"
-    mkdir -p $VIMDIR/bundle/nerdtree/nerdtree_plugin
-    ln -s $VIMDIR/patches/NerdTreePatch.vim $VIMDIR/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim
+    echo "Patching NerdTree:$RESET$BOLD$BLUE $DOTFILES/vim/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim$RESET"
+    mkdir -p $DOTFILES/vim/bundle/nerdtree/nerdtree_plugin
+    ln -s $DOTFILES/vim/patches/NerdTreePatch.vim $DOTFILES/vim/bundle/nerdtree/nerdtree_plugin/NerdTreePatch.vim
     echo ""
 }
-
 
 
 
@@ -660,69 +624,40 @@ PatchPlugs()
 #-------------------------------------------------------------------------------
 AddToEnvironment()
 {
+    echo "Add Environment Var:$RESET$BOLD$BLUE \$DOTFILES=$RESET$DOTFILES"
 
-    echo "$RESET${BOLD}Adding Environment Variables:$RESET$BOLD$BLUE \$DOTFILES=$DOTFILES & \$PATH$RESET"
+    for RCFILE in "${ENV_FILES[@]}"
+    do
+        if [[ -e ${RCFILE} ]]; then
+            if grep -q "export DOTFILES=" "$RCFILE" 2>/dev/null; then
+                echo "$BOLD$GREEN $RCFILE$RESET:$BOLD$BLUE Already added$RESET skipping"
+            else
+                echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
+                echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
+                echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
+                echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
+                #Also export then for any supscript of this install script
 
-    if [[ -f ~/.profile ]]; then
-        if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.profile"; then
-            RCFILE="~/.profile"
+                export DOTFILES="$DOTFILES"
+                export PATH="$PATH:$DOTFILES/scripts"
+            fi
+        else
+           echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
         fi
-    fi
+   done
 
-    if [[ -z $RCFILE ]] && [[ -f ~/.bash_profile ]]; then
-        if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.bash_profile"; then
-            RCFILE="~/.bash_profile"
-        fi
-    fi
-
-    if [[ -z $RCFILE ]] && [[ -f ~/.bashrc ]]; then
-        if ! grep -q "export DOTFILES=$HOME/dotfiles" "~/.profile"; then
-            RCFILE="~/.bashrc"
-        fi
-    fi
-
-    if [ $OS == 'OSX' ] && [[ -z $RCFILE ]]; then
+    if [[ $OS == 'OSX' ]]; then
         touch ~/.bash_profile
-    	RCFILE="~/.bash_profile"
-    fi
-    
-
-
-    if ! [[ -z $FILE ]]; then
-        echo "${BOLD}Adding to file:$RESET$BOLD$GREEN $RCFILE$RESET"
+        RCFILE="~/.bash_profile"
+        echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
         echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
         echo 'export PATH="$PATH:$DOTFILES/scripts"' >> $RCFILE
-    else 
-        echo "$YELLOW${BOLD}Environment Variable already exists$RESET"
+        echo 'source $DOTFILES/scripts/autorun.sh"' >> $RCFILE
     fi
-
+    #Also export then for any supscript of this install script
     export DOTFILES="$DOTFILES"
     export PATH="$PATH:$DOTFILES/scripts"
     echo ""
-}
-
-
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  DecryptSecure
-#   DESCRIPTION:  Decrypt secure file NOTE Must be called after AddToEnvironment
-#    PARAMETERS:  none
-#       RETURNS:  Success or none
-#-------------------------------------------------------------------------------
-DecryptSecure()
-{
-    read -n 1 -p "$BLUE${BOLD}Decrypt Secure File$RESET$BOLD (You probably want to say NO) (y/N): $GREEN" DECRYPT
-    echo "$RESET"
-    case "$DECRYPT" in
-        y|Y ) :;;
-        n|N|* ) return;;
-    esac
-    echo ""
-
-    export DOTFILES="$DOTFILES"
-    export PATH="$PATH:$DOTFILES/scripts"
-
-    (exec $DOTFILES/scripts/unlock.sh)
-    return
 }
 
 
@@ -735,7 +670,7 @@ DecryptSecure()
 #-------------------------------------------------------------------------------
 main()
 {
-#Run Init
+    #Run Init
     Init "$@"     # Remeber to pass the command line args $@
     Setup
     AddToEnvironment
@@ -751,7 +686,7 @@ main()
     ManageFilesAndLinks   #Create Dirs Copy Files and Make Links
 
     #Install Powerline Fonts?
-    read -n 1 -p  "${BOLD}Install$BLUE PowerLine Fonts$RESET$BOLD (Y/n): $GREEN" choice
+    read -n 1 -p  "Install$BOLD$BLUE PowerLine Fonts$RESET (Y/n): $GREEN" choice
     case "$choice" in
         n|N ) :;;
         y|Y|* ) InstallPowerlineFonts;;
@@ -763,20 +698,17 @@ main()
     CreateGitConfig
 
     if [ "$ZSH" = true ]; then
-        echo "${BOLD}Downloading and installing: oh-my-zsh"
+        echo "Downloading and installing: oh-my-zsh"
         sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     fi
 
     vim +PlugInstall +qall #Installs the vim plugin system and updates all plugins
 
     PatchPlugs
-
-    echo ""
-    echo "$BOLD${GREEN} $SCRIPTNAME $RESET$BOLD DONE: Enjoy a better$BLUE vim$RESET$BOLD experince.$RESET"
-    echo ""
-
-
     DecryptSecure
-}
 
+    echo ""
+    echo "$BOLD$BLUE$SCRIPTNAME$RESET Complete: Enjoy a better$BOLD vim$RESET experience.$RESET"
+    echo ""
+}
 main "$@"     #remember to pass all command line args
