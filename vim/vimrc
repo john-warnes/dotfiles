@@ -22,8 +22,8 @@ setlocal foldcolumn=1
 "
 " ==== Fonts (gnome-terminal only) =====
 " <F7> cycle though mono powerline fonts
-" <Ctrl + F5> to make fontsize smaller
-" <Ctrl + F6> to make fontsize bigger
+" <Ctrl + '+'> to make fontsize bigger
+" <Ctrl + '-'> to make fontsize smaller
 "
 " ==== Theme ====
 " <F5> to switch from dark to light
@@ -67,8 +67,6 @@ setlocal foldcolumn=1
 " Gnome-Terminal Font Control  Note: Only Gnome-Terminal
 "=================================================================
 " <F7> cycle though mono powerline fonts
-" <Ctrl + F5> to make fontsize smaller
-" <Ctrl + F6> to make fontsize bigger
 let g:powerlineFonts= [
             \'DejaVu Sans Mono for Powerline',
             \'Droid Sans Mono for Powerline',
@@ -104,8 +102,6 @@ function! GnomeTermCycleFont()
     echom g:font
 endfunction
 
-nnoremap <C-F5> :let g:fontsize = g:fontsize + 1<CR>:call GnomeTermSetFont()<CR>:echom "Fontsize = " . g:fontsize<CR>
-nnoremap <C-F6> :let g:fontsize = g:fontsize - 1<CR>:call GnomeTermSetFont()<CR>:echom "Fontsize = " . g:fontsize<CR>
 nnoremap <F7> :call GnomeTermCycleFont()<CR>
 
 
