@@ -590,7 +590,7 @@ ManageFilesAndLinks()
     mkdir -p $DOTFILES/vim/colors
     wget -O $DOTFILES/vim/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 
-    if [[ -f ~/.zshre && $ZSH = true ]]; then
+    if [[ -f ~/.zshrc && $ZSH = true ]]; then
         echo "Appending soruces to$BOLD$GREEN ~/.zshrc$RESET"
         echo "source ~/.zsh_aliases" >> ~/.zshrc
     fi
