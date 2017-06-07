@@ -38,27 +38,4 @@ VirtualEnvWrapper()
 }
 VirtualEnvWrapper
 
-
-
-RunShellAliases()
-{
-    # Set Dir for env configs
-    if [[ -e $DOTIFLES/shell/shellaliases ]]; then
-        source $DOTFILES/shell/shellaliases         # Source shellAliases
-    fi
-}
-#RunShellAliases
-
-
-PersonalAliases()
-{
-    # Set Dir for env configs
-    if [[ -e $DOTFILES/secure/personal.aliases.sh ]]; then
-        source $DOTFILES/secure/personal.aliases.sh # Source shellAliases
-    fi
-}
-#ShellAliases
-
-echo "autorun"
-
 set +o nounset   #DO NOT MOVE LEAVE AS LAST LINE - Can add anytihng above if needed
