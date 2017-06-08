@@ -38,4 +38,15 @@ VirtualEnvWrapper()
 }
 VirtualEnvWrapper
 
+LoadPersonalAliases()
+{
+    if [[ -f $DOTFILES/secure/personal_aliases ]]; then
+    # personal_aliases
+    source $DOTFILES/secure/personal_aliases
+    fi
+}
+LoadPersonalAliases
+
+echo " == Autorun Completed == "
+
 set +o nounset   #DO NOT MOVE LEAVE AS LAST LINE - Can add anytihng above if needed

@@ -31,7 +31,4 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 alias gits='git status'
 alias gita='git add'
 
-if [ -f $DOTFILES/secure/personal_aliases.sh ]; then
-    # personal_aliases
-    source $DOTFILES/secure/personal_aliases.sh
-fi
+echo " == Shell Aliases Loaded == "
