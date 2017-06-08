@@ -528,9 +528,11 @@ CreateGitConfig()
     editor = vim
     autocrlf= input
 [diff]
-    external = git_diff_wrapper.sh
-[pager]
-    diff =
+    tool = vimdiff
+[difftool]
+    prompt = false
+[merge]
+    tool = vimdiff
 [help]
     autocorrect = 1
 [color]
