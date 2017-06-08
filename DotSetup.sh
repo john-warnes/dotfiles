@@ -10,7 +10,12 @@
 #    PARAMETERS:  None
 #       RETURNS:  None
 #-------------------------------------------------------------------------------
+#!/bin/bash
+#set -euo pipefail
+#IFS=$'\n\t'
+
 set -o nounset
+
 clear
 
 DetectOS()
@@ -31,7 +36,7 @@ DetectOS()
     if [[  $OS == 'LINUX' ]]; then
         if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
             echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
-            echo "Supported:$BOLD$BLUE $SUPPORTEDDIRSTROS $RESET"
+            echo "Supported:$BOLD$BLUE $SUPPORTEDDISTROS $RESET"
             read -n 1 -p "Atempt to install? $RESET (y/N): $GREEN" choice
             echo "$RESET"
             case "$choice" in
@@ -212,20 +217,20 @@ Init()
 {
     #Check if running as sudo
     # TODO look into sudo -H
-    if [[  "$EUID" == 0 ]]
+    if [[  $EUID == 0 ]]
     then
         echo "Do ${RED}NOT$RESET run this script as root or with sudo$RESET"
         PrintHelp
     fi
 
     #Check and process command line arguments
-    while [[  "$#" > 0 ]]; do
+    while [[  $# > 0 ]]; do
         case $1 in
             --administrator) ADMIN=1;;
             --remove) Remove;;
             --upgrade) Upgrade;;
             --decrypt) DecryptSecure;;
-            -h | --help | *) PrintHelp;;
+            -h|--help|*) PrintHelp;;
         esac;
         shift;
     done

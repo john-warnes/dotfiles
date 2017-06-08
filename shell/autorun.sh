@@ -18,6 +18,12 @@
 #===============================================================================
 set +o nounset #DO NOT MOVE LEAVE AS FIRST LINE
 
+if [[ $DOTFILESAUTO == 1 ]]; then
+    return 0
+else
+    export DOTFILESAUTO=1
+fi
+
 VirtualEnvWrapper()
 {
     # Set Dir for env configs
