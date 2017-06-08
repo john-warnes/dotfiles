@@ -24,13 +24,50 @@ or
 - gurvbox color scheme integrated
 - ALE or Symatic Code linterer
 - Nerdtree with git support
-- Tagbar
-- Tmux
-- Zsh
+- Tagbar 
+- Tmux Shell Multiplexer
+- Zsh Shell
+- Changing Fonts
+- C-Support
+- Vim-Support
+- Bash-Support
+- Python Mode
 
+## Controls  
+### Map Leader
+map leader = `,`  
 
+### Search
+`<Ctrl+n>` Clear current search highlight  
+`<Leader>/` Clear current search highlight  
 
-# Documentation for the JVim Plugin
+### Fonts (gnome-terminal only)
+`<F7>` Cycle through installed powerline fonts  
+`<Ctrl+'+'>` Font size bigger  
+`<Ctrl+'-'>` Font size smaller  
+
+### Theme
+`<F5>` Cycle Dark and Light Mode  
+`<F6>` Cycle through three levels of contrast  
+
+### Function Mapping
+`<Leader>s` Do Sort  
+`<Crtl+b>` Open Tree Browser  
+`<Crtl+t>` Open Tag Browser  
+`<Tab><Tab>` Cycle opening folded code blocks  
+
+### Movement using vim standard keys
+`<Ctrl+[h,j,k,l]>` Move to vim panes and tmux windows (vim-tmux-navigator)  
+`<Leader>m` Move next tab  
+`<Leader>n` Move prev tab  
+
+### Movement using arrow keys
+  note: Many window managers intercept arrow key combos  
+`<Ctrl+[Left,Right,Up,Down]>` to change windows  
+`<Crtl+PageUp>` or `<Ctrl+PageDown` to change tabs  
+
+# Includes the JVim Plugin  
+# Documentation for the JVim Plugin  
 
 ## Installation
 Install this plugin as you would any other vim plugin  
