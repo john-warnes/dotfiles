@@ -37,7 +37,7 @@ DetectOS()
         if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
             echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
             echo "Supported:$BOLD$BLUE $SUPPORTEDDISTROS $RESET"
-            read -n 1 -p "Atempt to install? $RESET (y/N): $GREEN" choice
+            read -n 1 -p "Attempt to continue? $RESET (y/N): $GREEN" choice
             echo "$RESET"
             case "$choice" in
                 y|Y ) :;;
@@ -47,7 +47,7 @@ DetectOS()
             if [[  -z "$PRETTY_NAME" ]]; then
                 echo "Linux Detected:$BOLD$GREEN $ID $RESET"
             else
-                echo "Lunix Detected:$BOLD$GREEN $PRETTY_NAME $RESET"
+                echo "Linux Detected:$BOLD$GREEN $PRETTY_NAME $RESET"
             fi
         fi
 
