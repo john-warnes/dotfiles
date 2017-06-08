@@ -37,7 +37,7 @@ fi
 echo "$BOLD${BLUE}Unencrypting$RESET$BOLD tar.xz$RESET"
 if [[ $# == 1 ]]; then
     # (cd "$SECURE" && exec gpg --passphrase-file <(echo $1) --yes --batch --output secure.tar.xz secure.tar.xz.gpg)
-    (cd $SECURE && exec gpg --passphrase-file <(echo $1) --output secure.tar.xz -d secure.tar.xz.gpg)
+    (cd $SECURE && exec gpg --passphrase-file <(echo $1) secure.tar.xz.gpg)
 else
     (cd $SECURE && exec gpg secure.tar.xz.gpg)
 fi
