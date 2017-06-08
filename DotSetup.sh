@@ -187,13 +187,15 @@ Upgrade()
 #-------------------------------------------------------------------------------
 DecryptSecure()
 {
-    read -n 1 -p "$BOLD${BLUE}Decrypt Secure File$RESET (You probably want to say$BOLD NO$RESET) (y/N): $GREEN" DECRYPT
+    read -n 1 -p "$BOLD${BLUE}Use secure valut?$RESET (You must have a git repository setup) (y/N): $GREEN" choice
     echo "$RESET"
-    case "$DECRYPT" in
+    case "$choice" in
         y|Y ) :;;
         n|N|* ) return;;
     esac
-    echo ""
+    read -p "${RESET}Enter$BOLD$BLUE git repository of secure vault$RESET ex\"https://github.com/<user name>/secure.git\": $GREEN" REPO
+
+    (cd $DOTFILES && exec git clone $REPO)
     (exec $DOTFILES/scripts/unlock.sh)
     exit 0
 }
