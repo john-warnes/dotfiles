@@ -30,7 +30,7 @@ if [[ -f $SECURE/secure.tar.xz.gpg ]]; then
 fi
 
 echo "$BOLD${BLUE}Compressing$RESET$BOLD files to tar.xz$RESET"
-(cd $SECURE && exec tar -c --xz -f secure.tar.xz *)
+(cd $SECURE && exec tar --exclude=secure.tar.xz.gpg -c --xz -f secure.tar.xz *)
 
 echo "$BOLD${BLUE}Encrypting$RESET$BOLD tar.xz$RESET"
 if [[ "$#" == 1 ]]; then
