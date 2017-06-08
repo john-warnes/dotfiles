@@ -151,5 +151,5 @@ Common CMD misspelling mappings
 
 ### Indent Guide (Spaces for indents)
 `F2` to toggle on or off  
-![Indent Guide Example](/_assets/Indet_Flip.gif "Indent Guides")
+![Indent Guide Example](../jvim/_assets/Indet_Flip.gif "Indent Guides")
 
