@@ -1,70 +1,32 @@
-"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-"           ___ _      __   __   _ _ _ __ ___  _ __ ___
-"          |__ \ \ __ / /   \ \ / / | '_ ` _ \| '__/ __|
-"          ___| \ V  V /     \ V /| | | | | | | | | (__
-"          \____|\_/\_/       \_/ |_|_| |_| |_|_|  \___|
 "
-"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-" Local file settings
+"      gg                gg
+"      ""                ""
+"      gg     ggg    gg  gg    ,ggg,,ggg,,ggg,    ,gggggg,    ,gggg,
+"      8I    d8"Yb   88bg88   ,8" "8P" "8P" "8,   dP""""8I   dP"  "Yb
+"     ,8I   dP  I8   8I  88   I8   8I   8I   8I  ,8'    8I  i8'
+"   _,d8I ,dP   I8, ,8I_,88,_,dP   8I   8I   Yb,,dP     Y8,,d8,_    _
+" 888P"8888"     "Y8P" 8P""Y88P'   8I   8I   `Y88P      `Y8P""Y8888PP
+"----,d8I'-------------------------------------------------------------
+"  ,dP'8I
+" ,8"  8I
+" I8   8I
+" `8, ,8I
+"  `Y8P"
+"
+"=================================================================
+" Local file settings {
+"=================================================================
+set encoding=utf-8
 scriptencoding utf-8
 setlocal foldmarker={,}
 setlocal foldmethod=marker
 setlocal foldcolumn=1
-
-"=================================================================
-" Summary of CUSTOM KEYS
-"=================================================================
-"
-" Most plugins use the Map Leader=','
-"
-" ==== Text Search ====
-" <Ctrl + n> Clear current search hilight
-"
-" ==== Fonts (gnome-terminal only) =====
-" <F7> cycle though mono powerline fonts
-" <Ctrl + '+'> to make fontsize bigger
-" <Ctrl + '-'> to make fontsize smaller
-"
-" ==== Theme ====
-" <F5> to switch from dark to light
-" <F6>to cycle the 3 levels of contrast
-"
-" ==== Function Maping ====
-" <Leader>s Do Sort
-" <Crtl + b> Open Tree Browser
-" <Crtl + t> Open Tag Browser
-" <S-r> Cycle opening folded code blocks
-" <S-e> Cycle opening folded code blocks reverse direction
-"
-" ==== Movment using vim standard keys ====
-" <Ctrl + [h,j,k,l]> Move to vim panes and tmux windows (vim-tmux-navigator)
-" <Leader>m Move next tab
-" <Leader>n Move prev tab
-"
-" ==== Movment using arrow keys ====
-"   note: Many window managers intercept arrow key combos
-" <Ctrl + [Left,Right]> to move to next/prev tabs
-" <Ctrl + Shift+ [Left,Right,Up,Down]> to move to windows in same tab
-"
-" ==== Movment using arrow keys ====
-" <F8> Run syntax check on current file
-" <Ctrl + F8> Toggle active syntax checking
-"
-" === Commands ===
-" :TrimFile " Remove all trailing writespace in file
-"
-" <F2> Toggle showing Indent Guides and Pretty Chars
-
-" ==== Notes ====
-"  if has('mac')
-"  if has('nvim')
-" in insert mode Hit Crtl-k then push button to see the vim mapping of the key
-"
-
+setlocal keywordprg=:help
+" } ===
 
 
 "=================================================================
-" Gnome-Terminal Font Control  Note: Only Gnome-Terminal
+" Gnome-Terminal Font Control  Note: Only Gnome-Terminal {
 "=================================================================
 " <F7> cycle though mono powerline fonts
 let g:powerlineFonts= [
@@ -103,11 +65,11 @@ function! GnomeTermCycleFont()
 endfunction
 
 nnoremap <F7> :call GnomeTermCycleFont()<CR>
-
+"} ===
 
 
 "=================================================================
-" Vim-Plug Plugin Manager Auto Install
+" Vim-Plug Plugin Manager Auto Install {
 "=================================================================
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -116,79 +78,65 @@ if empty(glob('~/.vim/autoload/plug.vim'))
         autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | q
     augroup end
 endif
-
+"} ===
 
 
 "=================================================================
-" Vim Color Support and Force
+" Vim Color Support and Force {
 "=================================================================
-if exists('$TMUX')
-    if $COLORTERM ==? 'truecolor'
+if ($COLORTERM ==? 'truecolor')
+    if has('termguicolors')
+        set termguicolors
+    endif
+    if exists('$TMUX')
         let g:gruvbox_italic=0
-        " Disable Background Color Erase (BCE) so that color schemes
-        " work properly when Vim is used inside tmux and GNU screen
-        " and turecolor terminal like gnome-terminal
         set t_ut=
     else
-        set t_Co=256
-        " Disable Background Color Erase (BCE) so that color schemes
-        " work properly when Vim is used inside tmux and GNU screen
-        " and turecolor terminal like gnome-terminal
+        let g:gruvbox_italic=1
         set t_ut=
     endif
 else
-    if $COLORTERM ==? 'truecolor'
-        if has('termguicolors')
-            set termguicolors
-            let g:gruvbox_italic=1
-            " Disable Background Color Erase (BCE) so that color schemes
-            " work properly when Vim is used inside tmux and GNU screen
-            " and turecolor terminal like gnome-terminal
-            set t_ut=
-        endif
-    else
-        " No truecolor welcome to bad times
-        " Hope term supports 256 colors
-        set term=xterm-256color
-        set t_Co=256
-        set t_ut=
-    endif
+    " No true color. Hope term has 256 colors
+    let g:gruvbox_italic=1
+    set term=xterm-256color
+    set t_Co=256
+    set t_ut=set
 endif
 
-if $TERM ==? 'linux'
+if ($TERM ==? 'linux')
     " If Term is linux then we are in a 9 color envermonet
+    let g:gruvbox_italic=1
     set t_Co=8
 endif
-
+"} ===
 
 
 "=================================================================
-" Leader Key
+" Leader Key {
 "=================================================================
 " Rebind <Leader> key
 " I like to have it here becuase it is easier to reach than the default and
 " it is next to ``m`` and ``n`` which I use for navigating between tabs.
 let g:mapleader = ','
-
+"} ===
 
 
 "=================================================================
-"=#######################= START Plugin =########################=
+"{=#######################= START Plugin =########################
 "=================================================================
 call plug#begin('~/.vim/bundle')
 
 
-
 "=================================================================
-" NerdTree to see files in tree mode
+" NerdTree to see files in tree mode {
 "=================================================================
 let g:JV_showEol=1                                "Show EOL marker
 Plug 'john-warnes/jvim'
-
+"} ===
 
 
 "=================================================================
-" NerdTree to see files in tree mode
+" NerdTree to see files in tree mode {
 "=================================================================
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Activate with Ctrl-B
@@ -197,15 +145,15 @@ let g:NERDTreeQuitOnOpen=0          " close NERDTree after  file is opened
 let g:NERDTreeShowHidden=1          " show hidden files in NERDTree
 let g:NERDTreeWinSize=20
 let g:NERDTreeMapOpenInTab='<ENTER>'  " Open file in newtab
-
+"} ===
 
 
 "=================================================================
-" NerdTree git plugin
+" NerdTree git plugin {
 "=================================================================
 "Show git file status when browsing
 Plug 'Xuyuanp/nerdtree-git-plugin'
-            let g:NERDTreeIndicatorMapCustom = {
+let g:NERDTreeIndicatorMapCustom = {
             \ 'Modified'  : '✹',
             \ 'Staged'    : '✚',
             \ 'Untracked' : '✭',
@@ -218,11 +166,11 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
             \ 'Unknown'   : '?'
             \ }
 "let g:NERDTreeShowIgnoredStatus = 1 "Heavy feature can be SLOW
-
+"} ===
 
 
 "=================================================================
-" ALE Syntax Checking Plugin
+" ALE Syntax Checking Plugin {
 "=================================================================
 if has('job') && has ('timers')
 
@@ -233,12 +181,12 @@ if has('job') && has ('timers')
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '--'
 
-"    let g:ale_c_cppcheck_options = '--enable=style' " --suppress=memleak:src/file1.cpp src/
+    "    let g:ale_c_cppcheck_options = '--enable=style' " --suppress=memleak:src/file1.cpp src/
     let g:ale_history_log_output=1  " use ALEInfo to see the full output if needed
 
     " Write this in your vimrc file
     "let g:ale_set_loclist = 1
-    "let g:ale_set_quickfix = 1
+    let g:ale_set_quickfix = 1
     "let g:ale_open_list = 1
     " Set this if you want to.
     " This can be useful if you are combining ALE with
@@ -246,9 +194,9 @@ if has('job') && has ('timers')
     "let g:ale_keep_list_window_open = 0
 
 else
-"=================================================================
-" Syntastic Syntax checking Plugin
-"=================================================================
+    "=================================================================
+    " Syntastic Syntax checking Plugin
+    "=================================================================
     " Use :Erorrs to open location-list :lclose
     " :lnext and :lprevious
     Plug 'vim-syntastic/syntastic'
@@ -261,21 +209,21 @@ else
     let g:syntastic_check_on_open = 1
     let g:syntastic_check_on_wq = 0
     let g:syntastic_mode_map = {
-                \ "mode": "active",
-                \ "passive_filetypes": ["python"] }
+                \ 'mode': 'active',
+                \ 'passive_filetypes': ['python'] }
     "nnoremap <C-F8> :SyntasticToggleMode<CR>
     "nnoremap <F8> :SyntasticCheck<CR>
 endif
 
 augroup signcolumn
     autocmd!
-    autocmd ColorScheme Gruvbox highlight clear SignColumn    
+    autocmd ColorScheme Gruvbox highlight clear SignColumn
 augroup end
-
+"} ===
 
 
 "=================================================================
-" Airline Status Line
+" Airline Status Line {
 "=================================================================
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'   "Lots of themes
@@ -288,46 +236,46 @@ let g:airline_section_c = '%F'
 let g:airline#extensions#tmuxline#enabled = 1
 let g:airline#extensions#tmuxline#color_template = 'insert'
 Plug 'edkolev/tmuxline.vim'     "have airline theme the tmux bar
-
+"} ===
 
 
 "=================================================================
-" Fugitive for GIT
+" Fugitive for GIT {
 "=================================================================
 " Try ":Gpush :Gdiff when file in reposory is open
 Plug 'tpope/vim-fugitive'
 " Allow :Gbrowse for github and other github support
 Plug 'tpope/vim-rhubarb'
-
-
-
-"=================================================================
-" Language Support
-"=================================================================
-let g:C_CreateMenusDelayed = 'yes'
-Plug 'WolfgangMehner/c-support'
-let g:C_UseToolbox = 'yes'
-let g:C_UseTool_doxygen = 'yes'
-let g:C_UseTool_cmake = 'yes'
-
-let g:C_MapLeader  = ','
-Plug 'WolfgangMehner/bash-support'
-let g:Bash_MapLeader  = ','
-Plug 'WolfgangMehner/latex-support'
-let g:Latex_MapLeader  = ','
-Plug 'WolfgangMehner/lua-support'
-let g:Lua_MapLeader  = ','
-Plug 'WolfgangMehner/perl-support'
-let g:Perl_MapLeader  = ','
-Plug 'WolfgangMehner/vim-support'
-let g:Vim_MapLeader  = ','
-Plug 'WolfgangMehner/python-support'
-let g:Python_MapLeader  = ','
-
+"} ===
 
 
 "=================================================================
-" Python mode
+" Language Support {
+"=================================================================
+"let g:C_CreateMenusDelayed = 'yes'
+"Plug 'WolfgangMehner/c-support'
+"let g:C_UseToolbox = 'yes'
+"let g:C_UseTool_doxygen = 'yes'
+"let g:C_UseTool_cmake = 'yes'
+"
+"let g:C_MapLeader  = ','
+"Plug 'WolfgangMehner/bash-support'
+"let g:Bash_MapLeader  = ','
+"Plug 'WolfgangMehner/latex-support'
+"let g:Latex_MapLeader  = ','
+"Plug 'WolfgangMehner/lua-support'
+"let g:Lua_MapLeader  = ','
+"Plug 'WolfgangMehner/perl-support'
+"let g:Perl_MapLeader  = ','
+"Plug 'WolfgangMehner/vim-support'
+"let g:Vim_MapLeader  = ','
+"Plug 'WolfgangMehner/python-support'
+"let g:Python_MapLeader  = ','
+"} ===
+
+
+"=================================================================
+" Python mode {
 "=================================================================
 Plug 'python-mode/python-mode'
 "Template
@@ -335,25 +283,25 @@ augroup Python
     autocmd!
     autocmd BufNewFile *.py silent! 0r ~/.vim/templates/python-mode.template | cal cursor(8,4)
 augroup END
-
+"} ===
 
 
 "=================================================================
-" Super tab completion
+" Super tab completion {
 "=================================================================
 Plug 'ervandew/supertab'
-
+"} ===
 
 
 "=================================================================
-" TagBar - Requires Exuberant Ctags
+" TagBar - Requires Exuberant Ctags {
 "=================================================================
 " Activate with TagbarOpen or Ctrl-T
 Plug 'majutsushi/tagbar'
 nnoremap <C-t> :TagbarToggle<CR>
 "map <Leader>y :TagbarToggle<CR>
 let g:tagbar_width = 30
-
+" } ===
 
 
 "=================================================================
@@ -384,9 +332,8 @@ let g:tagbar_width = 30
 "nmap <S-Tab><S-Tab> <Plug>(fold-cycle-close)
 
 
-
 "=================================================================
-" gruvbox colorschene
+" gruvbox colorschene {
 "=================================================================
 Plug 'morhetz/gruvbox'
 " let g:gruvbox_italic=1
@@ -417,31 +364,47 @@ endfunction
 "mapping for Contrast and background changeing keys
 nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
-
+"} ===
 
 
 "=================================================================
-" TMUX integration
+" TMUX integration {
 "=================================================================
 " <Ctrl + [h,j,k,l]> Move to vim panes and tmux widows
 Plug 'christoomey/vim-tmux-navigator'
-
+"} ===
 
 
 "=================================================================
-" Code Snippits
+" Code Snippets {
 "=================================================================
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger='<tab>'
+let g:UltiSnipsJumpForwardTrigger='<Nul>'
+let g:UltiSnipsJumpBackwardTrigger='<C-S-d>'
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit='vertical'
 " Track the engine.
 Plug 'SirVer/ultisnips'
 " Snippets are separated from the engine. Add this if you want them:
 Plug 'honza/vim-snippets'
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger='<tab>'
-let g:UltiSnipsJumpForwardTrigger='<C-j>'
-let g:UltiSnipsJumpBackwardTrigger='<C-S-j>'
-" If you want :UltiSnipsEdit to split your window.
-"let g:UltiSnipsEditSplit="vertical"
+"} ===
 
+
+"=================================================================
+" Start Screen and Session Management {
+"=================================================================
+" :SLoad    load a session
+" :SSave    save a session
+" :SDelete  delete a session
+" :SClose   close current session
+"
+
+let g:startify_fortune_use_unicode = 1
+let g:startify_session_persistence = 0
+let g:startify_bookmarks = [ {'c': '~/.vimrc'} ]
+Plug 'mhinz/vim-startify'
+"} ===
 
 
 "=================================================================
@@ -449,10 +412,10 @@ let g:UltiSnipsJumpBackwardTrigger='<C-S-j>'
 "=================================================================
 call plug#end()
 set synmaxcol=1000      " Only syntax hightlight 1000 columns right
-
+"} ===
 
 "=================================================================
-" Color Scheme
+" Color Scheme {
 "=================================================================
 " mkdir -p ~/.vim/colors && cd ~/.vim/colors
 " wget -O wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
@@ -465,11 +428,11 @@ endif
 " colorscheme wombat256mod
 " colorscheme default
 silent! colorscheme gruvbox " colorscheme support truecolor
-
+"} ===
 
 
 "=================================================================
-" Behavior
+" Behavior {
 "=================================================================
 set nowritebackup              " only in case you don't want a backup file while editing
 set noswapfile                 " no swap files
@@ -490,23 +453,22 @@ set backspace=2                       " Set backspace
 " ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
 noremap <C-n> <Esc>:nohl<CR>
 inoremap <C-n> <Esc>:nohl<CR>i
-
-
+"} ===
 
 
 "=================================================================
-" Tags
+" Tags {
 "=================================================================
 nnoremap <Leader>t
             \ :silent execute '!(ctags -R -f %:p:h/tags *)&'<CR>
             \ :redraw!<CR>
             \ :echom 'Generating cTags'<CR>
 execute 'set tags=./tags;~/.vim/tags;tags;'
-
+"} ===
 
 
 "=================================================================
-" Editing
+" Editing {
 "=================================================================
 augroup reload_vimrc
     autocmd!
@@ -516,7 +478,7 @@ augroup END
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline           " Stay on current char on page commands
 set visualbell              " Don't beep, flash the screen instead
-set scrolloff=3             " Use a 1 line (horizontal) scroll offset
+set scrolloff=1             " Use a 1 line (horizontal) scroll offset
 set sidescrolloff=5         " Use a 5 Char (virtual) scroll offset
 set virtualedit=onemore
 set termencoding=utf-8
@@ -525,11 +487,11 @@ set commentstring=\ #\ %s
 
 "map sort function to a key
 vnoremap <Leader>s :sort<CR>
-
+"} ===
 
 
 "=================================================================
-" Status-line
+" Status-line {
 "=================================================================
 set ruler                   " Show the line / column number of cursor
 set showcmd                 " Show the partially completed command
@@ -537,21 +499,21 @@ set number                  " Display line number"
 set textwidth=79                   " width of document (used by gd)
 set nowrap                  " don't automatically wrap on load
 set formatoptions-=t                   " don't automatically wrap text when typing
-
+"} ===
 
 
 "=================================================================
-" Search
+" Search {
 "=================================================================
 set ignorecase             " Ignore case in search patterns
 set smartcase              " Don't ignore case if pattern contains it
 set incsearch              " Show the 'best match so far'
 set hlsearch               " Highlight all matches
-
+"} ===
 
 
 "=================================================================
-" Programming
+" Programming {
 "=================================================================
 set autoindent                 " Keep indent level on new line
 set nosmartindent              " Intelligent indenting for source code
@@ -559,22 +521,22 @@ set nosmartindent              " Intelligent indenting for source code
 set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch                  " Show matching brackets / parenthesis
 set matchtime=5                " Show matching character for .3s
-
+"} ===
 
 
 "=================================================================
-" Vertical indenting
+" Vertical indenting {
 "=================================================================
 set shiftwidth=4               " Number of spaces used for autoindents
 set tabstop=4                  " Set the tab width to 4
 set softtabstop=4
 set expandtab
 set textwidth=0
-
+"} ===
 
 
 "=================================================================
-" Mappings and Keybindings
+" Mappings and Keybindings {
 "
 "     Every unnecessary keystroke that can be saved is good for
 "     your health :)
@@ -583,20 +545,44 @@ set textwidth=0
 " easier moving between tabs
 noremap <Leader>n <Esc>:tabprevious<CR>
 noremap <Leader>m <Esc>:tabnext<CR>
+"} ===
+
 
 "=================================================================
-" Return to the last position in the file
+" Return to the last position in the file {
 "=================================================================
 augroup return_file_postion
     autocmd!
     au bufreadpost * if line("'\"") > 0 && line("'\"") <= line("$")
                 \ | exe "normal g'\"" | endif
 augroup END
+"} ===
 
 
+
+"=================================================================
+" Custom Start Screen {
+"=================================================================
+let g:ascii = [
+            \ '                                                                       8I            ',
+            \ '       gg                 gg                              gg           8I            ',
+            \ '       ""                 ""                              ""           8I            ',
+            \ '       gg     ggg    gg   gg    ,ggg,,ggg,,ggg,  aaaaaaaa gg     ,gggg,8I   ,ggg,    ',
+            \ '       8I    d8"Yb   88bg 88   ,8" "8P" "8P" "8, """""""" 88    dP"  "Y8I  i8" "8i   ',
+            \ '      ,8I   dP  I8   8I   88   I8   8I   8I   8I          88   i8`    ,8I  I8, ,8I   ',
+            \ '    _,d8I ,dP   I8, ,8I _,88,_,dP   8I   8I   Yb,       _,88,_,d8,   ,d8b, `YbadP`   ',
+            \ '  888P"8888"     "Y8P"  8P""Y88P`   8I   8I   `Y8       8P""Y8P"Y8888P"`Y8888P"Y888  ',
+            \ '     ,d8I`                                                                           ',
+            \ '   ,dP`8I                                                                            ',
+            \ '  ,8"  8I                                                                            ',
+            \ '  I8   8I                                                                            ',
+            \ '  `8, ,8I                                                                            ',
+            \ '   `Y8P"                                                                             ',
+            \ ]
+let g:startify_custom_header = g:ascii + startify#fortune#boxed()
+
+"} ===
 
 "set transparency=5
 "c-support
-"call mmtemplates#config#Add ( 'C', '~/.vim/bundle/c-support/c-support/templates/doxygen.templates', 'Doxygen', 'ntd' )
-
 
