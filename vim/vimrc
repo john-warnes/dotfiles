@@ -100,7 +100,9 @@ else
     let g:gruvbox_italic=1
     set term=xterm-256color
     set t_Co=256
-    set t_ut=set
+    set t_ut=
+    "    set t_ut=set
+    "    set t_ut=y
 endif
 
 if ($TERM ==? 'linux')
