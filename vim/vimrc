@@ -302,6 +302,7 @@ Plug 'ervandew/supertab'
 Plug 'majutsushi/tagbar'
 nnoremap <C-t> :TagbarToggle<CR>
 "map <Leader>y :TagbarToggle<CR>
+nnoremap <silent><C-]> <C-w><C-]><C-w>T
 let g:tagbar_width = 30
 " } ===
 
