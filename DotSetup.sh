@@ -706,16 +706,13 @@ main()
     PatchPlugs
     DecryptSecure
 
-echo '      _       _                 _     _         '
-echo '     (_)_   _(_)_ __ ___       (_) __| | ___    '
-echo '     | \ \ / / | `_ ` _ \ _____| |/ _` |/ _ \   '
-echo '     | |\ V /| | | | | | |_____| | (_| |  __/   '
-echo '    _/ | \_/ |_|_| |_| |_|     |_|\__,_|\___|   '
-echo '   |__/                    ${BOLD}Enjoy a better vim$RESET   '
-echo ''
-
-
-
+    echo '      _       _                 _     _         '
+    echo '     (_)_   _(_)_ __ ___       (_) __| | ___    '
+    echo '     | \ \ / / | `_ ` _ \ _____| |/ _` |/ _ \   '
+    echo '     | |\ V /| | | | | | |_____| | (_| |  __/   '
+    echo '    _/ | \_/ |_|_| |_| |_|     |_|\__,_|\___|   '
+    echo '   |__/                    ${BOLD}Enjoy a better vim$RESET   '
+    echo ''
 
 }
 main "$@"     #remember to pass all command line args
