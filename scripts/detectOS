@@ -2,6 +2,7 @@
 
 if [[ "$(uname)" == 'Darwin' ]]; then 
     export OS="OSX"
+    echo " == OS Detect: $OS == "
     return 0
 fi
 
@@ -17,12 +18,14 @@ case "$OSTYPE" in
     *)        OS="unknown: $OSTYPE" ;;
 esac
 
-if [[  $OS == 'LINUX' ]]; then
-    $DISTRO == $ID ]];
+if [[ "$OS" == 'LINUX' ]]; then
+    DISTRO="$ID"
     export OS
     export DISTRO
+    echo " == OS Detect: $OS/$DISTRO == "
     return 0
 fi
+
 
 return -1
 

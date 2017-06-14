@@ -16,16 +16,27 @@
 #       CREATED: 06/06/2017 04:35:35 PM
 #      REVISION:  ---
 #===============================================================================
-set +o nounset #DO NOT MOVE LEAVE AS FIRST LINE
 
+
+#===============================================================================
+# Check if this has already been run {
+#===============================================================================
 if [[ $DOTFILESAUTO == 1 ]]; then
+    echo " == Jvim Active == "
     return 0
 else
+    echo " == Jvim Autorun Starting == "
     export DOTFILESAUTO=1
 fi
+# } ===
 
-{
-    # Set Dir for env configs
+
+#===============================================================================
+# Python Virtual Environments {
+#===============================================================================
+
+if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
+
     if ! [[ -d $HOME/.virtualenvs ]]; then
         mkdir $HOME/.virtualenvs
     fi
@@ -39,25 +50,36 @@ fi
 
     #what python to use
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+
     source /usr/local/bin/virtualenvwrapper.sh
-}
 
-{
-    if [[ -f $DOTFILES/shell/shell_aliases ]]; then
-    # personal_aliases
+else
+    echo "/usr/local/bin/virtualenvwrapper.sh not found"
+fi
+# } ===
+
+
+#===============================================================================
+# Shell Aliases {
+#===============================================================================
+if [[ -f $DOTFILES/shell/shell_aliases ]]; then
     source $DOTFILES/shell/shell_aliases
-    fi
-}
+fi
+# }
 
-{
-    if [[ -f $DOTFILES/secure/personal_aliases ]]; then
-    # personal_aliases
+
+#===============================================================================
+# Personal Aliases {
+#===============================================================================
+if [[ -f $DOTFILES/secure/personal_aliases ]]; then
     source $DOTFILES/secure/personal_aliases
-    fi
-}
+fi
+# }
 
 
-{
+#===============================================================================
+# OSX Bash Completion {
+#===============================================================================
 if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
     if [ -f $(brew --prefix)/etc/bash_completion ]; then
         source $(brew --prefix)/etc/bash_completion
@@ -66,8 +88,7 @@ if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
         echo " == OSX Bash Completion NOT FOUND == "
     fi
 fi
-}
+# }
 
-echo " == Autorun Completed == "
 
-set +o nounset   #DO NOT MOVE LEAVE AS LAST LINE - Can add anytihng above if needed
+echo " == Jvim Autorun Completed and Active == "

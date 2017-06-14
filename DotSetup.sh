@@ -95,7 +95,7 @@ ScriptSettings()
     #Directory Setup
     DOTFILES=$HOME/dotfiles
     LOCALBIN=~/.local/bin
-    ENV_FILES=($HOME/.profile $HOME/.bash_profile $HOME/.bashrc $HOME/.zshrc $HOME/.bash_login)
+    ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.profile $HOME/.bashrc $HOME/.zshrc)
 
     #Optional
     OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags'
@@ -634,10 +634,6 @@ AddToEnvironment()
                 echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
                 echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
                 echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
-                #Also export then for any subscript of this install script
-
-                export DOTFILES="$DOTFILES"
-                export PATH="$PATH:$DOTFILES/scripts"
             fi
         else
            echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
@@ -649,11 +645,11 @@ AddToEnvironment()
         RCFILE="~/.bash_profile"
         echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
         echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
-        echo 'export PATH="$PATH:$DOTFILES/scripts"' >> $RCFILE
-        echo 'source $DOTFILES/scripts/autorun.sh"' >> $RCFILE
-        #echo 'source $DOTFILES/shell/shell_aliases"' >> $RCFILE
+        echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
+        echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
     fi
-    #Also export then for any supscript of this install script
+
+    #Also export then for any subscript this script runs
     export DOTFILES="$DOTFILES"
     export PATH="$PATH:$DOTFILES/scripts"
     echo ""
