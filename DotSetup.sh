@@ -18,6 +18,10 @@ set -o nounset
 
 clear
 
+#
+#  MAC OS fix bash completion: brew install bash-completion
+#
+
 DetectOS()
 {
     # IDs help ---> https://github.com/zyga/os-release-zoo

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [[ "$(uname)" == 'Darwin' ]]; then 
+    export OS="OSX"
+    return 0
+fi
+
+# IDs help ---> https://github.com/zyga/os-release-zoo
+source /etc/os-release    #Load OS VARS
+
+case "$OSTYPE" in
+    solaris*) OS='SOLARIS' ;;
+    darwin*)  OS='OSX' ;;
+    linux*)   OS='LINUX' ;;
+    bsd*)     OS='BSD' ;;
+    msys*)    OS='WINDOWS' ;;
+    *)        OS="unknown: $OSTYPE" ;;
+esac
+
+if [[  $OS == 'LINUX' ]]; then
+    $DISTRO == $ID ]];
+    export OS
+    export DISTRO
+    return 0
+fi
+
+return -1
+
