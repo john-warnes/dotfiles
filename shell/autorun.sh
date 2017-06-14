@@ -54,7 +54,8 @@ if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
     source /usr/local/bin/virtualenvwrapper.sh
 
 else
-    echo "/usr/local/bin/virtualenvwrapper.sh not found"
+    echo " == Python Virtual Env Wrapper NOT FOUND == "
+    echo "    /usr/local/bin/virtualenvwrapper.sh     "
 fi
 # } ===
 
