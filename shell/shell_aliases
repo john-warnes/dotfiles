@@ -19,6 +19,10 @@ elif [[ $OS == 'OSX' ]]; then
     alias la='ls -GFha' 
     alias lr='ls -Gfhlrt'
 
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+
 fi
 
 # Tmux alias
@@ -41,5 +45,10 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 #git
 alias gits='git status'
 alias gita='git add'
+
+if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]] && [[ -f /usr/local/etc/bash_completion ]]; then
+    source /usr/local/etc/bash_completion
+    echo " == OSX Bash Completion Loaded == "
+fi
 
 echo " == Shell Aliases Loaded == "
