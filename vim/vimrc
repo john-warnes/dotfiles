@@ -235,7 +235,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'   "Lots of themes
 set laststatus=2
 let g:airline_powerline_fonts = 1
-let g:airline_section_c = '%F'
+"let g:airline_section_c = '%F'
 "let g:airline_theme='base16'
 "let g:airline_theme='murmur'
 "let g:airline_theme='powerlineish'
@@ -495,7 +495,7 @@ set hlsearch               " Highlight all matches
 "=================================================================
 set autoindent                 " Keep indent level on new line
 set nosmartindent              " Intelligent indenting for source code
-"set cindent                   " Intelligent indenting for source code
+set cindent                    " Intelligent indenting for source code
 set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch                  " Show matching brackets / parenthesis
 set matchtime=5                " Show matching character for .3s

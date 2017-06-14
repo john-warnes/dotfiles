@@ -628,7 +628,7 @@ AddToEnvironment()
                 echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
                 echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
                 echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
-                #Also export then for any supscript of this install script
+                #Also export then for any subscript of this install script
 
                 export DOTFILES="$DOTFILES"
                 export PATH="$PATH:$DOTFILES/scripts"
@@ -645,6 +645,7 @@ AddToEnvironment()
         echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
         echo 'export PATH="$PATH:$DOTFILES/scripts"' >> $RCFILE
         echo 'source $DOTFILES/scripts/autorun.sh"' >> $RCFILE
+        echo 'source $DOTFILES/shell/shell_aliases"' >> $RCFILE
     fi
     #Also export then for any supscript of this install script
     export DOTFILES="$DOTFILES"
