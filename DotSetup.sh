@@ -556,6 +556,8 @@ CreateGitConfig()
     status = auto
 [push]
     default = matching
+[credential]
+    helper = cache --timeout=28800
 [alias]
     export = archive -o latest.tar.gz -9 --prefix=latest/
     amend = !git log -n 1 --pretty=tformat:%%s%%n%%n%%b | git commit -F - --amend
