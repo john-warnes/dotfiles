@@ -19,7 +19,11 @@ set -o nounset
 clear
 
 #
-#  MAC OS fix bash completion: brew install bash-completion
+#    MAC OS fix bash completion
+#
+#   brew install bash-completion
+#   brew install git
+#   brew link git
 #
 
 DetectOS()

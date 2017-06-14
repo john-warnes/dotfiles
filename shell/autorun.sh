@@ -24,7 +24,6 @@ else
     export DOTFILESAUTO=1
 fi
 
-VirtualEnvWrapper()
 {
     # Set Dir for env configs
     if ! [[ -d $HOME/.virtualenvs ]]; then
@@ -42,25 +41,32 @@ VirtualEnvWrapper()
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
     source /usr/local/bin/virtualenvwrapper.sh
 }
-VirtualEnvWrapper
 
-LoadShellAliases()
 {
     if [[ -f $DOTFILES/shell/shell_aliases ]]; then
     # personal_aliases
     source $DOTFILES/shell/shell_aliases
     fi
 }
-LoadShellAliases
 
-LoadPersonalAliases()
 {
     if [[ -f $DOTFILES/secure/personal_aliases ]]; then
     # personal_aliases
     source $DOTFILES/secure/personal_aliases
     fi
 }
-LoadPersonalAliases
+
+
+{
+if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
+    if [ -f $(brew --prefix)/etc/bash_completion ]; then
+        source $(brew --prefix)/etc/bash_completion
+        echo " == OSX Bash Completion Loaded == "
+    else
+        echo " == OSX Bash Completion NOT FOUND == "
+    fi
+fi
+}
 
 echo " == Autorun Completed == "
 
