@@ -81,7 +81,7 @@ DetectOS()
 #       RETURNS:  None
 #-------------------------------------------------------------------------------
 ScriptSettings()
-        {
+{
     SCRIPTNAME="WSU JCustom VIM IDE"
 
     #Directory Setup
@@ -99,10 +99,8 @@ ScriptSettings()
         PKGS='git vim python3 curl'
     fi
 
-    FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/shell/shell_aliases $DOTFILES/shell/shell_aliases \
-        $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
-    LINKS=(           ~/.vimrc        ~/.vim               ~/.bash_aliases               ~/.zsh_aliases \
-                    ~/.tmux.conf             ~/.vimrc            ~/.gitconfig)
+    FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
+    LINKS=(           ~/.vimrc        ~/.vim ~/.tmux.conf             ~/.vimrc            ~/.gitconfig)
 
     #Global Vars (Auto Set - Changing will have BAD effects)
     ADMIN=0
@@ -582,10 +580,10 @@ ManageFilesAndLinks()
     mkdir -p $DOTFILES/vim/colors
     wget -O $DOTFILES/vim/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 
-    if [[  -f ~/.zshrc && $ZSH == true ]]; then
-        echo "Appending soruces to$BOLD$GREEN ~/.zshrc$RESET"
-        echo "source ~/.zsh_aliases" >> ~/.zshrc
-    fi
+    #if [[  -f ~/.zshrc && $ZSH == true ]]; then
+    #    echo "Appending soruces to$BOLD$GREEN ~/.zshrc$RESET"
+    #    echo "source ~/.zsh_aliases" >> ~/.zshrc
+    #fi
 
     echo ""
 }
@@ -645,7 +643,7 @@ AddToEnvironment()
         echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
         echo 'export PATH="$PATH:$DOTFILES/scripts"' >> $RCFILE
         echo 'source $DOTFILES/scripts/autorun.sh"' >> $RCFILE
-        echo 'source $DOTFILES/shell/shell_aliases"' >> $RCFILE
+        #echo 'source $DOTFILES/shell/shell_aliases"' >> $RCFILE
     fi
     #Also export then for any supscript of this install script
     export DOTFILES="$DOTFILES"

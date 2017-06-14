@@ -44,6 +44,15 @@ VirtualEnvWrapper()
 }
 VirtualEnvWrapper
 
+LoadShellAliases()
+{
+    if [[ -f $DOTFILES/shell/shell_aliases ]]; then
+    # personal_aliases
+    source $DOTFILES/shell/shell_aliases
+    fi
+}
+LoadShellAliases
+
 LoadPersonalAliases()
 {
     if [[ -f $DOTFILES/secure/personal_aliases ]]; then
