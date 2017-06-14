@@ -102,9 +102,9 @@ ScriptSettings()
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper'
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
-        PKGS='git vim python3 curl'
+        PKGS='git vim python3 curl bc'
     elif [[  $OS == 'OSX' ]]; then  #OSX
-        PKGS='git vim python3 curl'
+        PKGS='git vim python3 curl bc'
     fi
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
