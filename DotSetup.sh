@@ -184,7 +184,9 @@ Remove()
 #-------------------------------------------------------------------------------
 Upgrade()
 {
-    vim +PlugClean +PlugInstall +PlugUpdate +qall
+    unlink ~/.bash_aliases
+    unlink ~/.zsh_aliases
+    vim +PlugInstall +PlugUpdate +PlugClean +qall
     exit 0
 }
 

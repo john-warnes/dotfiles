@@ -172,14 +172,12 @@ let g:NERDTreeIndicatorMapCustom = {
 "=================================================================
 if has('job') && has ('timers')
 
+    Plug 'w0rp/ale'
     set noshowmode
     let g:airline#extensions#ale#enabled = 1
-    Plug 'w0rp/ale'
     let g:ale_sign_column_always = 1
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '--'
-
-    "    let g:ale_c_cppcheck_options = '--enable=style' " --suppress=memleak:src/file1.cpp src/
     let g:ale_history_log_output=1  " use ALEInfo to see the full output if needed
 
     " Write this in your vimrc file
@@ -223,13 +221,14 @@ augroup end
 "=================================================================
 " Airline Status Line {
 "=================================================================
+let g:airline#extensions#tagbar#enabled = 0
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'   "Lots of themes
 set laststatus=2
 let g:airline_powerline_fonts = 1
 "let g:airline_section_c = '%F'
 "let g:airline_theme='base16'
-"let g:airline_theme='murmur'
+let g:airline_theme='murmur'
 "let g:airline_theme='powerlineish'
 let g:airline#extensions#tmuxline#enabled = 1
 let g:airline#extensions#tmuxline#color_template = 'insert'
