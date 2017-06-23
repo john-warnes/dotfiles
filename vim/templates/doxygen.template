@@ -519,4 +519,4 @@ xrefitem
 |Substitute( 'f}', 'fcurlyclose', '' )|
 |Browser( '|HelpPathDoxygen|#cmd|PICK|', '|HelpPathDoxygen|' )|
 == ENDTEMPLATE ==
-== ENDSTYLES ==
+§== ENDSTYLES ==
