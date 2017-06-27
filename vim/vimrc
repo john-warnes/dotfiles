@@ -128,7 +128,8 @@ call plug#begin('~/.vim/bundle')
 "=================================================================
 " NerdTree to see files in tree mode {
 "=================================================================
-let g:JV_showEol=1                                "Show EOL marker
+let g:JV_showEol=1       " Show EOL marker
+let g:JV_codePretty = 1  " Show indent guides when
 Plug 'john-warnes/jvim'
 "} ===
 
@@ -378,6 +379,14 @@ Plug 'mhinz/vim-startify'
 
 
 "=================================================================
+" Tabular Test Alignment Tool {
+"=================================================================
+" :Tab /<char> to align on <char> SLoad
+Plug 'godlygeek/tabular'
+
+
+"} ===
+"=================================================================
 "=####################= END Plugin System =######################=
 "=================================================================
 call plug#end()
@@ -474,7 +483,8 @@ set formatoptions-=t                   " don't automatically wrap text when typi
 "=================================================================
 " Search {
 "=================================================================
-set ignorecase             " Ignore case in search patterns
+"set ignorecase             " Ignore case in search patterns
+set infercase              " Same as ignorecase but does not mess with autocomplete
 set smartcase              " Don't ignore case if pattern contains it
 set incsearch              " Show the 'best match so far'
 set hlsearch               " Highlight all matches
