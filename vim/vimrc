@@ -176,7 +176,7 @@ if has('job') && has ('timers')
     Plug 'w0rp/ale'
     set noshowmode
     let g:airline#extensions#ale#enabled = 1
-    let g:ale_sign_column_always = 1
+"    let g:ale_sign_column_always = 1
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '--'
     let g:ale_history_log_output=1  " use ALEInfo to see the full output if needed
@@ -383,9 +383,14 @@ Plug 'mhinz/vim-startify'
 "=================================================================
 " :Tab /<char> to align on <char> SLoad
 Plug 'godlygeek/tabular'
-
-
 "} ===
+
+
+
+" Vim Startup Time Profiler run  :StartupTime
+Plug 'tweekmonster/startuptime.vim'
+
+
 "=================================================================
 "=####################= END Plugin System =######################=
 "=================================================================
@@ -474,9 +479,9 @@ vnoremap <Leader>s :sort<CR>
 set ruler                   " Show the line / column number of cursor
 set showcmd                 " Show the partially completed command
 set number                  " Display line number"
-set textwidth=79                   " width of document (used by gd)
+set textwidth=79            " width of document (used by gd)
 set nowrap                  " don't automatically wrap on load
-set formatoptions-=t                   " don't automatically wrap text when typing
+set formatoptions-=t        " don't automatically wrap text when typing
 "} ===
 
 
@@ -484,9 +489,11 @@ set formatoptions-=t                   " don't automatically wrap text when typi
 " Search {
 "=================================================================
 "set ignorecase             " Ignore case in search patterns
-set infercase              " Same as ignorecase but does not mess with autocomplete
+set infercase              " Don't ignore case in auto completion
+                           "  but do Ignore it in search patterns
 set smartcase              " Don't ignore case if pattern contains it
 set incsearch              " Show the 'best match so far'
+set wrapscan               " Search will wrap around the file
 set hlsearch               " Highlight all matches
 "} ===
 
