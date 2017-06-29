@@ -25,11 +25,22 @@ if [[ $DOTFILESAUTO == 1 ]]; then
     echo " == Jvim Active == "
     return 0
 else
-    echo " == Jvim Autorun Starting == "
-    export DOTFILESAUTO=1
+    echo " == Jvim Autorun == "
+    export DOTFILESAUTO=0
 fi
 # } ===
 
+#===============================================================================
+# Detect OS {
+#===============================================================================
+
+if [[ -f $DOTFILES/scripts/detectOS ]]; then
+    source $DOTFILES/scripts/detectOS
+fi
+
+# } ===
+
+printf " == "
 
 #===============================================================================
 # Python Virtual Environments {
@@ -52,10 +63,9 @@ if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 
     source /usr/local/bin/virtualenvwrapper.sh
-
+    printf "[Python Virtual Env Wrapper] "
 else
-    echo " == Python Virtual Env Wrapper NOT FOUND == "
-    echo "    /usr/local/bin/virtualenvwrapper.sh     "
+    printf "[Python Virtual Env Wrapper NOT FOUND] "
 fi
 # } ===
 
@@ -84,12 +94,31 @@ fi
 if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
     if [ -f $(brew --prefix)/etc/bash_completion ]; then
         source $(brew --prefix)/etc/bash_completion
-        echo " == OSX Bash Completion Loaded == "
+        printf "[OSX Bash Completion] "
     else
-        echo " == OSX Bash Completion NOT FOUND == "
+        printf "[OSX Bash Completion NOT FOUND] "
     fi
 fi
 # }
 
 
-echo " == Jvim Autorun Completed and Active == "
+
+#===============================================================================
+# Bash Git-Prompt {
+#===============================================================================
+if [[ $SHELL == '/bin/bash' ]]; then
+    if [[ -f $DOTFILES/shell/git-prompt.sh ]]; then
+        source $DOTFILES/shell/git-prompt.sh
+
+        export GIT_PS1_SHOWCOLORHINTS=1
+        #PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
+        PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "'
+        printf "[Bash Git Prompt] "
+    else
+        printf "[Bash Git Prompt NOT FOUND] "
+    fi
+fi
+# }
+
+printf " == \n"
+echo " == ready == "
