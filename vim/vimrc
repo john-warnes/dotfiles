@@ -42,6 +42,9 @@ let g:powerlineFonts= [
             \]
 
 let g:font='DejaVu Sans Mono for Powerline'
+if has('gui_running')
+    set guifont=DejaVu\ Sans\ Mono\ for\ Powerline
+endif
 let g:fontsize='11'
 
 function! GnomeTermSetFont()
@@ -183,8 +186,8 @@ if has('job') && has ('timers')
 
     " Write this in your vimrc file
     "let g:ale_set_loclist = 1
-    let g:ale_set_quickfix = 1
-    let g:ale_open_list = 1
+    "let g:ale_set_quickfix = 1
+    "let g:ale_open_list = 1
     " Set this if you want to.
     " This can be useful if you are combining ALE with
     " some other plugin which sets quickfix errors, etc.
@@ -250,9 +253,10 @@ Plug 'tpope/vim-rhubarb'
 "=================================================================
 " Language Support {
 "=================================================================
-let g:C_CreateMenusDelayed = 'yes'
-let g:C_MapLeader  = ','
-Plug 'WolfgangMehner/c-support'
+"let g:C_CreateMenusDelayed = 'yes'
+"let g:C_MapLeader  = ','
+"Plug 'WolfgangMehner/c-support'
+"
 "let g:C_UseToolbox = 'yes'
 "let g:C_UseTool_doxygen = 'yes'
 "let g:C_UseTool_cmake = 'yes'
@@ -545,7 +549,39 @@ augroup END
 "} ===
 
 
+"=================================================================
+" UltiSnips FileType Templates {
+"=================================================================
+if !exists('g:UltiSnipsExpandTrigger')
+    finish
+endif
 
+function! s:Try_insert(skel)
+    execute "normal! i_" . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
+    
+    if (g:ulti_expand_res == 0)
+        silent! undo
+    endif
+
+    return g:ulti_expand_res
+endfunction
+
+function! InsertSkeleton() abort
+    let l:filename = expand('%')
+
+    " Abort on non-empty buffer or extant file
+    if !(line('$') ==? 1 && getline('$') ==? '') || filereadable(l:filename)
+        return
+    endif
+
+    call s:Try_insert('skel')
+endfunction
+" } ===
+
+augroup ultisnips_custom
+    autocmd!
+    autocmd BufNewFile * silent! call InsertSkeleton()
+augroup END
 "=================================================================
 " Custom Start Screen {
 "=================================================================

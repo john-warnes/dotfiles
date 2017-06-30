@@ -34,7 +34,7 @@ snippet beginend "$1.begin(), $1.end() (beginend)"
 ${1:v}${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), $1${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()
 endsnippet
 
-snippet cl "class .. (class)"
+snippet class "class .. (class)"
 class ${1:`!p snip.rv = snip.basename or "name"`}
 {
 public:
@@ -72,7 +72,7 @@ snippet vector "std::vector (v)"
 std::vector<${1:char}> v$0;
 endsnippet
 
-snippet tp "template <typename ..> (template)"
+snippet template "template <typename ..> (template)"
 template <typename ${1:_InputIter}>
 endsnippet
 
@@ -109,7 +109,40 @@ ${1:ReturnType} ${2:FunctionName}(${3:param})
 endsnippet
 
 
-# 
+
+snippet if "if ... then (if)"
+if ( ${1:condition} )
+{
+	${0:#statements}
+{
+endsnippet
+
+
+
+snippet _skel "cpp / c skeletion" b
+/** ============================================================================
+ *  @file  `!v expand('%:t')`
+ *  @brief ${1:Description}
+ *
+ *  @author ${2:Full Name}
+ *
+ *  @internal
+ *       Created:  `date +%d.%b.%Y`
+ *      Revision:  none
+ *      Compiler:  gcc
+ *  Organization:  ${3:Organization}
+ *     Copyright:  Copyright (c) `date +%Y`, $2
+ *
+ *  This source code is released for free distribution under the terms of the
+ *  GNU General Public License as published by the Free Software Foundation.
+ * =============================================================================
+ */
+
+$0
+endsnippet
+
+
+#
 # ################################################ One offs below  
 #
 
@@ -133,5 +166,6 @@ endsnippet
 snippet dox "Doxygen general comment"
 /*! ${1} */${2}
 endsnippet
+
 
 # vim:ft=snippets:
