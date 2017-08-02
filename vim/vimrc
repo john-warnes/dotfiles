@@ -549,6 +549,18 @@ augroup END
 "} ===
 
 
+
+"=================================================================
+" Return to the last position in the file {
+"=================================================================
+augroup shift-K
+    autocmd!
+    autocmd FileType cpp set keywordprg=cppman
+    autocmd FileType c set keywordprg=man\ -S3
+augroup END
+"} ===
+
+
 "=================================================================
 " UltiSnips FileType Templates {
 "=================================================================
@@ -582,6 +594,8 @@ augroup ultisnips_custom
     autocmd!
     autocmd BufNewFile * silent! call InsertSkeleton()
 augroup END
+
+
 "=================================================================
 " Custom Start Screen {
 "=================================================================

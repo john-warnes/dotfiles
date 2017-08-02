@@ -98,7 +98,7 @@ ScriptSettings()
     ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.profile $HOME/.bashrc $HOME/.zshrc)
 
     #Optional
-    OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags'
+    OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper'
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
