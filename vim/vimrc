@@ -18,6 +18,13 @@ setlocal keywordprg=:help
 
 
 "=================================================================
+" Notes {
+"=================================================================
+" run make without changing files on eorror and open list
+"       :make! | copen
+" } ===
+
+"=================================================================
 " Gnome-Terminal Font Control  Note: Only Gnome-Terminal {
 "=================================================================
 " <F7> cycle though mono powerline fonts
