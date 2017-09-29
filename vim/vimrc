@@ -500,7 +500,7 @@ set formatoptions-=t        " don't automatically wrap text when typing
 " Search {
 "=================================================================
 set ignorecase             " Ignore case in search patterns
-set infercase              " Don't ignore case in auto completion
+set noinfercase              " Don't ignore case in auto completion
                            "  but do Ignore it in search patterns
 set smartcase              " Don't ignore case if pattern contains it
 set incsearch              " Show the 'best match so far'
