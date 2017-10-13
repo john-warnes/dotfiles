@@ -20,6 +20,8 @@
 SECURE=$DOTFILES/secure
 SCRIPTS=$DOTFILES/scripts
 
+DATE=`date +%Y-%m-%d`
+
 if [[ -f "$SCRIPTS/colors.sh" ]]; then
     source $SCRIPTS/colors.sh
 fi
@@ -41,3 +43,15 @@ fi
 
 echo "$BOLD${BLUE}Shredding$RESET$BOLD old tar.xz$RESET"
 (shred -n 9 -uzf $SECURE/secure.tar.xz)
+
+if [[ -d $SECURE ]]; then
+    if [[ -f $SECURE/secure.tar.xz.gpg ]]; then
+       (cd $SECURE && git add -u)
+       (cd $SECURE && git commit -m "Updated Secure File $DATE")
+       (cd $SECURE && git push)
+    else
+        echo "ERROR File $SECURE/secure.tar.xz.gpg not found"
+    fi
+else
+    echo "ERROR Directory $SECURE not found"
+fi
