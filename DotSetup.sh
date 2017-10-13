@@ -684,6 +684,7 @@ main()
     GetUserInfo   # Get user information
 
     ManageFilesAndLinks   #Create Dirs Copy Files and Make Links
+
     AddToEnvironment
 
     #Install Powerline Fonts?
@@ -698,15 +699,16 @@ main()
     CreatePersonalTemplate
     CreateGitConfig
 
-    if [[ "$ZSH" == true ]]; then
-        echo "Downloading and installing: oh-my-zsh"
-        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-    fi
-
     vim +PlugInstall +qall #Installs the vim plugin system and updates all plugins
 
     PatchPlugs
     DecryptSecure
+
+    if [[ "$ZSH" == true ]]; then
+        echo "Downloading and installing: oh-my-zsh"
+        sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+        AddToEnvironment
+    fi
 
     echo '      _       _                 _     _         '
     echo '     (_)_   _(_)_ __ ___       (_) __| | ___    '
