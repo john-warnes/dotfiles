@@ -454,7 +454,8 @@ inoremap <C-n> <Esc>:nohl<CR>i
 " Tags {
 "=================================================================
 nnoremap <Leader>t
-            \ :silent execute '!(ctags -R -f %:p:h/tags *)&'<CR>
+            \ :silent execute '!(rm tags)'<CR>
+            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
             \ :redraw!<CR>
             \ :echom 'Generating cTags'<CR>
 execute 'set tags=./tags;~/.vim/tags;tags;'
