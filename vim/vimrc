@@ -113,6 +113,10 @@ if ($TERM ==? 'linux')
     set t_Co=8
 endif
 
+if has('macos')
+    let g:gruvbox_italic=0
+endif
+
 if has('mac')
     let g:gruvbox_italic=0
 endif
@@ -213,13 +217,13 @@ else
 
     let g:syntastic_always_populate_loc_list = 1
     let g:syntastic_auto_loc_list = 1
-    let g:syntastic_check_on_open = 1
+    let g:syntastic_check_on_open = 0
     let g:syntastic_check_on_wq = 0
     let g:syntastic_mode_map = {
                 \ 'mode': 'active',
                 \ 'passive_filetypes': ['python'] }
-    "nnoremap <C-F8> :SyntasticToggleMode<CR>
-    "nnoremap <F8> :SyntasticCheck<CR>
+    nnoremap <C-F8> :SyntasticToggleMode<CR>
+    nnoremap <F8> :SyntasticCheck<CR>
 endif
 
 augroup signcolumn
@@ -318,7 +322,7 @@ let g:tagbar_width = 30
 " gruvbox colorschene {
 "=================================================================
 Plug 'morhetz/gruvbox'
-" let g:gruvbox_italic=1
+" let g:gruvbox_italic=0
 " F5 to switch from dark to light
 " F6 to cycle the 3 levels of contrast
 
@@ -578,7 +582,7 @@ endif
 
 function! s:Try_insert(skel)
     execute "normal! i_" . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
-    
+
     if (g:ulti_expand_res == 0)
         silent! undo
     endif

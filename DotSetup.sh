@@ -114,7 +114,7 @@ ScriptSettings()
     ADMIN=0
     WSU=0
     TMUX=0
-    ZSH=0
+    USEZSH=0
 }
 
 
@@ -381,7 +381,7 @@ Setup()
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
-        y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; ZSH=true;;
+        y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; USEZSH=true;;
     esac
     echo ""
 }
@@ -706,7 +706,7 @@ main()
     PatchPlugs
     DecryptSecure
 
-    if [[ "$ZSH" == true ]]; then
+    if [[ "$USEZSH" == true ]]; then
         echo "Downloading and installing: oh-my-zsh"
         sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
         AddToEnvironment
