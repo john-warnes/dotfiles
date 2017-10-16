@@ -168,6 +168,8 @@ Remove()
     rm -f $DOTFILES/git/gitconfig
     rm -f $DOTFILES/vim/template/personal.template
 
+    rm -f $HOME/.vimrc
+
     echo "Remove Complete$RESET"
     echo ""
     exit -1
