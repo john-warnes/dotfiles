@@ -459,11 +459,13 @@ GetUserInfo()
     read -p "${RESET}Enter$BOLD$BLUE Full Name$RESET ex\"John Doe\": $GREEN" name
     read -p "${RESET}Enter$BOLD$BLUE Author Ref$RESET ex\"jdoe\": $GREEN" ref
     read -p "${RESET}Enter$BOLD$BLUE Email Address$RESET ex\"JohnD@mail.weber.edu\": $GREEN" email
-    read -p "${RESET}Enter$BOLD$BLUE Oganization$RESET ex\"WSU\": $GREEN" org
-    read -p "${RESET}Enter$BOLD$BLUE Company$RESET ex\"WSU\": $GREEN" com
-    read -p "${RESET}Enter$BOLD$BLUE Default License$RESET (hit enter for default): $GREEN" license
-    if [[  -z "$license" ]]; then
-        license='this program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program.  If not, see <http://www.gnu.org/licenses/>\n.'
+    read -p "${RESET}Enter$BOLD$BLUE Organization$RESET ex\"Computer Science\": $GREEN" org
+    read -p "${RESET}Enter$BOLD$BLUE Company$RESET ex\"Weber State University\": $GREEN" com
+    read -p "${RESET}Enter$BOLD$BLUE Default License line 1$RESET (hit enter for default): $GREEN" license1
+    read -p "${RESET}Enter$BOLD$BLUE Default License line 2$RESET (hit enter for default): $GREEN" license2
+    if [[ -z "$license1" ]]; then
+        license1='This source code is released for free distribution under the terms of the'
+        license2='GNU General Public License as published by the Free Software Foundation.'
     fi
     printf "$RESET"
 }
@@ -505,8 +507,14 @@ CreatePersonalTemplate()
 {
 echo "Creaing User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template.csv$RESET"
 
-printf "AUTHOR:'%s', AUTHORREF':'%s', EMAIL:'%s', ORGANIZATION:'%s', COMPANY:'%s'
-" "$name" "$ref" "$email" "$org" "$com" > $DOTFILES/vim/templates/personal.template.csv
+printf "AUTHOR,%s
+AUTHORREF,%s
+EMAIL,%s
+ORGANIZATION,%s
+COMPANY,%s
+LICENSE1,%s
+LICENSE2,%s
+" "$name" "$ref" "$email" "$org" "$com" "$ref" "$license1" "$lisence2" > $DOTFILES/vim/templates/personal.template.csv
 
 echo "Creaing User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template$RESET"
 
@@ -520,7 +528,7 @@ SetMacro( 'EMAIL',        '%s' )
 SetMacro( 'ORGANIZATION', '%s' )
 SetMacro( 'COMPANY',      '%s' )
 SetMacro( 'COPYRIGHT',    'Copyright (c) |YEAR|, |AUTHOR|' )
-SetMacro( 'LICENSE',      '%s' )
+SetMacro( 'LICENSE',      '|AUTHOR|' )
 
 § =============================================================
 §  Date and Time Format

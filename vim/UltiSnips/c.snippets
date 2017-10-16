@@ -5,31 +5,50 @@ extends c
 # We want to overwrite everything in parent ft.
 priority -49
 ###########################################################################
-#			    Global functions 						  #
+#                Global functions                           #
 ###########################################################################
 
 global !p
 
+import csv
+
+#def read_user_dict():
+from os.path import expandvars
+userfile = expandvars("$DOTFILES/vim/templates/personal.template.csv")
+userinfo = reader = dict(csv.reader(open(userfile, mode='r')))
+
+def print_dict():
+	snip.rv = str(userinfo)
+
+
 def write_docstring_args(arglist, snip):
-	args = str(arglist).split(',')
+    args = str(arglist).split(',')
 
-	if len(args) > 1:
-		c = 0
-		for arg in args:
-			if c == 0:
-				snip.rv += arg
-				c = 1
-			else:
-				snip += '*       : %s' % arg.strip()
-	else:
-		snip.rv = args[0]
+    if len(args) > 1:
+        c = 0
+        for arg in args:
+            if c == 0:
+                snip.rv += arg
+                c = 1
+            else:
+                snip += '*       : %s' % arg.strip()
+    else:
+        snip.rv = args[0]
 
+# "../templates/personal.template.csv"
+# "$DOTFILES/vim/templates/personal.template.csv"
 
 endglobal
 
-###########################################################################
-#                            TextMate Snippets                            #
-###########################################################################
+##################################################################
+#                            Snippets                            #
+##################################################################
+
+
+snippet dopy "Basic c++ doxygen function template" b
+`!p print_dict()`
+endsnippet
+
 snippet beginend "$1.begin(), $1.end() (beginend)"
 ${1:v}${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), $1${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()
 endsnippet
@@ -38,18 +57,18 @@ snippet class "class .. (class)"
 class ${1:`!p snip.rv = snip.basename or "name"`}
 {
 public:
-	${1/(\w+).*/$1/} (${2:arguments});
-	virtual ~${1/(\w+).*/$1/} ();
+    ${1/(\w+).*/$1/} (${2:arguments});
+    virtual ~${1/(\w+).*/$1/} ();
 
 private:
-	${0:/* data */}
+    ${0:/* data */}
 };
 endsnippet
 
 snippet ns "namespace .. (namespace)"
 namespace${1/.+/ /m}${1:`!p snip.rv = snip.basename or "name"`}
 {
-	${VISUAL}$0
+    ${VISUAL}$0
 }${1/.+/ \/* /m}$1${1/.+/ *\/ /m}
 endsnippet
 
@@ -57,10 +76,10 @@ snippet readfile "read file (readF)"
 std::vector<char> v;
 if (FILE *fp = fopen(${1:"filename"}, "r"))
 {
-	char buf[1024];
-	while(size_t len = fread(buf, 1, sizeof(buf), fp))
-		v.insert(v.end(), buf, buf + len);
-	fclose(fp);
+    char buf[1024];
+    while(size_t len = fread(buf, 1, sizeof(buf), fp))
+        v.insert(v.end(), buf, buf + len);
+    fclose(fp);
 }
 endsnippet
 
@@ -83,11 +102,11 @@ snippet cla "An entire .h generator" b
 class ${1:`!v substitute(substitute(vim_snippets#Filename('$1','ClassName'),'^.','\u&',''), '_\(\w\)', '\u\1', 'g')`}
 {
 private:
-	$3
+    $3
 
 public:
-	$1();
-	virtual ~$1();
+    $1();
+    virtual ~$1();
 };
 
 #endif /* $2 */
@@ -109,14 +128,12 @@ ${1:ReturnType} ${2:FunctionName}(${3:param})
 endsnippet
 
 
-
 snippet if "if ... then (if)"
 if ( ${1:condition} )
 {
-	${0:#statements}
+    ${0:#statements}
 {
 endsnippet
-
 
 
 snippet _skel "cpp / c skeletion" b
@@ -124,17 +141,18 @@ snippet _skel "cpp / c skeletion" b
  *  @file   `!v expand('%:t')`
  *  @brief  ${1:Description}
  *
- *  @author ${2:Full Name}
+ *  @author ${2:`!p snip.rv = userinfo['AUTHOR']`}
  *
  *  @internal
  *       Created  `date +%d.%b.%Y`
  *      Revision  none
  *      Compiler  gcc
- *  Organization  ${3:Organization}
+ *  Organization  ${3:`!p snip.rv = userinfo['ORGANIZATION']`}
+ *       Company  ${4:`!p snip.rv = userinfo['COMPANY']`}
  *     Copyright  Copyright (c) `date +%Y`, $2
  *
- *  This source code is released for free distribution under the terms of the
- *  GNU General Public License as published by the Free Software Foundation.
+ *  `!p snip.rv = userinfo['LICENCE1']`
+ *  `!p snip.rv = userinfo['LICENCE2']`
  * =============================================================================
  */
 
@@ -149,12 +167,12 @@ endsnippet
 snippet once "Include header once only guard"
 #ifndef ${1:`!p
 if not snip.c:
-	import random, string
-	name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
-	rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
-	snip.rv = ('__%s_%s__' % (name,rand)).upper()
+    import random, string
+    name = re.sub(r'[^A-Za-z0-9]+','_', snip.fn).upper()
+    rand = ''.join(random.sample(string.ascii_letters+string.digits, 8))
+    snip.rv = ('__%s_%s__' % (name,rand)).upper()
 else:
-	snip.rv = snip.c`}
+    snip.rv = snip.c`}
 #define $1
 
 ${0}
