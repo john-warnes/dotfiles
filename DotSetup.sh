@@ -403,7 +403,7 @@ AdminSetup()
     ERRFLAG=false
     APTOPT=''
 
-    # Fix for apt-get linuxes and wsu ipv6 firewall 
+    # Fix for apt-get linuxes and wsu ipv6 firewall
     if [[  $OS == 'LINUX' ]]; then
         if [[ "$WSU" == true ]]; then
             # Fixes for Ubuntu and IPv6 inside WSU
@@ -673,7 +673,7 @@ AddToEnvironment()
 #-------------------------------------------------------------------------------
 main()
 {
-    source ./scripts/colors.sh
+    source scripts/colors.sh
     DetectOS
     ScriptSettings
     Init "$@"     # Remember to pass the command line args $@
@@ -681,10 +681,10 @@ main()
     CheckDeps
 
     if [[ $ADMIN == 1 ]]; then
-	CheckOptional
+    CheckOptional
         AdminSetup
     fi
-    
+
     GetUserInfo   # Get user information
 
     ManageFilesAndLinks   #Create Dirs Copy Files and Make Links
