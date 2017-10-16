@@ -2,5 +2,6 @@ colors
 autoload
 tags
 templates/personal.template
+templates/personal.template.csv
 bundle
 
