@@ -31,16 +31,17 @@ DetectOS()
     # IDs help ---> https://github.com/zyga/os-release-zoo
     SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
 
-    source /etc/os-release    #Load OS VARS
-    case "$OSTYPE" in
-        solaris*) OS="SOLARIS" ;;
-        darwin*)  OS="OSX" ;;
-        linux*)   OS="LINUX" ;;
-        bsd*)     OS="BSD" ;;
-        msys*)    OS="WINDOWS" ;;
-        *)        OS="unknown: $OSTYPE" ;;
-    esac
+    source scripts/detectOS
 
+#    case "$OSTYPE" in
+#        solaris*) OS="SOLARIS" ;;
+#        darwin*)  OS="OSX" ;;
+#        linux*)   OS="LINUX" ;;
+#        bsd*)     OS="BSD" ;;
+#        msys*)    OS="WINDOWS" ;;
+#        *)        OS="unknown: $OSTYPE" ;;
+#    esac
+#
     if [[  $OS == 'LINUX' ]]; then
         if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
             echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
@@ -163,6 +164,7 @@ Remove()
     rm -rf $DOTFILES/vim/bundle
     rm -rf $DOTFILES/vim/autoload
     rm -rf $DOTFILES/vim/colors
+    rm -rf $DOTFILES/vim/undo
 
     #Detete FILE created by the setup
     rm -f $DOTFILES/git/gitconfig
