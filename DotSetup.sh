@@ -44,7 +44,7 @@ DetectOS()
 #
     if [[  $OS == 'LINUX' ]]; then
         if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
-            echo "$BOLD${RED}ERROR:$RESET Undetect Linux: $ID $RESET"
+            echo "$BOLD${RED}ERROR:$RESET Undetected Linux: $ID $RESET"
             echo "Supported:$BOLD$BLUE $SUPPORTEDDISTROS $RESET"
             read -n 1 -p "Attempt to continue? $RESET (y/N): $GREEN" choice
             echo "$RESET"
@@ -114,7 +114,7 @@ ScriptSettings()
     #Global Vars (Auto Set - Changing will have BAD effects)
     ADMIN=0
     WSU=0
-    TMUX=0
+    USETMUX=0
     USEZSH=0
 }
 
@@ -128,15 +128,67 @@ ScriptSettings()
 #-------------------------------------------------------------------------------
 PrintHelp()
 {
-    echo "${RESET}usage: $0 [--administrator] [--remove] [--upgrade] [--decrypt]$RESET"
+    echo "${RESET}usage: $0 [--administrator] [--remove] [--upgrade] [--decrypt] [--backup]$RESET"
     exit 0
 }
 
 
 
 #---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  Remove
-#   DESCRIPTION:  Removes current setup files. Invoke with --remove
+#          NAME:  Backup
+#   DESCRIPTION:  Make a attempt to backup current vim setup. Invoked with --backup
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
+Backup()
+{
+    echo "${BOLD}Backing up current vim setup$RESET"
+
+    pushd .
+
+    cd $HOME
+
+    BACKUPFILE=.jvimbackup.tar
+
+    if [[ -f $BACKUPFILE ]]; then
+
+        read -n 1 -p "${BOLD}${YELLOW}NOTE: ${RESET}Backup file already exists continuing will replace. Continue (Y/n): $GREEN" choice
+        case "$choice" in
+            y|Y ) :;;
+            n|N ) popd;echo "Canceled$RESET";exit 0;;
+            * ) :;;
+        esac
+        echo "$RESET"
+
+        rm $BACKUPFILE
+    fi
+
+    #add .vimrc to tar (create needs to be first)
+    tar -vpcf $BACKUPFILE .vimrc
+
+    #append autoexec targets
+    tar -vprf $BACKUPFILE .bash_profile
+    tar -vprf $BACKUPFILE .bash_login
+    tar -vprf $BACKUPFILE .profile
+    tar -vprf $BACKUPFILE .bashrc
+    tar -vprf $BACKUPFILE .zshrc
+
+    #append other config to tar
+    tar -vprf $BACKUPFILE .tmux.conf
+    tar -vprf $BACKUPFILE .gitconfig
+
+    #append dir to tar
+    tar -vprf $BACKUPFILE .vim
+
+    popd
+    exit 0
+}
+
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  AskRemove
+#   DESCRIPTION:  Asks if you want to removes current setup files. Invoke with --remove
 #    PARAMETERS:  None
 #       RETURNS:  None
 #          Note:  There is NO backup.
@@ -153,7 +205,20 @@ Remove()
         * ) echo "Canceled$RESET";exit 0;;
     esac
 
+    Remove
+}
 
+
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  Remove
+#   DESCRIPTION:  Removes current setup files.
+#    PARAMETERS:  None
+#       RETURNS:  None
+#          Note:  There is NO backup.
+#-------------------------------------------------------------------------------
+Remove()
+{
     #Unlimk FILES
     for LINK in ${LINKS[@]}
     do
@@ -204,7 +269,7 @@ Upgrade()
 #-------------------------------------------------------------------------------
 DecryptSecure()
 {
-    read -n 1 -p "$BOLD${BLUE}Use secure valut?$RESET (You must have a git repository setup) (y/N): $GREEN" choice
+    read -n 1 -p "$BOLD${BLUE}Use secure vault?$RESET (You must have a git repository setup) (y/N): $GREEN" choice
     echo "$RESET"
     case "$choice" in
         y|Y ) :;;
@@ -214,7 +279,6 @@ DecryptSecure()
 
     (cd $DOTFILES && exec git clone $REPO)
     (exec $DOTFILES/scripts/unlock.sh)
-    exit 0
 }
 
 
@@ -239,9 +303,10 @@ Init()
     while [[  $# > 0 ]]; do
         case $1 in
             --administrator) ADMIN=1;;
-            --remove) Remove;;
+            --remove) AskRemove;;
             --upgrade) Upgrade;;
             --decrypt) DecryptSecure;;
+            --backup) Backup;;
             -h|--help|*) PrintHelp;;
         esac;
         shift;
@@ -376,7 +441,7 @@ Setup()
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
-        y|Y|* ) PKGS+=" tmux";OSXPKGS+=" tmux"; TMUX=true;;
+        y|Y|* ) PKGS+=" tmux";OSXPKGS+=" tmux"; USETMUX=true;;
     esac
 
     read -n 1 -p "Setup$BOLD$BLUE zsh$RESET (Y/n): $GREEN" choice
@@ -514,7 +579,7 @@ ORGANIZATION,%s
 COMPANY,%s
 LICENSE1,%s
 LICENSE2,%s
-" "$name" "$ref" "$email" "$org" "$com" "$ref" "$license1" "$lisence2" > $DOTFILES/vim/templates/personal.template.csv
+" "$name" "$ref" "$email" "$org" "$com" "$ref" "$license1" "$license2" > $DOTFILES/vim/templates/personal.template.csv
 
 echo "Creaing User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template$RESET"
 
