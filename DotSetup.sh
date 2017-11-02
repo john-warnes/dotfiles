@@ -193,10 +193,10 @@ Backup()
 #       RETURNS:  None
 #          Note:  There is NO backup.
 #-------------------------------------------------------------------------------
-Remove()
+AskRemove()
 {
     echo "$RESET${RED}REMOVE$RESET Selected$RESET"
-    echo "NOTE: There is no backup make are you sure?$RESET"
+    echo "NOTE: If you want a backup run ./DotSetup --backup$RESET"
     read -n 1 -p "$BOLD${BLUE}Remove all configuration and files?$RESET (y/N): $GREEN" choice
     echo ""
     case "$choice" in
@@ -524,8 +524,8 @@ GetUserInfo()
     read -p "${RESET}Enter$BOLD$BLUE Full Name$RESET ex\"John Doe\": $GREEN" name
     read -p "${RESET}Enter$BOLD$BLUE Author Ref$RESET ex\"jdoe\": $GREEN" ref
     read -p "${RESET}Enter$BOLD$BLUE Email Address$RESET ex\"JohnD@mail.weber.edu\": $GREEN" email
-    read -p "${RESET}Enter$BOLD$BLUE Organization$RESET ex\"Computer Science\": $GREEN" org
     read -p "${RESET}Enter$BOLD$BLUE Company$RESET ex\"Weber State University\": $GREEN" com
+    read -p "${RESET}Enter$BOLD$BLUE Organization$RESET ex\"Computer Science\": $GREEN" org
     read -p "${RESET}Enter$BOLD$BLUE Default License line 1$RESET (hit enter for default): $GREEN" license1
     read -p "${RESET}Enter$BOLD$BLUE Default License line 2$RESET (hit enter for default): $GREEN" license2
     if [[ -z "$license1" ]]; then
@@ -646,10 +646,11 @@ CreateGitConfig()
     export = archive -o latest.tar.gz -9 --prefix=latest/
     amend = !git log -n 1 --pretty=tformat:%%s%%n%%n%%b | git commit -F - --amend
     details = log -n1 -p --format=fuller
-    logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
+    logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset%%C(auto)%%d%%n%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset%n'
+    logshort = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
     s = status
-    arc = \"!git tag archive/\$1 \$1 -m \"Archived on: \$(date '+%%Y-%%m-%%dT%%H:%%M:%%S%%z')\" && git branch -D \$1 && git push origin -d \$1 \#\"
-    arcl = \"!git tag | grep '^archive' \#\"
+    arc = \"!git tag archive/\$1 \$1 -m \\\"Archived on: \$(date '+%%Y-%%m-%%dT%%H:%%M:%%S%%z')\\\" && git branch -D \$1 && git push origin -d \$1 #\"
+    arcl = \"!git tag | grep '^archive' #\"
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
