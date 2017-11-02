@@ -648,8 +648,8 @@ CreateGitConfig()
     details = log -n1 -p --format=fuller
     logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
     s = status
-    arc = \"!git tag archive/\$1 \$1 && git branch -D \$1\"
-    arcl = \"!git tag | grep '^archive/'\"
+    arc = \"!git tag archive/\$1 \$1 -m \"Archived on: \$(date '+%%Y-%%m-%%dT%%H:%%M:%%S%%z')\" && git branch -D \$1 && git push origin -d \$1 \#\"
+    arcl = \"!git tag | grep '^archive' \#\"
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
