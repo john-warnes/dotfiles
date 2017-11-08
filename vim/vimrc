@@ -347,6 +347,9 @@ function! GruvCycleContrast()
     colorscheme gruvbox
 endfunction
 
+" highlight the current line
+set cursorline
+
 "mapping for Contrast and background changeing keys
 nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
