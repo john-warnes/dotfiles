@@ -100,7 +100,7 @@ ScriptSettings()
 
     #Optional
     OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
-    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper'
+    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
         PKGS='git vim python3 curl bc'
@@ -762,6 +762,8 @@ neovimSetup()
     if [[ -n "$XDG_CONFIG_HOME" ]]; then
         NVIMCFGPATH=$XDG_CONFIG_HOME/nvim
     fi
+
+    mkdir -p $NVIMCFGPATH
 
     printf 'set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
