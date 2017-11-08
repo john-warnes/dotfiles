@@ -570,7 +570,7 @@ InstallPowerlineFonts()
 #-------------------------------------------------------------------------------
 CreatePersonalTemplate()
 {
-echo "Creaing User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template.csv$RESET"
+echo "Creating User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template.csv$RESET"
 
 printf "AUTHOR,%s
 AUTHORREF,%s
@@ -579,9 +579,9 @@ ORGANIZATION,%s
 COMPANY,%s
 LICENSE1,%s
 LICENSE2,%s
-" "$name" "$ref" "$email" "$org" "$com" "$ref" "$license1" "$license2" > $DOTFILES/vim/templates/personal.template.csv
+" "$name" "$ref" "$email" "$org" "$com" "$license1" "$license2" > $DOTFILES/vim/templates/personal.template.csv
 
-echo "Creaing User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template$RESET"
+echo "Creating User Template File:$BOLD$BLUE $DOTFILES/vim/templates/personal.template$RESET"
 
 printf "§ =============================================================
 §  Personal Information
