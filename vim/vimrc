@@ -108,7 +108,7 @@ else
 endif
 
 if ($TERM ==? 'linux')
-    " If Term is linux then we are in a 9 color envermonet
+    " If Term is linux then we are in a 9 color environment
     let g:gruvbox_italic=0
     set t_Co=8
 endif
@@ -127,7 +127,7 @@ endif
 " Leader Key {
 "=================================================================
 " Rebind <Leader> key
-" I like to have it here becuase it is easier to reach than the default and
+" I like to have it here because it is easier to reach than the default and
 " it is next to ``m`` and ``n`` which I use for navigating between tabs.
 let g:mapleader = ','
 "} ===
@@ -140,7 +140,7 @@ call plug#begin('~/.vim/bundle')
 
 
 "=================================================================
-" NerdTree to see files in tree mode {
+" jvim plugin options {
 "=================================================================
 let g:JV_showEol=1       " Show EOL marker
 let g:JV_codePretty = 1  " Show indent guides when
@@ -243,8 +243,9 @@ set laststatus=2
 let g:airline_powerline_fonts = 1
 let g:airline_section_c = '%F'              " Show full Path if possable
 "let g:airline_theme='base16'               " Pick a theme
-let g:airline_theme='murmur'                " or
+"let g:airline_theme='murmur'                " or
 "let g:airline_theme='powerlineish'         " or
+let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tmuxline#enabled = 1
 let g:airline#extensions#tmuxline#color_template = 'insert'
 Plug 'edkolev/tmuxline.vim'     "have airline theme the tmux bar
