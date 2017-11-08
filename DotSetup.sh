@@ -307,6 +307,7 @@ Init()
             --upgrade) Upgrade;;
             --decrypt) DecryptSecure;;
             --backup) Backup;;
+            --hidden) neovimSetup; exit 0;;
             -h|--help|*) PrintHelp;;
         esac;
         shift;
@@ -745,6 +746,33 @@ AddToEnvironment()
 }
 
 
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  neovimSetup
+#   DESCRIPTION:  Add config to start nvim support
+#    PARAMETERS:  none
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+neovimSetup()
+{
+    set +o nounset
+    set +u
+
+    echo "Creating$BOLD$GREEN neovim init.vim$RESET"
+    NVIMCFGPATH=$HOME/.config/nvim
+    if [[ -n "$XDG_CONFIG_HOME" ]]; then
+        NVIMCFGPATH=$XDG_CONFIG_HOME/nvim
+    fi
+
+    printf 'set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+source ~/.vimrc' > $NVIMCFGPATH/init.vim
+
+    echo "Created:$BOLD$BLUE $NVIMCFGPATH/init.vim$RESET"
+
+
+    set -o nounset
+    set -u
+}
 
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  main
@@ -788,6 +816,8 @@ main()
 
     PatchPlugs
     DecryptSecure
+
+    neovimSetup
 
     if [[ "$USEZSH" == true ]]; then
         echo "Downloading and installing: oh-my-zsh"
