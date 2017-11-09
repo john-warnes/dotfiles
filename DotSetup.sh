@@ -103,7 +103,7 @@ ScriptSettings()
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
-        PKGS='git vim python3 curl bc'
+        PKGS='git vim python3 curl bc global'
     elif [[  $OS == 'OSX' ]]; then  #OSX
         PKGS='git vim python3 curl bc'
     fi

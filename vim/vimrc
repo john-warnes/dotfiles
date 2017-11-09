@@ -1,10 +1,8 @@
-"                    _       _                                    "
 "                   (_)_   _(_)_ __ ___  _ __ ___                 "
 "                   | \ \ / / | '_ ` _ \| '__/ __|                "
 "                   | |\ V /| | | | | | | | | (__                 "
 "                  _/ | \_/ |_|_| |_| |_|_|  \___|                "
 "                 |__/                                            "
-"                                                                 "
 "=================================================================
 " Local file settings {
 "=================================================================
@@ -23,6 +21,17 @@ setlocal keywordprg=:help
 " run make without changing files on eorror and open list
 "       :make! | copen
 " } ===
+
+
+"=================================================================
+" Leader Key {
+"=================================================================
+" Rebind <Leader> key
+" I like to have it here because it is easier to reach than the default and
+" it is next to ``m`` and ``n`` which I use for navigating between tabs.
+let g:mapleader = ','
+"} ===
+
 
 "=================================================================
 " Gnome-Terminal Font Control  Note: Only Gnome-Terminal {
@@ -66,6 +75,7 @@ function! GnomeTermCycleFont()
     echom g:font
 endfunction
 
+" Cycle fonts with Gnome Terminal
 nnoremap <F7> :call GnomeTermCycleFont()<CR>
 "} ===
 
@@ -123,14 +133,6 @@ endif
 "} ===
 
 
-"=================================================================
-" Leader Key {
-"=================================================================
-" Rebind <Leader> key
-" I like to have it here because it is easier to reach than the default and
-" it is next to ``m`` and ``n`` which I use for navigating between tabs.
-let g:mapleader = ','
-"} ===
 
 
 "=================================================================
@@ -236,19 +238,22 @@ augroup end
 "=================================================================
 " Airline Status Line and TmuxLine {
 "=================================================================
-let g:airline#extensions#tagbar#enabled = 0 "tagbar plugin is slow disable it
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'   "Lots of themes
+
+let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is slow disable it
+Plug 'vim-airline/vim-airline'              " Airline plugin
+Plug 'vim-airline/vim-airline-themes'       " Many Airline themes
 set laststatus=2
 let g:airline_powerline_fonts = 1
 let g:airline_section_c = '%F'              " Show full Path if possable
-"let g:airline_theme='base16'               " Pick a theme
-"let g:airline_theme='murmur'                " or
-"let g:airline_theme='powerlineish'         " or
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tmuxline#enabled = 1
+
+" let g:airline_theme='base16'       " Pick a theme
+" let g:airline_theme='murmur'       " or
+" let g:airline_theme='powerlineish' " or
+
+let g:airline#extensions#tabline#enabled = 1     " Tabline support
+let g:airline#extensions#tmuxline#enabled = 1    " Airline support for tmux
 let g:airline#extensions#tmuxline#color_template = 'insert'
-Plug 'edkolev/tmuxline.vim'     "have airline theme the tmux bar
+Plug 'edkolev/tmuxline.vim'     " Allows Airline to theme tmux bar
 "} ===
 
 
@@ -256,9 +261,9 @@ Plug 'edkolev/tmuxline.vim'     "have airline theme the tmux bar
 " Fugitive for GIT {
 "=================================================================
 " Try ":Gpush :Gdiff when file in reposory is open
-Plug 'tpope/vim-fugitive'
+" Plug 'tpope/vim-fugitive'
 " Allow :Gbrowse for github and other github support
-Plug 'tpope/vim-rhubarb'
+" Plug 'tpope/vim-rhubarb'
 "} ===
 
 
@@ -303,9 +308,83 @@ augroup END
 "=================================================================
 " Super tab completion {
 "=================================================================
-Plug 'ervandew/supertab'
+"Plug 'ervandew/supertab'
 "} ===
 
+
+"=================================================================
+" completion {
+"=================================================================
+
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+    Plug 'zchee/deoplete-clang'
+    Plug 'Shougo/neco-vim'
+    Plug 'Shougo/neco-syntax'
+else
+    if has('job') && has('timers') && has('python3')
+        Plug 'Shougo/deoplete.nvim'
+        Plug 'roxma/nvim-yarp'
+        Plug 'roxma/vim-hug-neovim-rpc'
+
+        Plug 'zchee/deoplete-clang'
+        Plug 'Shougo/neco-vim'
+        Plug 'Shougo/neco-syntax'
+    endif
+endif
+
+if has('macos') || has('mac')
+    echom "vimrc needs the location of libclang.dylib run 'mdfind -name libclang.dylib'"
+    let g:deoplete#sources#clang#libclang_path=""
+    let g:deoplete#sources#clang#clang_header=""
+else
+    let g:deoplete#sources#clang#libclang_path="/usr/lib/llvm-4.0/lib/libclang.so.1"
+    let g:deoplete#sources#clang#clang_header="/usr/lib/llvm-4.0/"
+    " Use deoplete.
+endif
+
+let g:deoplete#enable_yarp = 1
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+"set completeopt+=noinsert
+set shortmess+=c
+
+
+function! s:check_back_space() abort "{{{
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
+
+inoremap <silent><expr> <TAB>
+            \ pumvisible() ? "\<C-n>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
+            \ deoplete#mappings#manual_complete()
+
+"if has('nvim')
+"    Plug 'roxma/nvim-completion-manager'
+"
+"    Plug 'roxma/ncm-clang'
+"    Plug 'Shougo/neoinclude.vim'
+"    Plug 'Shougo/neco-vim'
+"else
+"    if has('job') && has('timers') && has('python3')
+"        Plug 'roxma/vim-hug-neovim-rpc'
+"        Plug 'roxma/nvim-completion-manager'
+
+"        Plug 'roxma/ncm-clang'
+"        Plug 'Shougo/neoinclude.vim'
+"        Plug 'Shougo/neco-vim'
+"    endif
+"endif
+
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+"imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
+"imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-U>":"\<CR>")
+
+"} ===
 
 "=================================================================
 " TagBar - Requires Exuberant Ctags {
@@ -317,6 +396,34 @@ nnoremap <C-t> :TagbarToggle<CR>
 nnoremap <silent><C-]> <C-w><C-]><C-w>T
 let g:tagbar_width = 30
 " } ===
+
+
+"=================================================================
+" cTags {
+"=================================================================
+"let g:gen_tags#ctags_auto_gen = 1
+let g:gen_tags#verbose = 1
+let g:gen_tags#use_cache_dir = 0
+
+let g:loaded_gentags#gtags = 1
+
+Plug 'jsfaint/gen_tags.vim'
+
+
+nnoremap <Leader>t :GenCtags<CR>
+
+
+"nnoremap <Leader>t
+"            \ :silent execute '!(rm tags)'<CR>
+"            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
+"            \ :redraw!<CR>
+"            \ :echom 'Generating cTags'<CR>
+"            \ execute 'set tags=./tags;~/.vim/tags;tags;'
+"set tags=./tags;~/.vim/tags;tags;
+"} ===
+
+
+"} ===
 
 
 "=================================================================
@@ -351,9 +458,10 @@ endfunction
 " highlight the current line
 set cursorline
 
-"mapping for Contrast and background changeing keys
+"mapping for changing contrast and background colors
 nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
+
 "} ===
 
 
@@ -369,7 +477,7 @@ Plug 'christoomey/vim-tmux-navigator'
 " Code Snippets {
 "=================================================================
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger='<tab>'
+let g:UltiSnipsExpandTrigger='<Nul>'
 let g:UltiSnipsJumpForwardTrigger='<Nul>'
 let g:UltiSnipsJumpBackwardTrigger='<C-S-d>'
 " If you want :UltiSnipsEdit to split your window.
@@ -406,9 +514,11 @@ Plug 'godlygeek/tabular'
 
 
 
-" Vim Startup Time Profiler run  :StartupTime
+"=================================================================
+" Vim Startup Time Profiler run  :StartupTime {
+"=================================================================
 Plug 'tweekmonster/startuptime.vim'
-
+"} ===
 
 "=================================================================
 "=####################= END Plugin System =######################=
@@ -450,24 +560,8 @@ set wildchar=<Tab>
 set mouse=a                    " on OSX press ALT and click
 set backspace=2                       " Set backspace
 
-" Bind nohl
-" Removes highlight of your last search
-" ``<C>`` stands for ``CTRL`` and therefore ``<C-n>`` stands for ``CTRL+n``
-noremap <C-n> <Esc>:nohl<CR>
-inoremap <C-n> <Esc>:nohl<CR>i
 "} ===
 
-
-"=================================================================
-" Tags {
-"=================================================================
-nnoremap <Leader>t
-            \ :silent execute '!(rm tags)'<CR>
-            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
-            \ :redraw!<CR>
-            \ :echom 'Generating cTags'<CR>
-execute 'set tags=./tags;~/.vim/tags;tags;'
-"} ===
 
 
 "=================================================================
@@ -488,8 +582,6 @@ set termencoding=utf-8
 set wildmenu
 set commentstring=\ #\ %s
 
-"map sort function to a key
-vnoremap <Leader>s :sort<CR>
 "} ===
 
 
@@ -547,10 +639,22 @@ set textwidth=0
 "     Every unnecessary keystroke that can be saved is good for
 "     your health :)
 "=================================================================
+
 " Mappings for 'n' 'm' and vim 'movement keys'
 " easier moving between tabs
 noremap <Leader>n <Esc>:tabprevious<CR>
 noremap <Leader>m <Esc>:tabnext<CR>
+
+"map sort function to a key
+vnoremap <Leader>s :sort<CR>
+
+" Removes highlight of your last search: CTRL+n
+noremap <C-n> <Esc>:nohl<CR>
+inoremap <C-n> <Esc>:nohl<CR>i
+
+"set shortmess+=c
+
+
 "} ===
 
 
@@ -565,9 +669,8 @@ augroup END
 "} ===
 
 
-
 "=================================================================
-" Return to the last position in the file {
+" Shift-K Help support {
 "=================================================================
 augroup shift-K
     autocmd!
@@ -604,12 +707,13 @@ function! InsertSkeleton() abort
 
     call s:Try_insert('skel')
 endfunction
-" } ===
 
 augroup ultisnips_custom
     autocmd!
     autocmd BufNewFile * silent! call InsertSkeleton()
 augroup END
+
+" } ===
 
 
 "=================================================================
