@@ -325,6 +325,8 @@ else
     let g:JV_autocomplete = get(g:, 'JV_autocomplete', 0) "currently not working in VIM8
 endif
 
+
+
 if (g:JV_autocomplete == 1)
             \ && (has('nvim') || (
             \ has('job') && has('timers') && has('python3') ) )
@@ -368,6 +370,11 @@ if (g:JV_autocomplete == 1)
         let col = col('.') - 1
         return !col || getline('.')[col - 1]  =~ '\s'
     endfunction"}}}
+
+else
+    " Or super light VimCompletesMe'
+    Plug 'ajh17/VimCompletesMe'
+    autocmd! FileType text,markdown let b:vcm_tab_complete = 'dict'
 endif
 
 " Fallbacks for not autocomplete
