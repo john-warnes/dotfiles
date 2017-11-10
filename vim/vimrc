@@ -400,7 +400,7 @@ let g:tagbar_width = 30
 "let g:gen_tags#verbose = 1        " Give more feedback
 let g:gen_tags#ctags_auto_gen = 1 " Auto generate ctags if in git
 let g:gen_tags#use_cache_dir = 0  " Put tags in git or else home cache
-"let g:loaded_gentags#gtags = 1    " Disable gtags support
+let g:loaded_gentags#gtags = 1    " Disable gtags support
 Plug 'jsfaint/gen_tags.vim'
 nnoremap <Leader>t :GenCtags<CR>
 
