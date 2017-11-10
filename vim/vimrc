@@ -348,11 +348,11 @@ if (g:JV_autocomplete == 1)
         Plug 'Shougo/deoplete.nvim'
     endif
 
-    "Plug 'Shougo/neco-vim'
-    "Plug 'Shougo/neco-syntax'
-    "Plug 'Shougo/neoinclude.vim'
+    Plug 'Shougo/neco-vim'
+    Plug 'Shougo/neco-syntax'
+    Plug 'Shougo/neoinclude.vim'
 
-    "Plug 'zchee/deoplete-clang'
+    Plug 'zchee/deoplete-clang'
 
     let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
     let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
@@ -375,6 +375,7 @@ else
     " Or super light VimCompletesMe'
     Plug 'ajh17/VimCompletesMe'
     autocmd! FileType text,markdown let b:vcm_tab_complete = 'dict'
+    set completeopt-=preview  " Disable the preview window
 endif
 
 " Fallbacks for not autocomplete
@@ -385,6 +386,7 @@ if (g:JV_autocomplete == 0) && !has('nvim')
     " Or super light VimCompletesMe'
     Plug 'ajh17/VimCompletesMe'
     autocmd! FileType text,markdown let b:vcm_tab_complete = 'dict'
+    set completeopt-=preview  " Disable the preview window
 endif
 "} ===
 
