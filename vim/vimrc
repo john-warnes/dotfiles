@@ -132,20 +132,24 @@ call plug#begin('~/.vim/bundle')
 "=================================================================
 " jvim plugin options {
 "=================================================================
-let g:JV_showTrailing = 1        " Show Tailing Spaces
-let g:JV_showEol = 0             " Show EOL marker
-let g:JV_usePresistent_Undo = 0  " Use persistent Undo
-let g:JV_colorColumn = 81        " Set long line guide
-let g:JV_red = 'GruvboxRedBold'  " Highlight link for Red
-let g:JV_useSystemClipboard = 1  " Try to use system clipboard
-let g:JV_IndentGuide = 0         " Show indent guides when (F2 Toggle)
-let g:JV_codePretty =  1         " Replace some chars with alternatives (F2 Toggle)
-let g:JV_quickFixHeightMin =  3  " Limit the MIN size of the quick fix window
-let g:JV_quickFixHeightMax =  10 " Limit the MAX size of the quick fix window
-let g:JV_foldingSyntax  = 0      " 1 = enable folding=syntax for all files
-                                 " NOTE:Might be slow on older systems
-let g:JV_foldingDefault = 0      " Folding Mode on File Open
-
+let g:JV_showTrailing       = 1                " Show Tailing Spaces
+let g:JV_showEol            = 0                " Show EOL marker
+let g:JV_usePresistent_Undo = 0                " Use persistent Undo
+let g:JV_colorColumn        = 81               " Set long line guide
+let g:JV_red                = 'GruvboxRedBold' " Highlight link for Red
+let g:JV_useSystemClipboard = 1                " Try to use system clipboard
+let g:JV_IndentGuide        = 0                " Show indent guides when (F2 Toggle)
+let g:JV_codePretty         = 1                " Replace some chars with alternatives (F2 Toggle)
+let g:JV_quickFixHeightMin  = 3                " Limit the MIN size of the quick fix window
+let g:JV_quickFixHeightMax  = 10               " Limit the MAX size of the quick fix window
+let g:JV_foldingSyntax      = 1                " 1: enable set folding=syntax for all files
+                                               "  NOTE: Might be slow on older systems
+let g:JV_foldingDefault     = 3                " Folding Mode on File Open
+                                               " 0: none default vim
+                                               " 1: open all folds on file open
+                                               " 2: close all folds on file open
+                                               " 3: Auto save folds and reload them
+                                               "  NOTE: ''tt'' in normal mode to toggle folds
 Plug 'john-warnes/jvim'
 "} ===
 
