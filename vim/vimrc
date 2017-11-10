@@ -1,18 +1,13 @@
-"                   (_)_   _(_)_ __ ___  _ __ ___                 "
-"                   | \ \ / / | '_ ` _ \| '__/ __|                "
-"                   | |\ V /| | | | | | | | | (__                 "
-"                  _/ | \_/ |_|_| |_| |_|_|  \___|                "
-"                 |__/                                            "
+"                             vimrc                              "
 "=================================================================
-" Local file settings {
-"=================================================================
+"se all folds
 set encoding=utf-8
 scriptencoding utf-8
 setlocal foldmarker={,}
 setlocal foldmethod=marker
 setlocal foldcolumn=1
 setlocal keywordprg=:help
-" } ===
+"=================================================================
 
 
 "=================================================================
@@ -21,7 +16,6 @@ setlocal keywordprg=:help
 " run make without changing files on eorror and open list
 "       :make! | copen
 " } ===
-
 
 "=================================================================
 " Leader Key {
@@ -182,12 +176,11 @@ let g:NERDTreeIndicatorMapCustom = {
 "=================================================================
 " ALE Syntax Checking Plugin {
 "=================================================================
-if has('job') && has ('timers')
-
+if (has('job') && has('timers')) || has('nvim')
     Plug 'w0rp/ale'
     set noshowmode
     let g:airline#extensions#ale#enabled = 1
-"    let g:ale_sign_column_always = 1
+    "    let g:ale_sign_column_always = 1
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '--'
     let g:ale_history_log_output=1  " use ALEInfo to see the full output if needed
@@ -200,7 +193,6 @@ if has('job') && has ('timers')
     " This can be useful if you are combining ALE with
     " some other plugin which sets quickfix errors, etc.
     "let g:ale_keep_list_window_open = 0
-
 else
     "=================================================================
     " Syntastic Syntax checking Plugin
@@ -231,19 +223,24 @@ augroup end
 
 
 "=================================================================
-" Airline Status Line and TmuxLine {
+" Airline and TmuxLine {
 "=================================================================
-
-let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is slow disable it
+let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is very slow disable it
 Plug 'vim-airline/vim-airline'              " Airline plugin
 Plug 'vim-airline/vim-airline-themes'       " Many Airline themes
 set laststatus=2
 let g:airline_powerline_fonts = 1
-let g:airline_section_c = '%F'              " Show full Path if possable
+" let g:airline_section_c = '%F'              " Show full Path if possable
 
 " let g:airline_theme='base16'       " Pick a theme
 " let g:airline_theme='murmur'       " or
 " let g:airline_theme='powerlineish' " or
+
+let g:airline_detect_spell=0 " Don't show spell and language on status line
+
+" Caches the changes to the highlighting groups, should therefore be faster.
+"  Set this to one, if you experience a sluggish Vim
+let g:airline_highlighting_cache = 1
 
 let g:airline#extensions#tabline#enabled = 1     " Tabline support
 let g:airline#extensions#tmuxline#enabled = 1    " Airline support for tmux
@@ -251,6 +248,10 @@ let g:airline#extensions#tmuxline#color_template = 'insert'
 Plug 'edkolev/tmuxline.vim'     " Allows Airline to theme tmux bar
 "} ===
 
+
+"=================================================================
+" OLD DISABLED PLUGINS {
+"=================================================================
 
 "=================================================================
 " Fugitive for GIT {
@@ -287,6 +288,8 @@ Plug 'edkolev/tmuxline.vim'     " Allows Airline to theme tmux bar
 "let g:Python_MapLeader  = ','
 "} ===
 
+"} ===
+
 
 "=================================================================
 " Python mode {
@@ -301,73 +304,70 @@ augroup END
 
 
 "=================================================================
-" Super tab completion {
+" Completion Systems {
 "=================================================================
-"Plug 'ervandew/supertab'
-"} ===
-
-
-"=================================================================
-" completion {
-"=================================================================
+"let g:JV_autocomplete = 1
 
 if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
-    Plug 'Shougo/neco-vim'
-    Plug 'Shougo/neco-syntax'
-    Plug 'Shougo/neoinclude.vim'
-    
-    Plug 'zchee/deoplete-clang'
+    let g:JV_autocomplete = get(g:, 'JV_autocomplete', 1)
 else
-    if has('job') && has('timers') && has('python3')
-        Plug 'Shougo/deoplete.nvim'
-        Plug 'roxma/nvim-yarp'
-        Plug 'roxma/vim-hug-neovim-rpc'
+    let g:JV_autocomplete = get(g:, 'JV_autocomplete', 0) "currently not working in VIM8
+endif
 
-        Plug 'Shougo/neco-vim'
-        Plug 'Shougo/neco-syntax'
-        Plug 'Shougo/neoinclude.vim'
-        
-        Plug 'zchee/deoplete-clang'
-        let g:deoplete#enable_yarp = 1
+if (g:JV_autocomplete == 1)
+            \ && (has('nvim') || (
+            \ has('job') && has('timers') && has('python3') ) )
+
+    if has('macunix')
+        let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+        let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
+    else
+        let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
+        let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
     endif
+
+    if has('nvim')
+        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    else
+        " let g:deoplete#enable_yarp = 1
+        Plug 'roxma/nvim-yarp'
+        Plug 'roxma/vim-hug-neovim-rpc' " Buged on VIM8 for linux
+        Plug 'Shougo/deoplete.nvim'
+    endif
+
+    "Plug 'Shougo/neco-vim'
+    "Plug 'Shougo/neco-syntax'
+    "Plug 'Shougo/neoinclude.vim'
+
+    "Plug 'zchee/deoplete-clang'
+
+    let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
+    let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
+    " set completeopt+=noinsert           \" Do not modify line inless selected
+    " set completeopt-=menuone            \" Disable the complete menu for a single item
+    set completeopt-=preview  " Disable the preview window
+
+    " Use tab to cycle matches
+    inoremap <silent><expr> <TAB>
+                \ pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ deoplete#mappings#manual_complete()
+
+    function! s:check_back_space() abort "{{{
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1]  =~ '\s'
+    endfunction"}}}
 endif
 
-if has('macunix')
-    let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-    let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
-else
-    let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
-    let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/'
-    " Use deoplete.
+" other not working use supertab
+if (g:JV_autocomplete == 0) && !has('nvim')
+    " Super tab completion
+    " Plug 'ervandew/supertab'
+    "
+    " Or super light VimCompletesMe'
+    Plug 'ajh17/VimCompletesMe'
+    autocmd! FileType text,markdown let b:vcm_tab_complete = 'dict'
 endif
-
-
-" Use deoplete.
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-" set completeopt+=noinsert
-" set shortmess+=c
-set completeopt -=preview
-
-
-" Use tab to select
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ deoplete#mappings#manual_complete()
-
-function! s:check_back_space() abort "{{{
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
-
-" Assuming you're using `<c-u>` for snippet expansion
-" imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
-" imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-U>":"\<CR>")
-
-
 
 "} ===
 
@@ -378,7 +378,7 @@ endfunction"}}}
 Plug 'majutsushi/tagbar'
 nnoremap <C-t> :TagbarToggle<CR>
 "map <Leader>y :TagbarToggle<CR>
-nnoremap <silent><C-]> <C-w><C-]><C-w>T
+"nnoremap <silent><C-]> <C-w><C-]><C-w>T
 let g:tagbar_width = 30
 " } ===
 
@@ -386,14 +386,11 @@ let g:tagbar_width = 30
 "=================================================================
 " cTags {
 "=================================================================
-"let g:gen_tags#ctags_auto_gen = 1
-let g:gen_tags#verbose = 1
-let g:gen_tags#use_cache_dir = 0
-
-let g:loaded_gentags#gtags = 1
-
+"let g:gen_tags#verbose = 1        " Give more feedback
+let g:gen_tags#ctags_auto_gen = 1 " Auto generate ctags if in git
+let g:gen_tags#use_cache_dir = 0  " Put tags in git or else home cache
+"let g:loaded_gentags#gtags = 1    " Disable gtags support
 Plug 'jsfaint/gen_tags.vim'
-
 nnoremap <Leader>t :GenCtags<CR>
 
 "nnoremap <Leader>t
@@ -410,7 +407,6 @@ nnoremap <Leader>t :GenCtags<CR>
 " gruvbox colorschene {
 "=================================================================
 Plug 'morhetz/gruvbox'
-" let g:gruvbox_italic=0
 " F5 to switch from dark to light
 " F6 to cycle the 3 levels of contrast
 
@@ -435,13 +431,9 @@ function! GruvCycleContrast()
     colorscheme gruvbox
 endfunction
 
-" highlight the current line
-set cursorline
-
 "mapping for changing contrast and background colors
 nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
-
 "} ===
 
 
@@ -453,12 +445,11 @@ Plug 'christoomey/vim-tmux-navigator'
 "} ===
 
 
-
 "=================================================================
 " Code Snippets {
 "=================================================================
 let g:UltiSnipsExpandTrigger='<C-U>'
-let g:UltiSnipsJumpForwardTrigger='<C-Space>'
+let g:UltiSnipsJumpForwardTrigger='<C-space>'
 let g:UltiSnipsJumpBackwardTrigger='<C-S-d>'
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit='vertical'
@@ -476,8 +467,6 @@ Plug 'honza/vim-snippets'
 " :SSave    save a session
 " :SDelete  delete a session
 " :SClose   close current session
-"
-
 let g:startify_fortune_use_unicode = 1
 let g:startify_session_persistence = 0
 let g:startify_bookmarks = [ {'c': '~/.vimrc'} ]
@@ -488,7 +477,7 @@ Plug 'mhinz/vim-startify'
 "=================================================================
 " Tabular Test Alignment Tool {
 "=================================================================
-" :Tab /<char> to align on <char> SLoad
+" :Tab /<REGEX>
 Plug 'godlygeek/tabular'
 "} ===
 
@@ -496,7 +485,8 @@ Plug 'godlygeek/tabular'
 "=================================================================
 " Vim Startup Time Profiler run  :StartupTime {
 "=================================================================
-Plug 'tweekmonster/startuptime.vim'
+" Only enable when needed
+" Plug 'tweekmonster/startuptime.vim'
 "} ===
 
 "=================================================================
@@ -508,151 +498,143 @@ call plug#end()
 "=================================================================
 " Color Scheme {
 "=================================================================
-" mkdir -p ~/.vim/colors && cd ~/.vim/colors
-" wget -O wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
-if has('gui_running')
-    set background=light
-else
-    set background=dark
-endif
+set background=dark
 
-" colorscheme wombat256mod
-" colorscheme default
+"colorscheme default
 silent! colorscheme gruvbox " colorscheme support truecolor
 "} ===
 
 
 "=================================================================
-" Behavior {
+" Editing and Behavior {
 "=================================================================
 set nowritebackup              " only in case you don't want a backup file while editing
 set noswapfile                 " no swap files
 set nobackup                   " Just overwrite the file
 set printoptions=paper:letter,number:y,portrait:y
 set shortmess+=filmnrxoOtT     " Abbrev. of messages (avoids 'hit enter')
-set formatoptions+=tcq         " Basic formatting of text and comments
-set wildmode=list:longest,full " Command <Tab> completion, list matches and
-"  complete the longest common part, then,
-"  cycle through the matches
-set wildchar=<Tab>
-"set wildchar=<Nul>
-set mouse=a                    " on OSX press ALT and click
-set backspace=2                       " Set backspace
-
-"} ===
-
-
-"=================================================================
-" Editing {
-"=================================================================
-augroup reload_vimrc
-    autocmd!
-    autocmd! bufwritepost .vimrc,vimrc source % " Automatic reloading of .vimrc
-augroup END
-
+set formatoptions+=cq          " Basic formatting of text and comments
+set formatoptions-=t           " Don't automatically wrap text when typing
+set wildmenu                   " Use the wildmenu
+set wildmode=list:longest,full " Command <Tab> completion, list matches and,
+                               "  complete the longest common part,
+                               "  then, cycle through the matches
+set wildchar=<Tab>             " Use tab to move in the menu
+set mouse=a                    " Use mouse in all modes
+                               "  on OSX might have to press ALT and click
+set backspace=2                " Set backspace
 set backspace=indent,eol,start " Allow backspace over listed types
-set nostartofline           " Stay on current char on page commands
-set visualbell              " Don't beep, flash the screen instead
-set scrolloff=1             " Use a 1 line (horizontal) scroll offset
-set sidescrolloff=5         " Use a 5 Char (virtual) scroll offset
-set virtualedit=onemore
-set termencoding=utf-8
-set wildmenu
-set commentstring=\ #\ %s
-
+set nostartofline              " Stay on current char on page commands
+set visualbell                 " Don't beep, flash the screen instead
+set scrolloff=1                " Use a 1 line (horizontal) scroll offset
+set sidescrolloff=10           " Use a 5 column (virtual) scroll offset
+set virtualedit=onemore        " Allow you to move the cursor to the newline
+set termencoding=utf-8         " Lets try using Unicode
 "} ===
 
 
 "=================================================================
-" Status-line {
+" Editor Look and Decorations {
 "=================================================================
 set ruler                   " Show the line / column number of cursor
-set showcmd                 " Show the partially completed command
+" set showcmd                 " Show the partially completed command
 set number                  " Display line number"
-set textwidth=79            " width of document (used by gd)
-set nowrap                  " don't automatically wrap on load
-set formatoptions-=t        " don't automatically wrap text when typing
+set numberwidth=5           " Use 5 spaces for number column"
+set textwidth=79            " Width of document (used by gd)
+set nowrap                  " Don't automatically wrap on load
+set formatoptions-=t        " Don't automatically wrap text when typing
+set commentstring=\ #\ %s   " This how fold markers look
+set cursorline              " Highlight the current line
+
+if has('gui_running')
+    set guicursor=n-v-c:block-Cursor
+    set guicursor+=i:ver100-iCursor
+    set guicursor+=n-v-c:blinkon0
+    "set guicursor+=i:blinkwait10
+else
+    let &t_SI = "\<Esc>[6 q"
+    let &t_SR = "\<Esc>[4 q"
+    let &t_EI = "\<Esc>[2 q"
+endif
 "} ===
 
 
 "=================================================================
 " Search {
 "=================================================================
-set ignorecase             " Ignore case in search patterns
-set noinfercase              " Don't ignore case in auto completion
-                           "  but do Ignore it in search patterns
-set smartcase              " Don't ignore case if pattern contains it
-set incsearch              " Show the 'best match so far'
-set wrapscan               " Search will wrap around the file
-set hlsearch               " Highlight all matches
+set ignorecase              " Ignore case in search patterns
+set noinfercase             " Don't ignore case in auto completion
+                            "  but, do Ignore it in search patterns
+set smartcase               " Don't ignore case if pattern contains it
+set incsearch               " Show the 'best match so far'
+set wrapscan                " Search will wrap around the file
+set hlsearch                " Highlight all matches
 "} ===
 
 
 "=================================================================
 " Programming {
 "=================================================================
-set autoindent                 " Keep indent level on new line
-set nosmartindent              " Intelligent indenting for source code
-set cindent                    " Intelligent indenting for source code
-set cinkeys=0{,0},!^F,o,O,e    " default is: 0{,0},0),:,0#,!^F,o,O,e
-set showmatch                  " Show matching brackets / parenthesis
-set matchtime=5                " Show matching character for .3s
-"} ===
+set autoindent              " Keep indent level on new line
+set nosmartindent           " Intelligent indenting for source code
+set cindent                 " Intelligent indenting for source code
+set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
+set showmatch               " Show matching brackets / parenthesis
+set matchtime=5             " Show matching character for .3s
+" } ===
 
 
 "=================================================================
-" Vertical indenting {
+" Tabs {
 "=================================================================
-set shiftwidth=4               " Number of spaces used for autoindents
-set tabstop=4                  " Set the tab width to 4
-set softtabstop=4
-set expandtab
-set textwidth=0
+set shiftwidth=4            " Number of spaces used for autoindents
+set tabstop=4               " Set the tab width to 4
+set softtabstop=4           " Number of spaces a tab moves over
+set expandtab               " Insert spaces when using the Tab key
 "} ===
 
 
 "=================================================================
 " Mappings and Keybindings {
-"
-"     Every unnecessary keystroke that can be saved is good for
-"     your health :)
 "=================================================================
+" zM   "Close all folds
+" zR   "Open all folds
 
-" Toggle all folds
-nmap t- zM   " Close all folds
-nmap t= zR
-
-" Mappings for 'n' 'm' and vim 'movement keys'
+" Mappings for <Leader> plus ''n'' ''m'' for tabs control
 " easier moving between tabs
-nmap <Leader>n <Esc>:tabprevious<CR>
-nmap <Leader>m <Esc>:tabnext<CR>
+nnoremap <Leader>n <Esc>:tabprevious<CR>
+nnoremap <Leader>m <Esc>:tabnext<CR>
 
-"map sort function to a key
-vmap <Leader>s :sort<CR>
+"map sort function to <Leader> plus ''s'' key
+vnoremap <Leader>s :sort<CR>
 
-" Removes highlight of your last search: CTRL+n
-nmap <C-n> <Esc>:nohl<CR>
-imap <C-n> <Esc>:nohl<CR>i
+" Removes highlight of your last search: ''CTRL+n''
+nnoremap <C-n> <Esc>:nohl<CR>
+inoremap <C-n> <Esc>:nohl<CR>i
 
-" Macos make FN+Arrows work as CTRL+Arrows
+" mac os make ''FN+Arrows'' to work as CTRL+Arrows
 if has('macunix')
     map <ESC>[5~ <C-Up>
     map <ESC>[6~ <C-Down>
     map <ESC>OH <C-Left>
     map <ESC>OF <C-Right>
-    map <NUL> <C-Space>
 endif
 
-" <CR>: Close Popup, Expand Snippets else just be <CR>
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort
-    if (pumvisible()) 
-        return deoplete#close_popup() . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
-    else
-        return "\<CR>"
-    endif
-endfunction
+" Map ''NUL'' as control space
+map <C-@> <C-space>
+map <NUL> <C-space>
 
+if (g:JV_autocomplete==1)
+    " <CR>: Close popup, expand snippets or just do <CR>
+    inoremap <silent> <CR> <C-r>=<SID>cr_function()<CR>
+    function! s:cr_function() abort
+        if (pumvisible())
+            return deoplete#close_popup() . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
+        else
+            return "\<CR>"
+        endif
+    endfunction
+endif
 "} ===
 
 
@@ -663,6 +645,16 @@ augroup return_file_postion
     autocmd!
     au bufreadpost * if line("'\"") > 0 && line("'\"") <= line("$")
                 \ | exe "normal g'\"" | endif
+augroup END
+"} ===
+
+
+"=================================================================
+" auto source vimrc and jvim when saving {
+"=================================================================
+augroup reload_vimrc
+    autocmd!
+    autocmd! bufwritepost .vimrc,vimrc,.jvim.vim,jvim.vim source % " Automatic reloading of .vimrc
 augroup END
 "} ===
 
@@ -679,42 +671,45 @@ augroup END
 
 
 "=================================================================
-" UltiSnips FileType Templates {
+" UltiSnips Support and File Type Templates {
 "=================================================================
-if !exists('g:UltiSnipsExpandTrigger')
-    finish
+if exists('g:UltiSnipsExpandTrigger')
+
+    function! s:Try_insert(skel)
+        execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
+
+        if (g:ulti_expand_res == 0)
+            silent! undo
+        endif
+
+        return g:ulti_expand_res
+    endfunction
+
+    function! InsertSkeleton() abort
+        let l:filename = expand('%')
+
+        " Abort on non-empty buffer or extant file
+        if !(line('$') ==? 1 && getline('$') ==? '') || filereadable(l:filename)
+            return
+        endif
+
+        call s:Try_insert('skel')
+    endfunction
+
+    augroup ultisnips_custom
+        autocmd!
+        autocmd BufNewFile * silent! call InsertSkeleton()
+    augroup END
+
+    "put utilsnips expands at top
+    if exists(g:JV_autocomplete)
+        if (g:JV_autocomplete=1)
+            call deoplete#custom#source('ultisnips', 'rank', 1000)
+        endif
+    endif
 endif
-
-function! s:Try_insert(skel)
-    execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
-
-    if (g:ulti_expand_res == 0)
-        silent! undo
-    endif
-
-    return g:ulti_expand_res
-endfunction
-
-function! InsertSkeleton() abort
-    let l:filename = expand('%')
-
-    " Abort on non-empty buffer or extant file
-    if !(line('$') ==? 1 && getline('$') ==? '') || filereadable(l:filename)
-        return
-    endif
-
-    call s:Try_insert('skel')
-endfunction
-
-augroup ultisnips_custom
-    autocmd!
-    autocmd BufNewFile * silent! call InsertSkeleton()
-augroup END
-
-"put utilsnips expands at top
-call deoplete#custom#source('ultisnips', 'rank', 1000) 
-
 " } ===
+
 
 "=================================================================
 " Custom Start Screen {
