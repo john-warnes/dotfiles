@@ -99,13 +99,13 @@ ScriptSettings()
     ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.profile $HOME/.bashrc $HOME/.zshrc)
 
     #Optional
-    OPTPKGS='vim-gnome clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
+    OPTPKGS='clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
-        PKGS='git vim python3 curl bc global'
+        PKGS="git bc curl vim\ --with-python3 python3"
     elif [[  $OS == 'OSX' ]]; then  #OSX
-        PKGS='git vim python3 curl bc'
+        PKGS="git vim python3 curl bc"
     fi
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)

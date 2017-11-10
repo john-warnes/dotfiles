@@ -123,20 +123,15 @@ if ($TERM ==? 'linux')
     set t_Co=8
 endif
 
-if has('macos')
+if ($OS ==? 'OSX') && !has('nvim')
     let g:gruvbox_italic=0
 endif
 
-if has('mac')
-    let g:gruvbox_italic=0
-endif
 "} ===
 
 
-
-
 "=================================================================
-"{=#######################= START Plugin =########################
+"= #######################= START Plugin =###################### {
 "=================================================================
 call plug#begin('~/.vim/bundle')
 
@@ -319,70 +314,60 @@ augroup END
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
-    Plug 'zchee/deoplete-clang'
     Plug 'Shougo/neco-vim'
     Plug 'Shougo/neco-syntax'
+    Plug 'Shougo/neoinclude.vim'
+    
+    Plug 'zchee/deoplete-clang'
 else
     if has('job') && has('timers') && has('python3')
         Plug 'Shougo/deoplete.nvim'
         Plug 'roxma/nvim-yarp'
         Plug 'roxma/vim-hug-neovim-rpc'
 
-        Plug 'zchee/deoplete-clang'
         Plug 'Shougo/neco-vim'
         Plug 'Shougo/neco-syntax'
+        Plug 'Shougo/neoinclude.vim'
+        
+        Plug 'zchee/deoplete-clang'
+        let g:deoplete#enable_yarp = 1
     endif
 endif
 
-if has('macos') || has('mac')
-    echom "vimrc needs the location of libclang.dylib run 'mdfind -name libclang.dylib'"
-    let g:deoplete#sources#clang#libclang_path=""
-    let g:deoplete#sources#clang#clang_header=""
+if has('macunix')
+    let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+    let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
 else
-    let g:deoplete#sources#clang#libclang_path="/usr/lib/llvm-4.0/lib/libclang.so.1"
-    let g:deoplete#sources#clang#clang_header="/usr/lib/llvm-4.0/"
+    let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
+    let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/'
     " Use deoplete.
 endif
 
-let g:deoplete#enable_yarp = 1
+
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
-"set completeopt+=noinsert
-set shortmess+=c
+let g:deoplete#enable_smart_case = 1
+" set completeopt+=noinsert
+" set shortmess+=c
+set completeopt -=preview
 
+
+" Use tab to select
+inoremap <silent><expr> <TAB>
+            \ pumvisible() ? "\<C-n>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
+            \ deoplete#mappings#manual_complete()
 
 function! s:check_back_space() abort "{{{
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~ '\s'
 endfunction"}}}
 
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ deoplete#mappings#manual_complete()
+" Assuming you're using `<c-u>` for snippet expansion
+" imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
+" imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-U>":"\<CR>")
 
-"if has('nvim')
-"    Plug 'roxma/nvim-completion-manager'
-"
-"    Plug 'roxma/ncm-clang'
-"    Plug 'Shougo/neoinclude.vim'
-"    Plug 'Shougo/neco-vim'
-"else
-"    if has('job') && has('timers') && has('python3')
-"        Plug 'roxma/vim-hug-neovim-rpc'
-"        Plug 'roxma/nvim-completion-manager'
 
-"        Plug 'roxma/ncm-clang'
-"        Plug 'Shougo/neoinclude.vim'
-"        Plug 'Shougo/neco-vim'
-"    endif
-"endif
-
-"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-"imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
-"imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-U>":"\<CR>")
 
 "} ===
 
@@ -409,9 +394,7 @@ let g:loaded_gentags#gtags = 1
 
 Plug 'jsfaint/gen_tags.vim'
 
-
 nnoremap <Leader>t :GenCtags<CR>
-
 
 "nnoremap <Leader>t
 "            \ :silent execute '!(rm tags)'<CR>
@@ -420,9 +403,6 @@ nnoremap <Leader>t :GenCtags<CR>
 "            \ :echom 'Generating cTags'<CR>
 "            \ execute 'set tags=./tags;~/.vim/tags;tags;'
 "set tags=./tags;~/.vim/tags;tags;
-"} ===
-
-
 "} ===
 
 
@@ -473,12 +453,12 @@ Plug 'christoomey/vim-tmux-navigator'
 "} ===
 
 
+
 "=================================================================
 " Code Snippets {
 "=================================================================
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger='<Nul>'
-let g:UltiSnipsJumpForwardTrigger='<Nul>'
+let g:UltiSnipsExpandTrigger='<C-U>'
+let g:UltiSnipsJumpForwardTrigger='<C-Space>'
 let g:UltiSnipsJumpBackwardTrigger='<C-S-d>'
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit='vertical'
@@ -511,7 +491,6 @@ Plug 'mhinz/vim-startify'
 " :Tab /<char> to align on <char> SLoad
 Plug 'godlygeek/tabular'
 "} ===
-
 
 
 "=================================================================
@@ -561,7 +540,6 @@ set mouse=a                    " on OSX press ALT and click
 set backspace=2                       " Set backspace
 
 "} ===
-
 
 
 "=================================================================
@@ -640,20 +618,40 @@ set textwidth=0
 "     your health :)
 "=================================================================
 
+" Toggle all folds
+nmap t- zM   " Close all folds
+nmap t= zR
+
 " Mappings for 'n' 'm' and vim 'movement keys'
 " easier moving between tabs
-noremap <Leader>n <Esc>:tabprevious<CR>
-noremap <Leader>m <Esc>:tabnext<CR>
+nmap <Leader>n <Esc>:tabprevious<CR>
+nmap <Leader>m <Esc>:tabnext<CR>
 
 "map sort function to a key
-vnoremap <Leader>s :sort<CR>
+vmap <Leader>s :sort<CR>
 
 " Removes highlight of your last search: CTRL+n
-noremap <C-n> <Esc>:nohl<CR>
-inoremap <C-n> <Esc>:nohl<CR>i
+nmap <C-n> <Esc>:nohl<CR>
+imap <C-n> <Esc>:nohl<CR>i
 
-"set shortmess+=c
+" Macos make FN+Arrows work as CTRL+Arrows
+if has('macunix')
+    map <ESC>[5~ <C-Up>
+    map <ESC>[6~ <C-Down>
+    map <ESC>OH <C-Left>
+    map <ESC>OF <C-Right>
+    map <NUL> <C-Space>
+endif
 
+" <CR>: Close Popup, Expand Snippets else just be <CR>
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function() abort
+    if (pumvisible()) 
+        return deoplete#close_popup() . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
+    else
+        return "\<CR>"
+    endif
+endfunction
 
 "} ===
 
@@ -688,7 +686,7 @@ if !exists('g:UltiSnipsExpandTrigger')
 endif
 
 function! s:Try_insert(skel)
-    execute "normal! i_" . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
+    execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>\<ESC>"
 
     if (g:ulti_expand_res == 0)
         silent! undo
@@ -713,8 +711,10 @@ augroup ultisnips_custom
     autocmd BufNewFile * silent! call InsertSkeleton()
 augroup END
 
-" } ===
+"put utilsnips expands at top
+call deoplete#custom#source('ultisnips', 'rank', 1000) 
 
+" } ===
 
 "=================================================================
 " Custom Start Screen {
