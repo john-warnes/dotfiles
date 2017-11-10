@@ -39,9 +39,10 @@ DetectOS()
 #        linux*)   OS="LINUX" ;;
 #        bsd*)     OS="BSD" ;;
 #        msys*)    OS="WINDOWS" ;;
+#        cygwin*)  export OS="BABUN" ;;
 #        *)        OS="unknown: $OSTYPE" ;;
 #    esac
-#
+
     if [[  $OS == 'LINUX' ]]; then
         if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
             echo "$BOLD${RED}ERROR:$RESET Undetected Linux: $ID $RESET"
@@ -70,6 +71,16 @@ DetectOS()
             echo "$BOLD${YELLOW}Note:$RESET OSX:$BOLD$BLUE HomeBrew (https://brew.sh/)$RESET is required for auto install."
             echo "$BOLD${YELLOW}Note:$RESET Missing Packages will be listed."
         fi
+   elif [[  "$OS" == "BABUN" ]]; then
+        echo "Cygwin Detected $RESET"
+        if which pact 2> /dev/null; then
+            echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using PACT"
+            PACT=1;
+        else
+            PACT=0
+            echo "$BOLD${YELLOW}Note:$RESET Babun:$BOLD$BLUE Babun (https://babun.github.io/)$RESET is required for auto install."
+            echo "$BOLD${YELLOW}Note:$RESET Missing Packages will be listed."
+        fi
     fi
 
 
@@ -77,6 +88,8 @@ DetectOS()
         APTCMD='sudo apt-get -o Dpkg::Progress-Fancy="1" -y install'
     elif [[ $OS == 'OSX' ]]; then
         APTCMD='brew install'
+    elif [[ $OS == 'BABUN' ]]; then
+        APTCMD='pact install'
     fi
 
 }
@@ -104,8 +117,11 @@ ScriptSettings()
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
         PKGS="git bc curl vim\ --with-python3 python3"
+        #PKGS="git vim python3 curl bc"
     elif [[  $OS == 'OSX' ]]; then  #OSX
-        PKGS="git vim python3 curl bc"
+        PKGS='git bc curl vim python3'
+    elif [[  $OS == 'BABUN' ]]; then  #Babun
+        PKGS='git vim python3 curl bc'
     fi
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
@@ -730,7 +746,7 @@ AddToEnvironment()
         fi
    done
 
-    if [[  $OS == 'OSX' ]]; then
+    if [[  $OS == 'OSX' ]] || [[ $OS == 'BABUN' ]]; then
         touch ~/.bash_profile
         RCFILE="~/.bash_profile"
         echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
