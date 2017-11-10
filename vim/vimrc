@@ -1,6 +1,5 @@
 "                             vimrc                              "
 "=================================================================
-"se all folds
 set encoding=utf-8
 scriptencoding utf-8
 setlocal foldmarker={,}
@@ -9,6 +8,11 @@ setlocal foldcolumn=1
 setlocal keywordprg=:help
 "=================================================================
 
+
+inoremap <S-home> <ESC>v^
+inoremap <S-home> <ESC>v^
+nnoremap <S-end> <ESC>v$<Left>
+nnoremap <S-end> <ESC>v$<Left>
 
 "=================================================================
 " Notes {
@@ -179,7 +183,6 @@ let g:NERDTreeIndicatorMapCustom = {
 if (has('job') && has('timers')) || has('nvim')
     Plug 'w0rp/ale'
     set noshowmode
-    let g:airline#extensions#ale#enabled = 1
     "    let g:ale_sign_column_always = 1
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '--'
@@ -242,6 +245,7 @@ let g:airline_detect_spell=0 " Don't show spell and language on status line
 "  Set this to one, if you experience a sluggish Vim
 let g:airline_highlighting_cache = 1
 
+let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1     " Tabline support
 let g:airline#extensions#tmuxline#enabled = 1    " Airline support for tmux
 let g:airline#extensions#tmuxline#color_template = 'insert'
@@ -359,17 +363,17 @@ if (g:JV_autocomplete == 1)
     endfunction"}}}
 endif
 
-" other not working use supertab
+" Fallbacks for not autocomplete
 if (g:JV_autocomplete == 0) && !has('nvim')
     " Super tab completion
     " Plug 'ervandew/supertab'
-    "
+
     " Or super light VimCompletesMe'
     Plug 'ajh17/VimCompletesMe'
     autocmd! FileType text,markdown let b:vcm_tab_complete = 'dict'
 endif
-
 "} ===
+
 
 "=================================================================
 " TagBar - Requires Exuberant Ctags {
@@ -438,10 +442,16 @@ nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
 
 
 "=================================================================
-" TMUX integration {
+" TMUX integration and support {
 "=================================================================
 " <Ctrl + [h,j,k,l]> Move to vim panes and tmux widows
 Plug 'christoomey/vim-tmux-navigator'
+
+if exists('$TMUX')
+    if !has('nvim')
+        set ttymouse=xterm2
+    endif
+endif
 "} ===
 
 
@@ -469,7 +479,7 @@ Plug 'honza/vim-snippets'
 " :SClose   close current session
 let g:startify_fortune_use_unicode = 1
 let g:startify_session_persistence = 0
-let g:startify_bookmarks = [ {'c': '~/.vimrc'} ]
+let g:startify_bookmarks = [ {'v': '~/.vimrc'}, {'b': '~/.vim/bundle/jvim/plugin/jvim.vim'}]
 Plug 'mhinz/vim-startify'
 "} ===
 

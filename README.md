@@ -20,26 +20,32 @@ or
 4. Answer setup questions  
 4. Enjoy jvim
 
+## Supported OS
+ - linux
+ - mac osX
+ - ubunutu on windows 10
+
 ## Features
 - gurvbox color scheme integrated
-- ALE or Symatic Code linterer
+- ALE / Symatic Code linter
 - Nerdtree with git support
 - Tagbar 
 - Tmux Shell Multiplexer
-- Zsh Shell
+- Zsh Shell Support
 - Changing Fonts
 - C-Support
 - Vim-Support
 - Bash-Support
 - Python Mode
+- neovim support
+- encrypted personal alises
+- .gitconfig
+- bash customisation
+- useful shell script
 
 ## Controls  
 ### Map Leader
 map leader = `,`  
-
-### Search
-`<Ctrl+n>` Clear current search highlight  
-`<Leader>/` Clear current search highlight  
 
 ### Fonts (gnome-terminal only)
 `<F7>` Cycle through installed powerline fonts  
@@ -54,7 +60,7 @@ map leader = `,`
 `<Leader>s` Do Sort  
 `<Crtl+b>` Open Tree Browser  
 `<Crtl+t>` Open Tag Browser  
-`<Tab><Tab>` Cycle opening folded code blocks  
+`<t><t>` Cycle opening folded code blocks  
 
 ### Movement using vim standard keys
 `<Ctrl+[h,j,k,l]>` Move to vim panes and tmux windows (vim-tmux-navigator)  
@@ -63,11 +69,15 @@ map leader = `,`
 
 ### Movement using arrow keys
   note: Many window managers intercept arrow key combos  
-`<Ctrl+[Left,Right,Up,Down]>` to change windows  
+`<Ctrl+[Left,Right,Up,Down]>` to change windows and tabs  
+`<Alt+[Left,Right]>` to move current tab  
 `<Crtl+PageUp>` or `<Ctrl+PageDown` to change tabs  
 
 # Includes the JVim Plugin  
 # Documentation for the JVim Plugin  
+
+# JVim Plugin
+Version 2.0  
 
 ## Installation
 Install this plugin as you would any other vim plugin  
@@ -79,7 +89,10 @@ vim-plug example:
 ```
 Plug 'john-warnes/jvim'
 ```
-### Features
+
+## Features
+- Fixing Quickfix Window Size
+- Folding Defaults
 - Use detected file sytnax for code folding support
 - Automatically return to the last position of previously edited files
 - Spell check on by default
@@ -89,67 +102,99 @@ Plug 'john-warnes/jvim'
 - Show EOL marked (off by default)
 - Show many hidden characters: Tabs, NBSP, Extends, Precedes
 - Show simple indent guide for <space> indented files
-- Persistent Undo (undo on a previously edited file)
+- Persistent Undo (undo saved on a previously edited file)
 - Many helpful <Arrow Key> mapping for the new users
-    - Same mapping support with regular vim movement keys
+    - Same mappings supported with regular vim movement keys
 - Many other useful key mapping
 
 ## Options
 Place options before your `Plug 'john-warnes/jvim'` line in vimrc  
 Options shown with defaults  
 ```
-g:JV_vimDir="$HOME/.vim"                  "Setup Vim Directory
-g:JV_showTrailing = 1                     "Show Trailing Spaces
-g:JV_showEol = 0                          "Show EOL marker
-g:JV_showIndentGuides = 1                 "Show Indents
-g:JV_usePresistentUndo = 1                "Use persistent Undo
-g:JV_colorColumn = join(range(81,83),',') "Set Long Line guide
-g:JV_red = 'GruvboxRedBold'               "Highlight link for Red
-g:JV_useSystemClipboard = 1               "Use System Clipboard
+let g:JV_vimDir             = $HOME/.vim         " Setup Vim Directory
+let g:JV_showTrailing       = 1                  " Show Tailing Spaces
+let g:JV_showEol            = 0                  " Show EOL marker
+let g:JV_usePresistent_Undo = 1                  " Use persistent Undo
+let g:JV_colorColumn        = 81                 " Set long line guide
+let g:JV_red                = 'GruvboxRedBold'   " Highlight link for Red
+let g:JV_useSystemClipboard = 1                  " Try to use system clipboard
+let g:JV_IndentGuide        = 1                  " Show indent guides when (F2 Toggle)
+let g:JV_codePretty         = 1                  " Replace some chars with alternatives (F2 Toggle)
+let g:JV_quickFixHeightMin  = 3                  " Limit the MIN size of the quick fix window
+let g:JV_quickFixHeightMax  = 10                 " Limit the MAX size of the quick fix window
+let g:JV_foldingSyntax      = 1                  " Enable fold=syntax for all files
+                                                 " NOTE:Might be slow on older systems
+let g:JV_foldingDefault     = 2                  " Folding Mode on File Open
+                                                 "   0 no default (might remember last)
+                                                 "   1 open all folds on file open
+                                                 "   2 close all folds on file open
+                                                 "   NOTE: ''tt'' in normal mode to toggle folds
 ```
 
-## Commands
+### Window Creation/Deletion
+`<Ctrl+w><Del>` or `<C-w><BackSpace>` to close current window  
+`<Ctrl+w>|` or `<Ctrl+w>\` Create new file in vertical split window  
+`<Ctrl+w>-` or `<Ctrl+=>` Create new file in horizontal split window  
+*NOTE* Use the *mouse* for easy control over window splits `[Click]` and `[Drag]` on window the *separator*  
 
-### GUI menu
-`F4` Open Terminal version if the GUI menu  
-- Use movement left and right or `<Tab>` to navagate  
-- `<Enter>` to select  
-- `<Esc>` to quit  
+### Window and Tab Movement
+`<C-PageUp>` and `<C-PageDown>` Change current tab  
+`<Ctrl+Left>` and `<Ctrl+Right>` Move cursor to *Left/Right Window*, or if at screen edge change to *Next/Prev Tab*  
+`<Ctrl+Up>` and `<Ctrl+Down>` Move cursor to *Up/Down Window*  
+`<Leader><Arrow Key>` does the same as `<Ctrl+Arrow Key>`  
+`<Alt+Left>` Move current tab left  
+`<Alt+Right>` Move current tab right  
 
-### File Commands
-`:TrimFile` to trim trailing white space  
-`ff` open filename under cursor in new vsplit  
-`ft` open filename under cursor in new tab  
+### Commands
+`:TrimFile` Trim trailing white space(s) from current file  
+`:w!!` Force saving current file with *sudo* (protected file)  
 
-### Code Folding
-`<tab><tab>` to open and close a code fold  
-or when cursor is over fold push left or right movement keys  
+### Visual Mode
+`<tab>` Jump to matching braces, parentheses, etc..
+`<` or `>` Indent or unindent lines selected lines
 
-### Window Commands
-`<C-w><Del>` or `<C-w><BackSpace>` to close current window  
-`<C-w>|` Create new vertical split in window  
-`<C-w>-` Create new horizontal split in window  
-Use the mouse for easy control over window splits  
-- Click and drag on window separator  
+### Normal Mode
 
-### Tabs
-Change Tabs with `<C-PageUp>` and `<C-PageDown>`
+#### Code Folding
+`<t><t>` Toggle open/close current fold  
+`<z><M>` Close *all* folds  
+`<z><R>` Open *all* folds  
 
-### Saving
-`:w!!` Save with sudo (in case you edited protected file and forgot)
+#### Files
+`<f><t>` open file *under cursor* in *new tab* (or current file)  
+`<f><f>` open file *under cursor* in new *vertical split* window (or current file)  
 
-### Spelling Help
+#### Search
+`<Leader>/` or `<Ctrl+n>` Clear current search highlight  
+`<leader>p` Manually toggle *Paste Mode* use if you have problems pasting into vim from outside programs  
+
+#### Movement
+`<tab>` Jump to matching (braces, parentheses, etc)  
+
+#### Display
+`<F2>` Show/hide indent guides and CodePretty()  
+![Indent Guide Example](/_assets/Indet_Flip.gif "Indent Guides")
+
+#### Spelling Help
 `==` to autocorrect word under cursor  
 `z=` to list possible corrections of word under cursor  
 `u`  to undo  
 
-Common CMD misspelling mappings
+#### GUI menu
+`<F4>` Open Terminal version of the GUI menu  
+- Use `<Left>`, `<Right>` or `<Tab>` to navigate  
+- `<Enter>` to select  
+- `<Esc>` to quit  
+
+#### Vim Scripting
+`<Shift+F5>` re-source current file (vim files only)  
+
+### Other fixes
+
+#### Command Mode
 `:Q` becomes `q`  
 `:Q!` becomes `q!`  
 `:W` becomes `w`  
 `:W!` becomes `w!`  
 
-### Indent Guide (Spaces for indents)
-`F2` to toggle on or off  
-![Indent Guide Example](https://raw.githubusercontent.com/john-warnes/jvim/master/_assets/Indet_Flip.gif "Indent Guides")
 
