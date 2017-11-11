@@ -17,7 +17,7 @@
 #      REVISION:  ---
 #===============================================================================
 
-set -o nounset                              # Treat unset variables as an error
+set -o nounset                  # Treat unset variables as an error
 
 # Use colors, but only if connected to a terminal, and that terminal
     # supports them.
@@ -42,4 +42,4 @@ set -o nounset                              # Treat unset variables as an error
 
 echo "$BOLD${RED}C${GREEN}O${YELLOW}L${BLUE}O${RED}R${GREEN}S$RESET$BOLD support$GREEN ON$RESET"
 
-
+set +o nounset                  # Do Not treat unset variables as an error
