@@ -16,6 +16,7 @@ setlocal keywordprg=:help
 "       :make! | copen
 " } ===
 
+
 "=================================================================
 " Leader Key {
 "=================================================================
@@ -368,12 +369,15 @@ if (g:JV_autocomplete == 1) && !has('nvim')
     " Plug 'ervandew/supertab'            " Super tab completion
 
     Plug 'ajh17/VimCompletesMe'           " Light plugin like supertab 
-    autocmd! FileType text,markdown let b:vcm_tab_complete = 'dict'
+    augroup VCM_use_dict
+        autocmd!
+        autocmd FileType text,markdown let b:vcm_tab_complete = 'dict'
+    augroup END
 endif
 
 "} ===
-"
-"
+
+
 " let g:ulti_expand_or_jump_res = 0 "default value, just set once
    function! Ulti_ExpandOrJump_and_getRes()
       call UltiSnips#ExpandSnippetOrJump()
@@ -385,7 +389,7 @@ endif
 
 function! ExpJump()
     if (Ulti_ExpandOrJump_and_getRes() > 0) 
-        return ""
+        return ''
     else
         return "\<tab>"
     endif
@@ -531,6 +535,7 @@ Plug 'godlygeek/tabular'
 call plug#end()
 "} ===
 
+
 "=================================================================
 " Color Scheme {
 "=================================================================
@@ -667,8 +672,6 @@ smap <NUL> <C-Space>
 smap <C-@> <C-Space>
 smap <C-Space> <C-U>
 
-
-
 "if (g:JV_autocomplete==1)
 "     <CR>: Close popup, expand snippets or just do <CR>
 "    inoremap <silent> <CR> <C-r>=<SID>cr_function()<CR>
@@ -753,8 +756,8 @@ if exists('g:UltiSnipsExpandTrigger')
 "}=====
 
     "put utilsnips expands at top
-    if exists('g:JV_autocomplete')
-        if (g:JV_autocomplete == 1) && has('nvim')
+    if exists('g:JV_autocomplete') && exists('deoplete#custom#source')
+        if (g:JV_autocomplete == 1)
             call deoplete#custom#source('ultisnips', 'rank', 1000)
         endif
     endif
