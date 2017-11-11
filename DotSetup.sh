@@ -269,7 +269,8 @@ Remove()
 #-------------------------------------------------------------------------------
 Upgrade()
 {
-    vim +PlugInstall +PlugUpdate +PlugClean +qall
+    git pull
+    vim +PlugInstall +PlugInstall +PlugUpdate +PlugClean +qall
     exit 0
 }
 
