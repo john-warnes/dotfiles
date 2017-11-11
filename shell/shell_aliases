@@ -20,7 +20,6 @@ elif [[ $OS == 'OSX' ]]; then
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
-
 fi
 
 # Tmux alias
@@ -44,4 +43,4 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 alias gits='git status'
 alias gita='git add'
 
-printf "[Shell Aliases Loaded] "
+printf "${RESET}${GREEN}Shell Aliases$RESET|"

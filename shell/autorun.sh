@@ -22,11 +22,14 @@
 # Check if this has already been run {
 #===============================================================================
 if [[ $DOTFILESAUTO == 1 ]]; then
-    echo " == Jvim Active == "
+    #echo "$RESET${GREEN}[dotfiles Already Loaded]$RESET"
     return 0
 else
-    echo " == Jvim Autorun == "
-    export DOTFILESAUTO=0
+
+if [[ -f $DOTFILES/scripts/colors.sh ]]; then
+    source $DOTFILES/scripts/colors.sh
+fi
+    export DOTFILESAUTO=1
 fi
 # } ===
 
@@ -40,7 +43,7 @@ fi
 
 # } ===
 
-printf " == "
+printf "["
 
 #===============================================================================
 # Python Virtual Environments {
@@ -63,9 +66,9 @@ if [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 
     source /usr/local/bin/virtualenvwrapper.sh
-    printf "[Python Virtual Env Wrapper] "
+    printf "${RESET}${GREEN}Python Virt Wrapper,$RESET|"
 else
-    printf "[Python Virtual Env Wrapper NOT FOUND] "
+    printf "${RESET}${YELLOW}!! Python Virt Wrapper !!$RESET "
 fi
 # } ===
 
@@ -94,9 +97,9 @@ fi
 if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
     if [ -f $(brew --prefix)/etc/bash_completion ]; then
         source $(brew --prefix)/etc/bash_completion
-        printf "[OSX Bash Completion] "
+        printf "${RESET}${GREEN}OSX Bash Complete$RESET|"
     else
-        printf "[OSX Bash Completion NOT FOUND] "
+        printf "${RESET}${YELLOW}!! OSX Bash Completion !!$RESEET "
     fi
 fi
 # }
@@ -113,12 +116,12 @@ if [[ $SHELL == '/bin/bash' ]]; then
         export GIT_PS1_SHOWCOLORHINTS=1
         #PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
         PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "'
-        printf "[Bash Git Prompt] "
+        printf "${RESET}${GREEN}Bash git-Prompt$RESET"
     else
-        printf "[Bash Git Prompt NOT FOUND] "
+        printf "${RESET}${YELLOW}!! Bash git-Prompt !!$RESET"
     fi
 fi
 # }
 
-printf " == \n"
-echo " == ready == "
+echo "]"
+echo "${RESET}DOTFILES${GREEN} Ready$RESET"
