@@ -2,14 +2,7 @@
 
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
-# Modify on May-29-2017 by Hugo V. to fit my setup
 
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  DetectOS
-#   DESCRIPTION:  Set variables detecting the OS type
-#    PARAMETERS:  None
-#       RETURNS:  None
-#-------------------------------------------------------------------------------
 #!/bin/bash
 #set -euo pipefail
 #IFS=$'\n\t'
@@ -18,14 +11,20 @@ set -o nounset
 
 clear
 
-#
-#    MAC OS fix bash completion
-#
+SCRIPTVERSION="V2.2"
+
+# Note: MAC OS fix for bash completion
 #   brew install bash-completion
 #   brew install git
 #   brew link git
-#
 
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  DetectOS
+#   DESCRIPTION:  Set variables detecting the OS type
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
 DetectOS()
 {
     # IDs help ---> https://github.com/zyga/os-release-zoo
@@ -43,9 +42,8 @@ DetectOS()
 #        *)        OS="unknown: $OSTYPE" ;;
 #    esac
 
-    if [[  $OS == 'LINUX' ]]; then
-        if [[  $SUPPORTEDDISTROS != *$ID* ]]; then
-            echo "$BOLD${RED}ERROR:$RESET Undetected Linux: $ID $RESET"
+    if [[ $OS == 'LINUX' ]] && [[ $SUPPORTEDDISTROS != *$DISTRO* ]]; then
+            echo "$BOLD${RED}ERROR$RESET Undetected Linux:$BOLD$YELLOW $ID $RESET"
             echo "Supported:$BOLD$BLUE $SUPPORTEDDISTROS $RESET"
             read -n 1 -p "Attempt to continue? $RESET (y/N): $GREEN" choice
             echo "$RESET"
@@ -53,15 +51,8 @@ DetectOS()
                 y|Y ) :;;
                 n|N|* ) echo "$RESET";exit -1;;
             esac
-        else
-            if [[  -z "$PRETTY_NAME" ]]; then
-                echo "Linux Detected:$BOLD$GREEN $ID $RESET"
-            else
-                echo "Linux Detected:$BOLD$GREEN $PRETTY_NAME $RESET"
-            fi
-        fi
 
-    elif [[  "$OS" == "OSX" ]]; then
+    elif [[  $OS == "OSX" ]]; then
         echo "OSX Detected $RESET"
         if which brew 2> /dev/null; then
             echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using BREW"
@@ -71,7 +62,8 @@ DetectOS()
             echo "$BOLD${YELLOW}Note:$RESET OSX:$BOLD$BLUE HomeBrew (https://brew.sh/)$RESET is required for auto install."
             echo "$BOLD${YELLOW}Note:$RESET Missing Packages will be listed."
         fi
-   elif [[  "$OS" == "BABUN" ]]; then
+
+   elif [[  $OS == "BABUN" ]]; then
         echo "Cygwin Detected $RESET"
         if which pact 2> /dev/null; then
             echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using PACT"
@@ -112,16 +104,21 @@ ScriptSettings()
     ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.profile $HOME/.bashrc $HOME/.zshrc)
 
     #Optional
-    OPTPKGS='clang cppcheck libxml2-utils lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
+    OPTPKGS='clang cppcheck lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     if [[  $OS == 'LINUX' ]]; then  #LINUX
-        PKGS="git bc curl vim\ --with-python3 python3"
-        #PKGS="git vim python3 curl bc"
+        PKGS="git bc curl python3 vim"
     elif [[  $OS == 'OSX' ]]; then  #OSX
-        PKGS='git bc curl vim python3'
+        # NOTE: OSX needs to update the vim it comes with or you may have issues
+
+        PKGS="git bc curl python3 neovim vim\ --with-python3" # need to test
+        # hoping it will run: "brew install vim --with-python3" if not
+        # change back to this line
+        #PKGS='git bc curl python3 vim'
+
     elif [[  $OS == 'BABUN' ]]; then  #Babun
-        PKGS='git vim python3 curl bc'
+        PKGS='git bc curl python3 vim'
     fi
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
@@ -144,7 +141,10 @@ ScriptSettings()
 #-------------------------------------------------------------------------------
 PrintHelp()
 {
-    echo "${RESET}usage: $0 [--administrator] [--remove] [--upgrade] [--decrypt] [--backup]$RESET"
+    echo ""
+    echo "${RESET}DotSetup Version $SCRIPTVERSION"
+    echo "${RESET}usage: $0 [--backup] [--install] [--upgrade] [--remove] [--administrator] [--decrypt]$RESET"
+    echo ""
     exit 0
 }
 
@@ -307,21 +307,26 @@ Init()
 {
     #Check if running as sudo
     # TODO look into sudo -H
-    if [[  $EUID == 0 ]]
-    then
+    if [[  $EUID == 0 ]]; then
         echo "Do ${RED}NOT$RESET run this script as root or with sudo$RESET"
+        PrintHelp
+    fi
+
+    # Force "--install" to start the install now
+    if [[  $# == 0 ]]; then
         PrintHelp
     fi
 
     #Check and process command line arguments
     while [[  $# > 0 ]]; do
         case $1 in
+            --install) :;; # empty on purpose
             --administrator) ADMIN=1;;
             --remove) AskRemove;;
             --upgrade) Upgrade;;
             --decrypt) DecryptSecure;;
             --backup) Backup;;
-            --hidden) neovimSetup; exit 0;;
+            --hidden) neovimSetup; exit 0;; # Used for testing
             -h|--help|*) PrintHelp;;
         esac;
         shift;
@@ -332,9 +337,7 @@ Init()
     if [[ $ADMIN == 1 ]]; then
         echo "Admin Mode is:$BOLD$GREEN ON $RESET"
     fi
-
 }
-
 
 
 #---  FUNCTION  ----------------------------------------------------------------
