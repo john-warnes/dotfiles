@@ -141,14 +141,14 @@ snippet _skel "cpp / c skeletion" b
  *  @file   `!v expand('%:t')`
  *  @brief  ${1:Description}
  *
- *  @author ${2:`!p snip.rv = userinfo['AUTHOR']`}
+ *  @author `!p snip.rv = userinfo['AUTHOR']`
  *
  *  @internal
  *       Created  `date +%d.%b.%Y`
  *      Revision  none
- *      Compiler  gcc
- *  Organization  ${3:`!p snip.rv = userinfo['ORGANIZATION']`}
- *       Company  ${4:`!p snip.rv = userinfo['COMPANY']`}
+ *      Compiler  ${2:gcc}
+ *  Organization  `!p snip.rv = userinfo['ORGANIZATION']`
+ *       Company  `!p snip.rv = userinfo['COMPANY']`
  *     Copyright  Copyright (c) `date +%Y`, $2
  *
  *  `!p snip.rv = userinfo['LICENSE1']`
