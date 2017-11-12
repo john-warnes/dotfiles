@@ -105,7 +105,9 @@ if ($COLORTERM ==? 'truecolor')
 else
     " No true color. Hope term has 256 colors
     let g:gruvbox_italic=0
-    set term=xterm-256color
+    if !has('nvim')
+        set term=xterm-256color
+    endif
     set t_Co=256
     set t_ut=
     "    set t_ut=set
@@ -154,6 +156,7 @@ let g:JV_foldingDefault     = 3                " Folding Mode on File Open
                                                "  NOTE: ''tt'' in normal mode to toggle folds
 Plug 'john-warnes/jvim'
 "} ===
+
 
 "=================================================================
 " NerdTree to see files in tree mode {
@@ -272,7 +275,6 @@ Plug 'edkolev/tmuxline.vim'     " airline Plugin that allows theming of tmux
 "} ===
 
 
-
 "=================================================================
 " Fugitive for GIT {
 "=================================================================
@@ -282,10 +284,10 @@ Plug 'tpope/vim-fugitive'
 " Plug 'tpope/vim-rhubarb'
 "} ===
 
+
 "=================================================================
 " Language Support Only enable if needed {
 "=================================================================
-
 let g:C_CreateMenusDelayed = 'yes'
 let g:C_MapLeader          = ','
 "Plug 'WolfgangMehner/c-support'
@@ -309,7 +311,6 @@ let g:Python_MapLeader  = ','
 "Plug 'WolfgangMehner/vim-support'
 "Plug 'WolfgangMehner/python-support'
 "} ===
-
 
 
 "=================================================================
@@ -362,54 +363,32 @@ if (g:JV_autocomplete == 1) && has('nvim') " || ( has('job') && has('timers') &&
     "set completeopt+=noinsert            " Do not modify line inless selected
     "set completeopt-=menuone             " Disable the complete menu for a single item
 
-    " Use tab to cycle matches 
+    " Use tab to cycle matches
 endif
 
 if (g:JV_autocomplete == 1) && !has('nvim')
     " Plug 'ervandew/supertab'            " Super tab completion
 
-    Plug 'ajh17/VimCompletesMe'           " Light plugin like supertab 
+    Plug 'ajh17/VimCompletesMe'           " Light plugin like supertab
     augroup VCM_use_dict
         autocmd!
         autocmd FileType text,markdown let b:vcm_tab_complete = 'dict'
     augroup END
 endif
 
-"} ===
-
-
-" let g:ulti_expand_or_jump_res = 0 "default value, just set once
-   function! Ulti_ExpandOrJump_and_getRes()
-      call UltiSnips#ExpandSnippetOrJump()
-      return g:ulti_expand_or_jump_res
-   endfunction
-
-"inoremap <Tab> <C-R>=(Ulti_ExpandOrJump_and_getRes() > 0)?"":IMAP_Jumpfunc('', 0)<CR>
-
-
-function! ExpJump()
-    if (Ulti_ExpandOrJump_and_getRes() > 0) 
-        return ''
-    else
-        return "\<tab>"
-    endif
-endfunction
-
-inoremap <expr> <tab> pumvisible() ? "\<c-n>" : ExpJump()
-
-"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" Tab to move through the choices
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
+"} ===
 
 
 "=================================================================
 " TagBar - Requires Exuberant Ctags {
 "=================================================================
 Plug 'majutsushi/tagbar'
+let g:tagbar_width = 30             " width of tagnar window
 
 nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
-
-let g:tagbar_width = 30             " width of tagnar window
 " } ===
 
 
@@ -428,7 +407,7 @@ nnoremap <Leader>t :GenCtags<CR>   " if no autogen then force with <Leader>t
 "            \ :silent execute '!(rm tags)'<CR>
 "            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
 "            \ :redraw!<CR>
-"            \ :echom 'Generating cTags'<CR>
+"            \ :echom 'Generated cTags'<CR>
 "            \ execute 'set tags=./tags;~/.vim/tags;tags;'
 "set tags=./tags;~/.vim/tags;tags;
 "} ===
@@ -479,18 +458,17 @@ if exists('$TMUX')
 endif
 "} ===
 
-
 "=================================================================
 " Code Snippets {
 "=================================================================
-let g:UltiSnipsExpandTrigger       = '<C-U>'
-let g:UltiSnips#JumpForwardTrigger  = '<C-S-f>'
-let g:UltiSnipsJumpBackwardTrigger = '<C-S-d>'
+let g:UltiSnipsExpandTrigger       = '<C-Space>'
+let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
+"let g:UltiSnipsJumpBackwardTrigger = '<C-S-d>'
+
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
 Plug 'SirVer/ultisnips'     " Track the engine
 Plug 'honza/vim-snippets'   " Snippets are separated from the engine
-
 "} ===
 
 
@@ -501,12 +479,12 @@ Plug 'honza/vim-snippets'   " Snippets are separated from the engine
 " :SSave    save a session
 " :SDelete  delete a session
 " :SClose   close current session
-let g:startify_fortune_use_unicode = 1
-let g:startify_session_persistence = 0
-let g:startify_relative_path       = 1
-let g:startify_change_to_dir       = 1
-let g:startify_update_oldfiles        = 1
-let g:startify_bookmarks           = [ {'v': '~/.vimrc'}, {'b': '~/.vim/bundle/jvim/plugin/jvim.vim'}]
+"let g:startify_fortune_use_unicode = 1
+"let g:startify_session_persistence = 0
+"let g:startify_relative_path       = 1
+"let g:startify_change_to_dir       = 1
+"let g:startify_update_oldfiles     = 1
+"let g:startify_bookmarks           = [ {'v': '~/.vimrc'}, {'b': '~/.vim/bundle/jvim/plugin/jvim.vim'}]
 " Plug 'mhinz/vim-startify'
 "} ===
 
@@ -578,7 +556,7 @@ set termencoding=utf-8         " Lets try using Unicode
 " Editor Look and Decorations {
 "=================================================================
 set ruler                   " Show the line / column number of cursor
-" set showcmd                 " Show the partially completed command
+"set showcmd                 " Show the partially completed command
 set number                  " Display line number"
 set numberwidth=5           " Use 5 spaces for number column"
 set textwidth=79            " Width of document (used by gd)
@@ -630,11 +608,11 @@ set matchtime=5             " Show matching character for .3s
 "=================================================================
 " Tabs {
 "=================================================================
-set shiftwidth=4            " Number of spaces used for autoindents
+set shiftwidth=4            " Spaces used for auto indents
 set tabstop=4               " Set the tab width to 4
-set softtabstop=4           " Number of spaces a tab moves over
+set softtabstop=4           " Spaces that a tab moves over
 set expandtab               " Insert spaces when using the Tab key
-set smarttab                " Allow <tab> to match previous line
+set smarttab                " Allow Tab to match previous line
 "} ===
 
 
@@ -644,11 +622,11 @@ set smarttab                " Allow <tab> to match previous line
 " zM   "Close all folds
 " zR   "Open all folds
 
-" easier moving between tabs
+" Easier moving between tabs
 nnoremap <Leader>n <Esc>:tabprevious<CR>
 nnoremap <Leader>m <Esc>:tabnext<CR>
 
-" sort visual mode function 
+" Sort visual mode selected lines
 vnoremap <Leader>s :sort<CR>
 
 nnoremap <C-n> <Esc>:nohl<CR>   " Remove highlight from search
@@ -664,30 +642,9 @@ endif
 
 " Map <NUL> and <C-@> as Control-Space as it commonly is
 " Allow remapping
-imap <NUL> <C-Space>  
+imap <NUL> <C-Space>
 imap <C-@> <C-Space>
-imap <C-Space> <C-U>
 
-smap <NUL> <C-Space>  
-smap <C-@> <C-Space>
-smap <C-Space> <C-U>
-
-"if (g:JV_autocomplete==1)
-"     <CR>: Close popup, expand snippets or just do <CR>
-"    inoremap <silent> <CR> <C-r>=<SID>cr_function()<CR>
-"    function! s:cr_function() abort
-"        if (pumvisible())
-"            call deoplete#close_popup() 
-"            call UltiSnips#ExpandSnippetOrJump()
-"            if (g:ulti_expand_res == 0)
-"                startinsert
-"            endif
-"        else
-"            return "\<CR>"
-"        endif
-"    endfunction
-"endif
-"} ===
 
 
 "=================================================================
@@ -702,11 +659,11 @@ augroup END
 
 
 "=================================================================
-" auto source vimrc and jvim when saving {
+" auto source vimrc and jvim.vim when saving {
 "=================================================================
 augroup reload_vimrc
     autocmd!
-    autocmd! bufwritepost .vimrc,vimrc,.jvim.vim,jvim.vim source % " Automatic reloading of .vimrc
+    autocmd bufwritepost .vimrc,vimrc,.jvim.vim,jvim.vim source %
 augroup END
 "} ===
 
@@ -724,11 +681,11 @@ augroup END
 
 
 "=================================================================
-" UltiSnips Support and File Type Templates {
+" UltiSnips File Type Templates {
 "=================================================================
 if exists('g:UltiSnipsExpandTrigger')
 
-"UltiSnips Templates ===== {
+"UltiSnips Template for new Files ===== {
     function! s:Try_insert(skel)
         execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
         if (g:ulti_expand_res ==? 0)
@@ -755,10 +712,10 @@ if exists('g:UltiSnipsExpandTrigger')
     augroup END
 "}=====
 
-    "put utilsnips expands at top
-    if exists('g:JV_autocomplete') && exists('deoplete#custom#source')
+    "put also have deoplete have ultisnips expands at top
+    if exists('g:JV_autocomplete') && exists('g:deoplete#sources#clang#libclang_path')
         if (g:JV_autocomplete == 1)
-            call deoplete#custom#source('ultisnips', 'rank', 1000)
+            call deoplete#custom#source('ultisnips', 'rank', -1000)
         endif
     endif
 endif
