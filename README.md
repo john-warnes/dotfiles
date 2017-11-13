@@ -147,6 +147,9 @@ let g:JV_foldingDefault     = 2                  " Folding Mode on File Open
                                                  "   1 open all folds on file open
                                                  "   2 close all folds on file open
                                                  "   NOTE: ''tt'' in normal mode to toggle folds
+let g:JV_DateFormat         = '%A, %d %B %Y'     " Format for template and metadata dates (man date)
+let g:JV_MaxMetaDataSearch  = 50                 " Max lines at top of file to search for meta data tags
+let g:JV_EnableUpdateMetaData = 1                " Enable auto updating of metadata on file save
 ```
 
 ### Window Creation/Deletion
