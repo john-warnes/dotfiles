@@ -1,8 +1,8 @@
 "=================================================================
 "                             vimrc                              "
 "=================================================================
-"  Revision  386
-"  Modified  Sunday, 12 November 2017
+"  Revision  391
+"  Modified  Monday, 13 November 2017
 "=================================================================
 set encoding=utf-8
 scriptencoding utf-8
@@ -149,7 +149,7 @@ let g:JV_IndentGuide        = 0                " Show indent guides when (F2 Tog
 let g:JV_codePretty         = 1                " Replace some chars with alternatives (F2 Toggle)
 let g:JV_quickFixHeightMin  = 3                " Limit the MIN size of the quick fix window
 let g:JV_quickFixHeightMax  = 10               " Limit the MAX size of the quick fix window
-let g:JV_foldingSyntax      = 1                " 1: enable set folding=syntax for all files
+let g:JV_foldingSyntax      = 0                " 1: enable set folding=syntax for all files
                                                "  NOTE: Might be slow on older systems
 let g:JV_foldingDefault     = 3                " Folding Mode on File Open
                                                " 0: none default vim
@@ -732,9 +732,9 @@ if exists('g:UltiSnipsExpandTrigger')
     "} ===
 
     " Put UltiSnips at the bottom of Deoplete List {
-    if exists('g:JV_autocomplete') && exists('g:deoplete#sources#clang#libclang_path')
+    if exists('g:JV_autocomplete') && exists('*deoplete#custom#source')
         if (g:JV_autocomplete == 1)
-            call deoplete#custom#source('ultisnips', 'rank', -1000)
+            silent call deoplete#custom#source('ultisnips', 'rank', -1000)
         endif
     endif
     "} ===
