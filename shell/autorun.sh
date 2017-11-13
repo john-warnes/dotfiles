@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  032
-#  Modified  Sunday, 12 November 2017
+#  Revision  042
+#  Modified  Monday, 13 November 2017
 #=================================================================
 
 
@@ -147,7 +147,11 @@ main()
 
     HASRUN=$(RunCheck)
 
-    if [[ $HASRUN ]]; then
+    # Might need to force it
+    #HASRUN=0
+    # this need more testing to see if detecting loaded or not
+
+    if ! [[ $HASRUN ]]; then
         printf "$RESET[dotfiles reload: "
         BashGit-Prompt
         echo "]"
