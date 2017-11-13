@@ -96,7 +96,9 @@ DetectOS()
 #-------------------------------------------------------------------------------
 ScriptSettings()
 {
-    SCRIPTNAME="WSU JCustom VIM IDE"
+    SCRIPTNAME="WSU JVim Customized IDE"
+
+    BACKUPFILE=.jvimbackup.tar
 
     #Directory Setup
     DOTFILES=$HOME/dotfiles
@@ -145,9 +147,44 @@ PrintHelp()
     echo "${RESET}DotSetup Version $SCRIPTVERSION"
     echo "${RESET}usage: $0 [--backup] [--install] [--upgrade] [--remove] [--administrator] [--decrypt]$RESET"
     echo ""
+    echo "    --backup          Backup important files to \"$HOME/$BACKUPFILE\"."
+    echo "    --install         Install \"$SCRIPTNAME\"."
+    echo "    --clean           Clean current version of temporary files."
+    echo "    --upgrade         Upgrade current version."
+    echo "    --remove          Uninstall \"$SCRIPTNAME\"."
+    echo "    --administrator   Install the optional and required packages"
+    echo "                        as a administrator."
+    echo "                        NOTE: Install will inform if required."
+    echo "    --decrypt         Setup, Get than Decrypt a secure git."
+    echo ""
     exit 0
 }
 
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  clean
+#   DESCRIPTION:  Clean out temp and possibly error files
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
+Clean()
+{
+    pushd .
+    printf "${BOLD}Cleaning Files and Directory: "
+
+    cd $DOTFILES/vim
+    printf "${BLUE}view, "
+    rm -rf view
+    printf "${BLUE}undo, "
+    rm -rf undo
+    printf "${BLUE}.netrwhist, "
+    rm .netrwhist
+
+    printf "${RESET}\nDone\n"
+    rm .netrwhist
+    popd
+    exit 0
+}
 
 
 #---  FUNCTION  ----------------------------------------------------------------
@@ -325,6 +362,7 @@ Init()
             --administrator) ADMIN=1;;
             --remove) AskRemove;;
             --upgrade) Upgrade;;
+            --clean) Clean;;
             --decrypt) DecryptSecure;;
             --backup) Backup;;
             --hidden) neovimSetup; exit 0;; # Used for testing
