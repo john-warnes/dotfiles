@@ -1,5 +1,39 @@
 # john-warnes/dotfiles.git
 
+## Features
+- Neovim and Vim 8 Supported
+- Termnal vim and GUI vim supported
+- Gurvbox color scheme integrated
+- ALE / Symatic Code linter
+- Nerdtree
+- Tagbar
+- Tmux Shell Multiplexer
+- Zsh Shell Support
+- Changing Fonts
+- UltiSnips
+- Python Mode
+- Bash customisation
+- Encrypted personal alises
+- .gitconfig
+- Useful shell scripts
+- c/c++/python templates
+- Custom simple auto metadata
+- Many more...
+
+## Theme ScreenShots
+Default Dark Setup
+![Default Color Scheme](/_assets/Default.png "Default Color Scheme")
+
+Default Light Setup
+![Default Light Color Scheme](/_assets/LightMode.png "Default Light Color Scheme")
+
+Not sure what one to pick? Try <F5>
+![Dark or Light](/_assets/Dark_or_Light.gif "Dark or Light Color Scheme")
+
+Need more contrast for theme? Try <F6>
+![Dark Contrasts](/_assets/Dark_Contrasts.gif "Dark Contrasts")
+![Light Contrasts](/_assets/Light_Contrasts.gif "Light Contrasts")
+
 ## Instillation
 1. Clone into `$HOME` folder  
 ```
@@ -21,27 +55,11 @@ or
 4. Enjoy jvim
 
 ## Supported OS
- - linux
- - mac osX
- - ubunutu on windows 10
+ - Linux
+ - Mac OSX
+ - Ubunutu on windows 10
+ - Babun
 
-## Features
-- gurvbox color scheme integrated
-- ALE / Symatic Code linter
-- Nerdtree with git support
-- Tagbar 
-- Tmux Shell Multiplexer
-- Zsh Shell Support
-- Changing Fonts
-- C-Support
-- Vim-Support
-- Bash-Support
-- Python Mode
-- neovim support
-- encrypted personal alises
-- .gitconfig
-- bash customisation
-- useful shell script
 
 ## Controls  
 ### Map Leader
@@ -173,7 +191,12 @@ let g:JV_foldingDefault     = 2                  " Folding Mode on File Open
 
 #### Display
 `<F2>` Show/hide indent guides and CodePretty()  
+
+Indent guide example  
 ![Indent Guide Example](/_assets/Indet_Flip.gif "Indent Guides")
+
+Example of codePretty text changes  
+![Indent Guide Example](/_assets/codePretty.gif "codePretty")
 
 #### Spelling Help
 `==` to autocorrect word under cursor  
