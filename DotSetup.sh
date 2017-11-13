@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  124
-#  Modified  Sunday, 12 November 2017
+#  Revision  129
+#  Modified  Monday, 13 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -311,7 +311,8 @@ Remove()
 Upgrade()
 {
     git pull
-    vim +PlugInstall +PlugInstall +PlugUpdate +PlugClean +qall
+    vim +PlugInstall +PlugUpdate +PlugClean +qall
+    nvim +PlugInstall +PlugUpdate +qall
     exit 0
 }
 
