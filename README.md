@@ -1,5 +1,7 @@
 # john-warnes/dotfiles.git
 
+Install Script for Advanced dotfiles and vim setup.
+
 ## Features
 - Neovim and Vim 8 Supported
 - Termnal vim and GUI vim supported
@@ -21,16 +23,16 @@
 - Many more...
 
 ## Theme ScreenShots
-Default Dark Setup
+Default Dark Setup  
 ![Default Color Scheme](/_assets/Default.png "Default Color Scheme")
 
-Default Light Setup
+Default Light Setup  
 ![Default Light Color Scheme](/_assets/LightMode.png "Default Light Color Scheme")
 
-Not sure what one to pick? Try <F5>
+Not sure what one to pick? Try `<F5>`  
 ![Dark or Light](/_assets/Dark_or_Light.gif "Dark or Light Color Scheme")
 
-Need more contrast for theme? Try <F6>
+Need more contrast for theme? Try `<F6>`  
 ![Dark Contrasts](/_assets/Dark_Contrasts.gif "Dark Contrasts")
 ![Light Contrasts](/_assets/Light_Contrasts.gif "Light Contrasts")
 
