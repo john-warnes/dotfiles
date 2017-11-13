@@ -35,6 +35,8 @@ def write_docstring_args(arglist, snip):
     else:
         snip.rv = args[0]
 
+dateformat='+%A, %d %B %Y'
+
 # "../templates/personal.template.csv"
 # "$DOTFILES/vim/templates/personal.template.csv"
 
@@ -139,26 +141,39 @@ endsnippet
 snippet _skel "cpp / c skeletion" b
 /** ============================================================================
  *  @file   `!v expand('%:t')`
- *  @brief  ${1:Description}
+ *  @brief  ${1:Brief Description}
  *
  *  @author `!p snip.rv = userinfo['AUTHOR']`
  *
  *  @internal
- *       Created  `date +%d.%b.%Y`
- *      Revision  none
- *      Compiler  ${2:gcc}
+ *       Created  `!v strftime(g:JV_DateFormat)`
+ *      Modified  `!v strftime(g:JV_DateFormat)`
+ *      Revision  0
+ *      Compiler  ${3:gcc}
  *  Organization  `!p snip.rv = userinfo['ORGANIZATION']`
  *       Company  `!p snip.rv = userinfo['COMPANY']`
- *     Copyright  Copyright (c) `date +%Y`, $2
  *
- *  `!p snip.rv = userinfo['LICENSE1']`
- *  `!p snip.rv = userinfo['LICENSE2']`
+ *  @Copyright  Copyright (c) `date +%Y`, `!p snip.rv = userinfo['AUTHOR']`
+ *
+ *  @License
+ *    `!p snip.rv = userinfo['LICENSE1']`
+ *    `!p snip.rv = userinfo['LICENSE2']`
  * =============================================================================
  */
+`!p if snip.fn.lower().endswith('.h') or snip.fn.lower().endswith('.hpp'):
+	snip.rv = '#ifndef __' + snip.fn.replace('.','_').upper() + '__\n' + '#define __' + snip.fn.replace('.','_').upper() + '__\n'`
+#define REVISION__ 0
+#define MODIFIED__ "`!v strftime(g:JV_DateFormat)`"
 
 $0
+
+#undef MODIFIED__    // Keep Modified local to each file
+#undef REVISION__    // Keep Revision local to each file
+`!p if snip.fn.lower().endswith('.h') or snip.fn.lower().endswith('.hpp'):
+	snip.rv = '#endif    // __' + snip.fn.replace('.','_').upper() + '__'`
 endsnippet
 
+#define MODIFIED__ "`!v =strftime(g:JV_DateFormat date)`"
 
 #
 # ################################################ One offs below  
