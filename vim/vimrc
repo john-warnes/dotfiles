@@ -1,4 +1,8 @@
+"=================================================================
 "                             vimrc                              "
+"=================================================================
+"  Revision  386
+"  Modified  Sunday, 12 November 2017
 "=================================================================
 set encoding=utf-8
 scriptencoding utf-8
@@ -123,7 +127,6 @@ endif
 if ($OS ==? 'OSX') && !has('nvim')
     let g:gruvbox_italic=0
 endif
-
 "} ===
 
 
@@ -154,6 +157,9 @@ let g:JV_foldingDefault     = 3                " Folding Mode on File Open
                                                " 2: close all folds on file open
                                                " 3: Auto save folds and reload them
                                                "  NOTE: ''tt'' in normal mode to toggle folds
+let g:JV_DateFormat         = '%A, %d %B %Y'   " Format for template and metadata dates (man date)
+let g:JV_MaxMetaDataSearch  = 50               " Max lines at top of file to search for meta data tags
+let g:JV_EnableUpdateMetaData = 1              " Enable auto updating of metadata on file save
 Plug 'john-warnes/jvim'
 "} ===
 
@@ -258,7 +264,7 @@ Plug 'vim-airline/vim-airline-themes'       " Many Airline themes
 "set noshowmode                             " Hide mode in status line below airline
 set laststatus=2                            " Always show the status line
 let g:airline_powerline_fonts = 1           " Use Powerline fonts
-let g:airline_detect_spell=0                " Don't show spell and lang
+let g:airline_detect_spell    = 0           " Don't show spell and lang
 "let g:airline_section_c = '%F'             " Show full Path if possable
 
 " Themes
@@ -266,11 +272,21 @@ let g:airline_detect_spell=0                " Don't show spell and lang
 "let g:airline_theme='murmur'
 "let g:airline_theme='powerlineish'
 
-let g:airline_highlighting_cache                 = 1    " Proformace cache
+let g:airline_highlighting_cache                 = 1    " Performance cache
 let g:airline#extensions#ale#enabled             = 1    " Use ALE lint msgs
 let g:airline#extensions#tabline#enabled         = 1    " Theme the tabline
+let airline#extensions#tabline#show_buffers      = 0
+
+let g:airline#extensions#tabline#show_splits     = 0
+let g:airline#extensions#tabline#show_tabs       = 1
+
+"let g:airline#extensions#tabline#show_tab_nr     = 0
+"let g:airline#extensions#tabline#show_tab_type   = 0
+"let g:airline#extensions#tabline#close_symbol    = 'x'
+"let g:airline#extensions#tabline#show_close_button = 0
+
 let g:airline#extensions#tmuxline#enabled        = 1    " Theme tmux bar
-let g:airline#extensions#tmuxline#color_template = 'noarmal' " make tmux mode
+let g:airline#extensions#tmuxline#color_template = 'normal' " make tmux mode
 Plug 'edkolev/tmuxline.vim'     " airline Plugin that allows theming of tmux
 "} ===
 
@@ -288,21 +304,21 @@ Plug 'tpope/vim-fugitive'
 "=================================================================
 " Language Support Only enable if needed {
 "=================================================================
-let g:C_CreateMenusDelayed = 'yes'
-let g:C_MapLeader          = ','
+"let g:C_CreateMenusDelayed = 'yes'
+"let g:C_MapLeader          = ','
 "Plug 'WolfgangMehner/c-support'
 
-let g:C_UseToolbox      = 'yes'
-let g:C_UseTool_doxygen = 'yes'
-let g:C_UseTool_cmake   = 'yes'
+"let g:C_UseToolbox      = 'yes'
+"let g:C_UseTool_doxygen = 'yes'
+"let g:C_UseTool_cmake   = 'yes'
 
-let g:Bash_MapLeader    = ','
-let g:Latex_MapLeader   = ','
-let g:Latex_MapLeader   = ','
-let g:Lua_MapLeader     = ','
-let g:Perl_MapLeader    = ','
-let g:Vim_MapLeader     = ','
-let g:Python_MapLeader  = ','
+"let g:Bash_MapLeader    = ','
+"let g:Latex_MapLeader   = ','
+"let g:Latex_MapLeader   = ','
+"let g:Lua_MapLeader     = ','
+"let g:Perl_MapLeader    = ','
+"let g:Vim_MapLeader     = ','
+"let g:Python_MapLeader  = ','
 
 "Plug 'WolfgangMehner/bash-support'
 "Plug 'WolfgangMehner/latex-support'
@@ -458,12 +474,16 @@ if exists('$TMUX')
 endif
 "} ===
 
+
 "=================================================================
-" Code Snippets {
+" UltiSnips Code Snippets {
 "=================================================================
 let g:UltiSnipsExpandTrigger       = '<C-Space>'
 let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
 "let g:UltiSnipsJumpBackwardTrigger = '<C-S-d>'
+
+"Use Tab in select mode is skip keeping the defualt
+snoremap <Tab> <C-o>:call UltiSnips#JumpForwards()<CR>
 
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
@@ -644,7 +664,7 @@ endif
 " Allow remapping
 imap <NUL> <C-Space>
 imap <C-@> <C-Space>
-
+"} ===
 
 
 "=================================================================
@@ -684,8 +704,7 @@ augroup END
 " UltiSnips File Type Templates {
 "=================================================================
 if exists('g:UltiSnipsExpandTrigger')
-
-"UltiSnips Template for new Files ===== {
+    " UltiSnips Templates for new Files ===== {
     function! s:Try_insert(skel)
         execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
         if (g:ulti_expand_res ==? 0)
@@ -710,16 +729,17 @@ if exists('g:UltiSnipsExpandTrigger')
         autocmd!
         autocmd BufNewFile * silent! call InsertSkeleton()
     augroup END
-"}=====
+    "} ===
 
-    "put also have deoplete have ultisnips expands at top
+    " Put UltiSnips at the bottom of Deoplete List {
     if exists('g:JV_autocomplete') && exists('g:deoplete#sources#clang#libclang_path')
         if (g:JV_autocomplete == 1)
             call deoplete#custom#source('ultisnips', 'rank', -1000)
         endif
     endif
+    "} ===
 endif
-" } ===
+"} ===
 
 
 "=================================================================
