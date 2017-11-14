@@ -146,14 +146,14 @@ call plug#begin('~/.vim/bundle')
 let g:Jvim#vimopts#colorColumn        = 81 " Set long line guide
 let g:Jvim#vimopts#useSystemClipboard = 1  " Try to use system clipboard
 
-let g:Jvim#highlightRed               = gruvboxRedBold " Highlight to link for Red
+let g:Jvim#highlightRed               = 'g:GruvboxRedBold' " Highlight to link for Red
 
 let g:Jvim#hidden#showTrailing        = 1  " Show Tailing Spaces
-let g:Jvim#hidden#showEol             = 0  " Show EOL marker
+let g:Jvim#hidden#showEol             = 1  " Show EOL marker
 let g:Jvim#hidden#showIndent          = 0  " Show indent guides when (F2 Toggle)
-let g:Jvim#hidden#codePretty          = 0  " Replace some chars with alternatives (F2 Toggle)
+let g:Jvim#hidden#codePretty          = 1  " Replace some chars with alternatives (F2 Toggle)
 
-let g:Jvim#presistentUndo#enable      = 1  " Use persistent Undo
+let g:Jvim#presistentUndo#enable      = 0  " Use persistent Undo
 let g:Jvim#presistentUndo#dir         = expand($DOTFILES.'/vim/undo') " Where to store persistent files
 
 let g:Jvim#folding#enableSyntax       = 0 " Enable folding by syntax for all files
