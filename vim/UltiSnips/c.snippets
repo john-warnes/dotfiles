@@ -146,8 +146,8 @@ snippet _skel "cpp / c skeletion" b
  *  @author `!p snip.rv = userinfo['AUTHOR']`
  *
  *  @internal
- *       Created  `!v strftime(g:Jvim#DateFormat)`
- *      Modified  `!v strftime(g:Jvim#DateFormat)`
+ *       Created  `!v strftime(g:Jvim#metadata#DateFormat)`
+ *      Modified  `!v strftime(g:Jvim#metadata#DateFormat)`
  *      Revision  0
  *      Compiler  ${3:gcc}
  *  Organization  `!p snip.rv = userinfo['ORGANIZATION']`
@@ -163,7 +163,7 @@ snippet _skel "cpp / c skeletion" b
 `!p if snip.fn.lower().endswith('.h') or snip.fn.lower().endswith('.hpp'):
 	snip.rv = '#ifndef __' + snip.fn.replace('.','_').upper() + '__\n' + '#define __' + snip.fn.replace('.','_').upper() + '__\n'`
 #define REVISION__ 0
-#define MODIFIED__ "`!v strftime(g:Jvim#DateFormat)`"
+#define MODIFIED__ "`!v strftime(g:Jvim#metadata#DateFormat)`"
 
 $0
 
