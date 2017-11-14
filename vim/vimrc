@@ -146,7 +146,7 @@ call plug#begin('~/.vim/bundle')
 let g:Jvim#vimopts#colorColumn        = 81 " Set long line guide
 let g:Jvim#vimopts#useSystemClipboard = 1  " Try to use system clipboard
 
-let g:Jvim#highlightRed               = 'g:GruvboxRedBold' " Highlight to link for Red
+let g:Jvim#highlightRed               = 'GruvboxRedBold' " Highlight to link for Red
 
 let g:Jvim#hidden#showTrailing        = 1  " Show Tailing Spaces
 let g:Jvim#hidden#showEol             = 1  " Show EOL marker
