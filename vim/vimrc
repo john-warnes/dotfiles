@@ -1,7 +1,7 @@
 "=================================================================
 "                             vimrc                              "
 "=================================================================
-"  Revision  391
+"  Revision  403
 "  Modified  Monday, 13 November 2017
 "=================================================================
 set encoding=utf-8
@@ -12,6 +12,9 @@ setlocal foldcolumn=1
 setlocal keywordprg=:help
 "=================================================================
 
+filetype plugin indent on
+set modeline
+set modelines=5
 
 "=================================================================
 " Notes {
@@ -349,7 +352,14 @@ set completeopt-=preview         " Disable the preview window, these use popups
 let g:JV_autocomplete = get(g:, 'JV_autocomplete', 1)
 
 
+let g:JV_autocomplete = 0
 if (g:JV_autocomplete == 1) && has('nvim') " || ( has('job') && has('timers') && has('python3') )
+
+    " # On GNU/Linux
+    "   [sudo] find / -name libclang.so
+    " # On macOS
+    "   mdfind -name libclang.dylib
+
 
     if has('macunix')
         let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
