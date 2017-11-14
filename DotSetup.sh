@@ -187,7 +187,6 @@ Clean()
     printf "${RESET}\nDone\n"
     rm .netrwhist
     popd
-    exit 0
 }
 
 
@@ -310,6 +309,7 @@ Remove()
 #-------------------------------------------------------------------------------
 Upgrade()
 {
+    Clean
     git pull
     vim +PlugInstall +PlugUpdate +PlugClean +qall
     nvim +PlugInstall +PlugUpdate +qall
@@ -367,7 +367,7 @@ Init()
             --administrator) ADMIN=1;;
             --remove) AskRemove;;
             --upgrade) Upgrade;;
-            --clean) Clean;;
+            --clean) Clean; exit 0;;
             --decrypt) DecryptSecure;;
             --backup) Backup;;
             --hidden) neovimSetup; exit 0;; # Used for testing
