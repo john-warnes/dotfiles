@@ -1,20 +1,18 @@
 "=================================================================
 "                             vimrc                              "
 "=================================================================
-"  Revision  423
+"  Revision  439
 "  Modified  Tuesday, 14 November 2017
 "=================================================================
-set encoding=utf-8
 scriptencoding utf-8
 setlocal foldmarker={,}
 setlocal foldmethod=marker
-setlocal foldcolumn=1
 setlocal keywordprg=:help
 "=================================================================
 
 filetype plugin indent on
 set modeline
-set modelines=5
+set modelines=10
 
 "=================================================================
 " Notes {
@@ -149,7 +147,7 @@ let g:Jvim#vimopts#useSystemClipboard = 1  " Try to use system clipboard
 let g:Jvim#highlightRed               = 'GruvboxRedBold' " Highlight to link for Red
 
 let g:Jvim#hidden#showTrailing        = 1  " Show Tailing Spaces
-let g:Jvim#hidden#showEol             = 1  " Show EOL marker
+let g:Jvim#hidden#showEol             = 0  " Show EOL marker
 let g:Jvim#hidden#showIndent          = 0  " Show indent guides when (F2 Toggle)
 let g:Jvim#hidden#codePretty          = 1  " Replace some chars with alternatives (F2 Toggle)
 
@@ -159,9 +157,9 @@ let g:Jvim#presistentUndo#dir         = expand($DOTFILES.'/vim/undo') " Where to
 let g:Jvim#folding#enableSyntax       = 0 " Enable folding by syntax for all files
                                           "  NOTE: Might be slow on older systems
 let g:Jvim#folding#defaultFolding     = 3 " Folding Mode
-                                          " 0: none default vim
-                                          " 1: open all folds on file open
-                                          " 2: close all folds on file open
+                                          " 0: None default vim
+                                          " 1: Open all folds on file open
+                                          " 2: Close all folds on file open
                                           " 3: Auto save folds and reload them
                                           "  NOTE: <t><t> in normal mode to toggle folds
 
