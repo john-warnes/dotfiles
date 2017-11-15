@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  129
-#  Modified  Monday, 13 November 2017
+#  Revision  136
+#  Modified  A, d B Y
 #=================================================================
 
 #!/bin/bash
@@ -107,7 +107,7 @@ ScriptSettings()
     #Directory Setup
     DOTFILES=$HOME/dotfiles
     LOCALBIN=~/.local/bin
-    ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.profile $HOME/.bashrc $HOME/.zshrc)
+    ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.bashrc $HOME/.zshrc)
 
     #Optional
     OPTPKGS='clang cppcheck lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
@@ -127,8 +127,8 @@ ScriptSettings()
         PKGS='git bc curl python3 vim'
     fi
 
-    FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/vim/vimrc $DOTFILES/git/gitconfig)
-    LINKS=(           ~/.vimrc        ~/.vim ~/.tmux.conf             ~/.vimrc            ~/.gitconfig)
+    FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/git/gitconfig)
+    LINKS=(           ~/.vimrc        ~/.vim ~/.tmux.conf             ~/.gitconfig)
 
     #Global Vars (Auto Set - Changing will have BAD effects)
     ADMIN=0
@@ -196,48 +196,62 @@ Clean()
 #    PARAMETERS:  None
 #       RETURNS:  None
 #-------------------------------------------------------------------------------
+AskBackup()
+{
+    Backup $BACKUPFILE
+}
+
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  Backup
+#   DESCRIPTION:  Make a attempt to backup current vim setup. Invoked with --backup
+#    PARAMETERS:  None
+#       RETURNS:  None
+#-------------------------------------------------------------------------------
 Backup()
 {
-    echo "${BOLD}Backing up current vim setup$RESET"
+    LOCALBACKUPFILE=$1
+    echo "${BOLD}Backing up current setup to ${BLUE}\"$LOCALBACKUPFILE\" $RESET"
 
     pushd .
-
     cd $HOME
 
-    BACKUPFILE=.jvimbackup.tar
+    if ! [[ $2 == "FORCE" ]]; then
+        if [[ -f $LOCALBACKUPFILE ]]; then
 
-    if [[ -f $BACKUPFILE ]]; then
+            read -n 1 -p "${BOLD}${YELLOW}NOTE: ${RESET}Backup file already exists continuing will replace. Continue (Y/n): $GREEN" choice
+            case "$choice" in
+                y|Y ) :;;
+                n|N ) popd;echo "Canceled$RESET";exit 0;;
+                * ) :;;
+            esac
+            echo "$RESET"
 
-        read -n 1 -p "${BOLD}${YELLOW}NOTE: ${RESET}Backup file already exists continuing will replace. Continue (Y/n): $GREEN" choice
-        case "$choice" in
-            y|Y ) :;;
-            n|N ) popd;echo "Canceled$RESET";exit 0;;
-            * ) :;;
-        esac
-        echo "$RESET"
-
-        rm $BACKUPFILE
+            rm $LOCALBACKUPFILE
+        fi
+    else
+        if [[ -f $LOCALBACKUPFILE ]]; then
+            rm $LOCALBACKUPFILE
+        fi
     fi
 
     #add .vimrc to tar (create needs to be first)
-    tar -vpcf $BACKUPFILE .vimrc
+    tar -vpcf $LOCALBACKUPFILE .vimrc
 
     #append autoexec targets
-    tar -vprf $BACKUPFILE .bash_profile
-    tar -vprf $BACKUPFILE .bash_login
-    tar -vprf $BACKUPFILE .profile
-    tar -vprf $BACKUPFILE .bashrc
-    tar -vprf $BACKUPFILE .zshrc
+    tar -vprf $LOCALBACKUPFILE .bash_profile
+    tar -vprf $LOCALBACKUPFILE .bash_login
+    tar -vprf $LOCALBACKUPFILE .profile
+    tar -vprf $LOCALBACKUPFILE .bashrc
+    tar -vprf $LOCALBACKUPFILE .zshrc
 
     #append other config to tar
-    tar -vprf $BACKUPFILE .tmux.conf
-    tar -vprf $BACKUPFILE .gitconfig
+    tar -vprf $LOCALBACKUPFILE .tmux.conf
+    tar -vprf $LOCALBACKUPFILE .gitconfig
 
     #append dir to tar
-    tar -vprf $BACKUPFILE .vim
+    tar -vprf $LOCALBACKUPFILE .vim
 
     popd
-    exit 0
 }
 
 
@@ -295,7 +309,6 @@ Remove()
 
     echo "Remove Complete$RESET"
     echo ""
-    exit -1
 }
 
 
@@ -363,14 +376,14 @@ Init()
     #Check and process command line arguments
     while [[  $# > 0 ]]; do
         case $1 in
-            --install) :;; # empty on purpose
-            --administrator) ADMIN=1;;
+            --install) Install;; # empty on purpose
+            --administrator) ADMIN=1; Install;;
             --remove) AskRemove;;
             --upgrade) Upgrade;;
-            --clean) Clean; exit 0;;
+            --clean) Clean;;
             --decrypt) DecryptSecure;;
-            --backup) Backup;;
-            --hidden) neovimSetup; exit 0;; # Used for testing
+            --backup) AskBackup;;
+            --hidden) neovimSetup;; # Used for testing
             -h|--help|*) PrintHelp;;
         esac;
         shift;
@@ -837,19 +850,16 @@ source ~/.vimrc' > $NVIMCFGPATH/init.vim
     set -u
 }
 
-#---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  main
-#   DESCRIPTION:  This is the main driver function.
-#    PARAMETERS:  Optional parameters: --help, --administrator, --remove
-#       RETURNS:  Success or Error
-#-------------------------------------------------------------------------------
-main()
+Install()
 {
-    source scripts/colors.sh
-    DetectOS
-    ScriptSettings
-    Init "$@"     # Remember to pass the command line args $@
+    echo "Installing$BOLD$BLUE $SCRIPTNAME$RESET"
+
+    Backup .autoBackup.tar FORCE
+
+    Remove
+
     Setup
+
     CheckDeps
 
     if [[ $ADMIN == 1 ]]; then
@@ -897,4 +907,19 @@ main()
     echo ''
 
 }
+#---  FUNCTION  ----------------------------------------------------------------
+#          NAME:  main
+#   DESCRIPTION:  This is the main driver function.
+#    PARAMETERS:  Optional parameters: --help, --administrator, --remove
+#       RETURNS:  Success or Error
+#-------------------------------------------------------------------------------
+main()
+{
+    source scripts/colors.sh
+    DetectOS
+    ScriptSettings
+
+    Init "$@"     # Remember to pass the command line args $@
+}
+
 main "$@"     #remember to pass all command line args
