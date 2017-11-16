@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  225
+#  Revision  235
 #  Modified  Thursday, 16 November 2017
 #=================================================================
 
@@ -115,7 +115,11 @@ DetectOS()
     ENV_FILES=($HOME/.bash_profile $HOME/.bash_login $HOME/.bashrc $HOME/.zshrc)
 
     #Optional
+    #declare -A OPTPKGS
+    #OPTPKGS = () ( [clang]=clang [cppcheck]=cppcheck [luacheck]=lua-check [jsonlint-php]=jsonlint [pylint]=pylint [pip3]=python3-pip [ctags]=exuberant-ctags [cppman]=cppman )
     OPTPKGS='clang cppcheck lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
+    #declare -A PIPPKGS
+    #PIPPKGS = ( [vim-vint]= [proselint]= [sphinx]= [virtualenvwrapper]= [neovim]= )
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     #Defualt PKGS
@@ -559,7 +563,7 @@ AdminSetup()
     echo -n "${RESET}Installing $BOLD${BLUE}required$RESET Packages: "
     for PKG in "${!PKGS[@]}"; do
         if which $PKG 1>/dev/null 2>/dev/null; then
-            if [[ $PKG != vim ]]; then
+            if ! [[ $PKG == vim ]]; then
                 echo -n "$BOLD$GREEN $PKG$RESET"
                 continue;
             fi
@@ -567,7 +571,6 @@ AdminSetup()
         fi
         echo "$BOLD$YELLOW $PKG$RESET"
         $APTCMD $APTOPT ${PKGS[$PKG]}
-
     done
     echo ""
 
@@ -591,7 +594,7 @@ AdminSetup()
     echo ""
     echo -n "$BOLD${BLUE}Installing$BOLD$BLUE pip3 recommended$RESET Packages: "
     for PKG in $PIPPKGS; do
-        echo "$PKG"
+        echo "$BOLD$YELLOW $PKG$RESET"
         pip3 install $PKG
     done
 
@@ -930,14 +933,16 @@ Install()
         AddToEnvironment
     fi
 
-    echo ""
-    echo ""
+    echo ''
+    echo ''
     echo '      _       _                 _     _         '
     echo '     (_)_   _(_)_ __ ___       (_) __| | ___    '
     echo '     | \ \ / / | `_ ` _ \ _____| |/ _` |/ _ \   '
     echo '     | |\ V /| | | | | | |_____| | (_| |  __/   '
     echo '    _/ | \_/ |_|_| |_| |_|     |_|\__,_|\___|   '
-    echo '   |__/                    ${BOLD}Enjoy a better vim$RESET   '
+    echo "   |__/                    $RESET${BOLD}Enjoy a better vim$RESET   "
+    echo ''
+    echo ''
     echo ''
     exit 0
 }
