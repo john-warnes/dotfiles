@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  140
+#  Revision  148
 #  Modified  Wednesday, 15 November 2017
 #=================================================================
 
@@ -116,10 +116,7 @@ ScriptSettings()
     elif [[  $OS == 'OSX' ]]; then  #OSX
         # NOTE: OSX needs to update the vim it comes with or you may have issues
 
-        PKGS="git bc curl python3 neovim vim\ --with-python3" # need to test
-        # hoping it will run: "brew install vim --with-python3" if not
-        # change back to this line
-        #PKGS='git bc curl python3 vim'
+        PKGS="git bc curl python3 neovim vim" # need to test
 
     elif [[  $OS == 'BABUN' ]]; then  #Babun
         PKGS='git bc curl python3 vim'
@@ -171,7 +168,7 @@ PrintHelp()
 #-------------------------------------------------------------------------------
 Clean()
 {
-    pushd .
+    pushd . > /dev/null
     printf "${BOLD}Cleaning Files and Directory: "
 
     cd $DOTFILES/vim
@@ -184,7 +181,7 @@ Clean()
 
     printf "${RESET}\nDone\n"
     rm .netrwhist
-    popd
+    popd > /dev/null
 }
 
 
@@ -210,7 +207,7 @@ Backup()
     LOCALBACKUPFILE=$1
     echo "${BOLD}Backing up current setup to ${BLUE}\"$LOCALBACKUPFILE\" $RESET"
 
-    pushd .
+    pushd . > /dev/null
     cd $HOME
 
     if ! [[ $2 == "FORCE" ]]; then
@@ -219,7 +216,7 @@ Backup()
             read -n 1 -p "${BOLD}${YELLOW}NOTE: ${RESET}Backup file already exists continuing will replace. Continue (Y/n): $GREEN" choice
             case "$choice" in
                 y|Y ) :;;
-                n|N ) popd;echo "Canceled$RESET";exit 0;;
+                n|N ) popd > /dev/null;echo "Canceled$RESET";exit 0;;
                 * ) :;;
             esac
             echo "$RESET"
@@ -249,7 +246,7 @@ Backup()
     #append dir to tar
     tar -vprf $LOCALBACKUPFILE .vim 2>/dev/null
 
-    popd
+    popd > /dev/null
 }
 
 
@@ -557,6 +554,14 @@ AdminSetup()
             echo -n "$BOLD$GREEN $PKG$RESET"
         else
             echo "$BOLD$YELLOW $PKG$RESET"
+
+            if [[ PKG == 'vim' ]]; then
+                case "$OS" in
+                    OSX   ) PKG='vim --with-python3';;    # Uses python3 over python2
+                    LINUX ) PKG='vim-gnome';;             # Allows system clipboard
+                    * ) ;;
+                esac
+            fi
             $APTCMD $APTOPT $PKG
         fi
     done
