@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  195
+#  Revision  225
 #  Modified  Thursday, 16 November 2017
 #=================================================================
 
@@ -15,26 +15,29 @@ set -o nounset
 
 clear
 
-SCRIPTVERSION="V2.2"
+SCRIPTVERSION="V2.7"
 
 # OSX INSTALL
 
 #   cd ~
-#   git clone https://github.com/john-warnes/dotfiles.git
 #
 #   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+#
+#   git clone https://github.com/john-warnes/dotfiles.git
+#
 #   brew update
 #   brew install bash
+#
 #   sudo bash -c 'echo /user/local/bin/bash >> /etc/shells
 #   chsh -s /usr/local/bin/bash
 #
 #   !! MUST !! RESTART COMPUTER NOW !! MUST !!
 #
-#   cd ~/dotfiles
-#   Dotfiles.sh --install
-#
 #   brew install git
 #   brew link git
+#
+#   cd ~/dotfiles
+#   bash Dotfiles.sh --install
 #
 #   brew install bash-completion
 
@@ -51,16 +54,6 @@ DetectOS()
     SUPPORTEDDISTROS="ubuntu, linuxmint, debian, elementary OS, neon, peppermint, Zorin OS"
 
     source scripts/detectOS
-
-#    case "$OSTYPE" in
-#        solaris*) OS="SOLARIS" ;;
-#        darwin*)  OS="OSX" ;;
-#        linux*)   OS="LINUX" ;;
-#        bsd*)     OS="BSD" ;;
-#        msys*)    OS="WINDOWS" ;;
-#        cygwin*)  export OS="BABUN" ;;
-#        *)        OS="unknown: $OSTYPE" ;;
-#    esac
 
     if [[ $OS == 'LINUX' ]] && [[ $SUPPORTEDDISTROS != *$DISTRO* ]]; then
             echo "$BOLD${RED}ERROR$RESET Undetected Linux:$BOLD$YELLOW $ID $RESET"
@@ -313,6 +306,7 @@ Remove()
     rm -rf $DOTFILES/vim/autoload
     rm -rf $DOTFILES/vim/colors
     rm -rf $DOTFILES/vim/undo
+    rm -rf $DOTFILES/vim/view
 
     #Detete FILE created by the setup
     rm -f $DOTFILES/git/gitconfig
@@ -361,17 +355,18 @@ DecryptSecure()
 
     (cd $DOTFILES && exec git clone $REPO)
     (exec $DOTFILES/scripts/unlock.sh)
+    echo ""
 }
 
 
 
 #---  FUNCTION  ----------------------------------------------------------------
-#          NAME:  Init
-#   DESCRIPTION:  Initialization of script. Color setup. Folder configuration.
+#          NAME:  SelectMode
+#   DESCRIPTION:  Selects mode based on parameters
 #    PARAMETERS:  $@ Program input choices.
 #       RETURNS:  Success or Error
 #-------------------------------------------------------------------------------
-Init()
+SelectMode()
 {
     #Check if running as sudo
     # TODO look into sudo -H
@@ -401,11 +396,7 @@ Init()
         shift;
     done
 
-    echo "Installing$BOLD$BLUE $SCRIPTNAME$RESET"
-
-    if [[ $ADMIN == 1 ]]; then
-        echo "Admin Mode is:$BOLD$GREEN ON $RESET"
-    fi
+    exit 0
 }
 
 
@@ -626,11 +617,21 @@ GetUserInfo()
     read -p "${RESET}Enter$BOLD$BLUE Organization$RESET ex\"Computer Science\": $GREEN" org
     read -p "${RESET}Enter$BOLD$BLUE Default License line 1$RESET (hit enter for default): $GREEN" license1
     read -p "${RESET}Enter$BOLD$BLUE Default License line 2$RESET (hit enter for default): $GREEN" license2
+
+    if [[ -z "$com" ]]; then
+        com='Weber State University'
+    fi
+
+    if [[ -z "$org" ]]; then
+        org='Computer Science'
+    fi
+
     if [[ -z "$license1" ]]; then
         license1='This source code is released for free distribution under the terms of the'
         license2='GNU General Public License as published by the Free Software Foundation.'
     fi
-    printf "$RESET"
+
+    echo "$RESET"
 }
 
 
@@ -771,9 +772,9 @@ ManageFilesAndLinks()
         ln -s ${FILES[${i}]} ${LINKS[${i}]}
     done
 
-    echo "Downloading Colors wombat256mod.vim"
-    mkdir -p $DOTFILES/vim/colors
-    wget -O $DOTFILES/vim/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
+    #echo "Downloading Colors wombat256mod.vim"
+    #mkdir -p $DOTFILES/vim/colors
+    #wget -O $DOTFILES/vim/colors/wombat256mod.vim http://www.vim.org/scripts/download_script.php?src_id=13400
 
     #if [[  -f ~/.zshrc && $ZSH == true ]]; then
     #    echo "Appending soruces to$BOLD$GREEN ~/.zshrc$RESET"
@@ -811,6 +812,10 @@ AddToEnvironment()
 {
     echo "Add Environment Var:$RESET$BOLD$BLUE \$DOTFILES=$RESET$DOTFILES"
 
+    if [[  $OS == 'OSX' ]]; then
+        touch ~/bashrc
+    fi
+
     for RCFILE in "${ENV_FILES[@]}"
     do
         if [[  -e ${RCFILE} ]]; then
@@ -823,11 +828,11 @@ AddToEnvironment()
                 echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
             fi
         else
-           echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
+            echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
         fi
-   done
+    done
 
-    if [[  $OS == 'OSX' ]] || [[ $OS == 'BABUN' ]]; then
+    if [[  $OS == 'OSX' ]]; then
         touch ~/.bash_profile
         RCFILE="~/.bash_profile"
         echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
@@ -868,14 +873,18 @@ source ~/.vimrc' > $NVIMCFGPATH/init.vim
 
     echo "Created:$BOLD$BLUE $NVIMCFGPATH/init.vim$RESET"
 
-
     set -o nounset
     set -u
+    echo ""
 }
 
 Install()
 {
     echo "Installing$BOLD$BLUE $SCRIPTNAME$RESET"
+
+    if [[ $ADMIN == 1 ]]; then
+        echo "Admin Mode is:$BOLD$GREEN ON $RESET"
+    fi
 
     Backup .autoBackup.tar FORCE
 
@@ -921,6 +930,8 @@ Install()
         AddToEnvironment
     fi
 
+    echo ""
+    echo ""
     echo '      _       _                 _     _         '
     echo '     (_)_   _(_)_ __ ___       (_) __| | ___    '
     echo '     | \ \ / / | `_ ` _ \ _____| |/ _` |/ _ \   '
@@ -928,7 +939,7 @@ Install()
     echo '    _/ | \_/ |_|_| |_| |_|     |_|\__,_|\___|   '
     echo '   |__/                    ${BOLD}Enjoy a better vim$RESET   '
     echo ''
-
+    exit 0
 }
 #---  FUNCTION  ----------------------------------------------------------------
 #          NAME:  main
@@ -941,9 +952,10 @@ main()
     source scripts/colors.sh
 
     DetectOS
+
     ScriptSettings
 
-    Init "$@"     # Remember to pass the command line args $@
+    SelectMode "$@"     # Remember to pass the command line args $@
 }
 
 main "$@"     #remember to pass all command line args
