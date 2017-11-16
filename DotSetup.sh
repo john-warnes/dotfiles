@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  148
-#  Modified  Wednesday, 15 November 2017
+#  Revision  162
+#  Modified  Thursday, 16 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -96,8 +96,6 @@ DetectOS()
 #    PARAMETERS:  None
 #       RETURNS:  None
 #-------------------------------------------------------------------------------
-ScriptSettings()
-{
     SCRIPTNAME="WSU JVim Customized IDE"
 
     BACKUPFILE=.jvimbackup.tar
@@ -111,16 +109,9 @@ ScriptSettings()
     OPTPKGS='clang cppcheck lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
-    if [[  $OS == 'LINUX' ]]; then  #LINUX
-        PKGS="git bc curl python3 vim"
-    elif [[  $OS == 'OSX' ]]; then  #OSX
-        # NOTE: OSX needs to update the vim it comes with or you may have issues
-
-        PKGS="git bc curl python3 neovim vim" # need to test
-
-    elif [[  $OS == 'BABUN' ]]; then  #Babun
-        PKGS='git bc curl python3 vim'
-    fi
+    #Defualt PKGS
+    declare -A PKGS
+    PKGS=( [git]=git [bc]=[bc] [curl]=[curl] [python3]=python3 [vim]=vim [nvim]=neovim )
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/git/gitconfig)
     LINKS=(           ~/.vimrc        ~/.vim ~/.tmux.conf             ~/.gitconfig)
@@ -130,6 +121,15 @@ ScriptSettings()
     WSU=0
     USETMUX=0
     USEZSH=0
+
+ScriptSettings()
+{
+    if [[  $OS == 'LINUX' ]]; then  #LINUX
+        PKGS[vim]="vim-gnome"
+    elif [[  $OS == 'OSX' ]]; then  #OSX
+        # NOTE: OSX needs to update the vim it comes with or you may have issues
+        PKGS[vim]='vim --with-python3'
+    fi
 }
 
 
@@ -432,7 +432,7 @@ CheckDeps()
     printf "Checking for Required Packages:$RESET"
     ERRFLAG=0
 
-    for PKG in $PKGS; do
+    for PKG in "${!PKGS[@]}"; do
         if which $PKG 1>/dev/null 2>/dev/null; then
             printf "$BOLD$GREEN $PKG$RESET"
         else
@@ -511,14 +511,14 @@ Setup()
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
-        y|Y|* ) PKGS+=" tmux";OSXPKGS+=" tmux"; USETMUX=true;;
+        y|Y|* ) PKGS[tmux]=tmux; USETMUX=true;;
     esac
 
     read -n 1 -p "Setup$BOLD$BLUE zsh$RESET (Y/n): $GREEN" choice
     echo "$RESET"
     case "$choice" in
         n|N ) :;;
-        y|Y|* ) PKGS+=" zsh";OSXPKGS+=" zsh"; USEZSH=true;;
+        y|Y|* ) PKGS[zsh]=zsh; USEZSH=true;;
     esac
     echo ""
 }
@@ -549,20 +549,13 @@ AdminSetup()
     fi
 
     echo -n "$BOLD${BLUE}Installing Packages: $RESET"
-    for PKG in $PKGS; do
+    for PKG in "${!PKGS[@]}"; do
         if which $PKG 1>/dev/null 2>/dev/null; then
             echo -n "$BOLD$GREEN $PKG$RESET"
         else
             echo "$BOLD$YELLOW $PKG$RESET"
 
-            if [[ PKG == 'vim' ]]; then
-                case "$OS" in
-                    OSX   ) PKG='vim --with-python3';;    # Uses python3 over python2
-                    LINUX ) PKG='vim-gnome';;             # Allows system clipboard
-                    * ) ;;
-                esac
-            fi
-            $APTCMD $APTOPT $PKG
+            $APTCMD $APTOPT ${PKGS[$PKG]}
         fi
     done
     echo ""
@@ -919,6 +912,7 @@ Install()
 main()
 {
     source scripts/colors.sh
+
     DetectOS
     ScriptSettings
 
