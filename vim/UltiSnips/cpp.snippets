@@ -41,6 +41,8 @@ def write_docstring_args(arglist, snip):
 endglobal
 
 
+
+
 ##################################################################
 #                            Snippets                            #
 ##################################################################
@@ -114,7 +116,7 @@ public:
 };
 
 #endif /* $2 */
-endsnippet
+endsnippet/
 
 
 snippet fun "Basic c++ doxygen function template" b
@@ -135,8 +137,8 @@ endsnippet
 snippet if "if ... then (if)"
 if ( ${1:condition} )
 {
-    ${0:#statements}
-{
+    ${0:${VISUAL:statements}}
+}
 endsnippet
 
 

@@ -1,7 +1,7 @@
 "=================================================================
 "                             vimrc                              "
 "=================================================================
-"  Revision  459
+"  Revision  480
 "  Modified  Thursday, 16 November 2017
 "=================================================================
 scriptencoding utf-8
@@ -405,7 +405,7 @@ if (g:JV_autocomplete == 1) && has('nvim') " || ( has('job') && has('timers') &&
 endif
 
 
-let g:JV_autocomplete = 1
+let g:JV_autocomplete = 0
 
 "if (g:JV_autocomplete == 1) && !has('nvim')
 if (g:JV_autocomplete == 1)
@@ -419,8 +419,8 @@ if (g:JV_autocomplete == 1)
 endif
 
 " Tab to move through the choices
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "} ===
 
 
@@ -500,27 +500,37 @@ if exists('$TMUX')
 endif
 "} ===
 
+set nolangremap
 
 "=================================================================
 " UltiSnips Code Snippets {
 "=================================================================
 "let g:UltiSnipsExpandTrigger       = '<C-S-Null>'
-let g:UltiSnipsJumpForwardTrigger  = '<C-S-Null>'
+"let g:UltiSnipsJumpForwardTrigger  = '<C-S-Null>'
 
-let g:UltiSnipsExpandTrigger       = '<C-Space>'
-"let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
+"let g:UltiSnipsExpandTrigger       = '<C-@>'
+let g:UltiSnipsExpandTrigger       = '<Tab>'
+let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
 
 "let g:UltiSnipsJumpBackwardTrigger = '<C-S-d>'
 
-"Use Tab in select mode is skip keeping the defualt
-snoremap <C-@> <C-o>:call UltiSnips#JumpForwards()<CR>
-snoremap <Tab> <C-o>:call UltiSnips#JumpForwards()<CR>
-snoremap <C-Space> <C-o>:call UltiSnips#JumpForwards()<CR>
 
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
 Plug 'SirVer/ultisnips'     " Track the engine
 Plug 'honza/vim-snippets'   " Snippets are separated from the engine
+
+
+"Use Tab in select mode is skip keeping the defualt
+"snoremap <C-@> <C-o>:call UltiSnips#JumpForwards()<CR>
+"snoremap <Tab> <C-o>:call UltiSnips#JumpForwards()<CR>
+"snoremap <C-Space> <C-o>:call UltiSnips#JumpForwards()<CR>
+
+
+"Use Tab in select mode is skip keeping the defualt
+"vnoremap <C-@> <C-o>:call UltiSnips#ExpandSnippitOrJump()<CR>
+"vnoremap <Tab> <C-o>:call UltiSnips#ExpandSnippitOrJump()<CR>
+"vnoremap <C-Space> <C-o>:call UltiSnips#ExpandSnippitOrJump()<CR>
 "} ===
 
 
@@ -694,8 +704,8 @@ endif
 
 " Map <NUL> and <C-@> as Control-Space as it commonly is
 " Allow remapping
-imap <NUL> <C-Space>
-imap <C-@> <C-Space>
+"imap <NUL> <C-Space>
+"imap <C-@> <C-Space>
 
 "} ===
 
