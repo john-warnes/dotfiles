@@ -28,10 +28,9 @@ def write_docstring_args(arglist, snip):
                 snip.rv += arg
                 c = 1
             else:
-                snip += '*       : %s' % arg.strip()
+                snip += '#         %s' % arg.strip()
     else:
         snip.rv = args[0]
-
 endglobal
 
 
@@ -49,9 +48,7 @@ snippet fun "Basic python doxygen function template"
 # @param  `!p write_docstring_args(t[2],snip)`
 #
 def ${1:FunctionName}(${2:param}):
-{
-  ${0:FunctionBody}
-}
+    ${0:FunctionBody}
 endsnippet
 
 
