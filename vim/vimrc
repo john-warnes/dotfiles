@@ -1,8 +1,8 @@
 "=================================================================
 "                             vimrc                              "
 "=================================================================
-"  Revision  439
-"  Modified  Tuesday, 14 November 2017
+"  Revision  459
+"  Modified  Thursday, 16 November 2017
 "=================================================================
 scriptencoding utf-8
 setlocal foldmarker={,}
@@ -13,6 +13,8 @@ setlocal keywordprg=:help
 filetype plugin indent on
 set modeline
 set modelines=10
+
+set nolangremap
 
 "=================================================================
 " Notes {
@@ -141,38 +143,38 @@ call plug#begin('~/.vim/bundle')
 "=================================================================
 " jvim plugin options {
 "=================================================================
-let g:Jvim#vimopts#colorColumn        = 81 " Set long line guide
-let g:Jvim#vimopts#useSystemClipboard = 1  " Try to use system clipboard
-
-let g:Jvim#highlightRed               = 'GruvboxRedBold' " Highlight to link for Red
-
-let g:Jvim#hidden#showTrailing        = 1  " Show Tailing Spaces
-let g:Jvim#hidden#showEol             = 0  " Show EOL marker
-let g:Jvim#hidden#showIndent          = 0  " Show indent guides when (F2 Toggle)
-let g:Jvim#hidden#codePretty          = 1  " Replace some chars with alternatives (F2 Toggle)
-
-let g:Jvim#presistentUndo#enable      = 0  " Use persistent Undo
-let g:Jvim#presistentUndo#dir         = expand($DOTFILES.'/vim/undo') " Where to store persistent files
-
-let g:Jvim#folding#enableSyntax       = 0 " Enable folding by syntax for all files
-                                          "  NOTE: Might be slow on older systems
-let g:Jvim#folding#defaultFolding     = 3 " Folding Mode
-                                          " 0: None default vim
-                                          " 1: Open all folds on file open
-                                          " 2: Close all folds on file open
-                                          " 3: Auto save folds and reload them
-                                          "  NOTE: <t><t> in normal mode to toggle folds
-
-let g:Jvim#quickFix#enable            = 0   " Enable auto resizing of the quick fix window
-let g:Jvim#quickFix#heightMin         = 3   " Limit the MIN size of the quick fix window
-let g:Jvim#quickFix#heightMax         = 10  " Limit the MAX size of the quick fix window
-
-let g:Jvim#metadata#DateFormat        = 'A, d B Y' " Format for template and metadata dates (man date)
-let g:Jvim#metadata#MaxSearch         = 50  " Max lines at top of file to search for meta data tags
-let g:Jvim#metadata#UpdateMetaData    = 1   " Loaded auto updating of metadata on file save
-
-let g:Jvim#testing#testingEnable      = 0   " loaded auto updating of metadata on file save
-let g:Jvim#testing#debugEnable        = 0   " loaded auto updating of metadata on file save
+"let g:Jvim#vimopts#colorColumn        = 81 " Set long line guide
+"let g:Jvim#vimopts#useSystemClipboard = 1  " Try to use system clipboard
+"
+"let g:Jvim#highlightRed               = 'GruvboxRedBold' " Highlight to link for Red
+"
+"let g:Jvim#hidden#showTrailing        = 1  " Show Tailing Spaces
+"let g:Jvim#hidden#showEol             = 0  " Show EOL marker
+"let g:Jvim#hidden#showIndent          = 0  " Show indent guides when (F2 Toggle)
+"let g:Jvim#hidden#codePretty          = 1  " Replace some chars with alternatives (F2 Toggle)
+"
+"let g:Jvim#presistentUndo#enable      = 0  " Use persistent Undo
+"let g:Jvim#presistentUndo#dir         = expand($DOTFILES.'/vim/undo') " Where to store persistent files
+"
+"let g:Jvim#folding#enableSyntax       = 0 " Enable folding by syntax for all files
+"                                          "  NOTE: Might be slow on older systems
+"let g:Jvim#folding#defaultFolding     = 3 " Folding Mode
+"                                          " 0: None default vim
+"                                          " 1: Open all folds on file open
+"                                          " 2: Close all folds on file open
+"                                          " 3: Auto save folds and reload them
+"                                          "  NOTE: <t><t> in normal mode to toggle folds
+"
+"let g:Jvim#quickFix#enable            = 0   " Enable auto resizing of the quick fix window
+"let g:Jvim#quickFix#heightMin         = 3   " Limit the MIN size of the quick fix window
+"let g:Jvim#quickFix#heightMax         = 10  " Limit the MAX size of the quick fix window
+"
+"let g:Jvim#metadata#DateFormat        = 'A, d B Y' " Format for template and metadata dates (man date)
+"let g:Jvim#metadata#MaxSearch         = 50  " Max lines at top of file to search for meta data tags
+"let g:Jvim#metadata#UpdateMetaData    = 1   " Loaded auto updating of metadata on file save
+"
+"let g:Jvim#testing#testingEnable      = 0   " loaded auto updating of metadata on file save
+"let g:Jvim#testing#debugEnable        = 0   " loaded auto updating of metadata on file save
 Plug 'john-warnes/jvim'
 "} ===
 
@@ -345,13 +347,13 @@ Plug 'tpope/vim-fugitive'
 "=================================================================
 " Python mode {
 "=================================================================
-Plug 'python-mode/python-mode'
+"Plug 'python-mode/python-mode'
 
 "load a Template for new .py files
-augroup Python
-    autocmd!
-    autocmd BufNewFile *.py silent! 0r ~/.vim/templates/python-mode.template | cal cursor(8,4)
-augroup END
+"augroup Python
+"    autocmd!
+"    autocmd BufNewFile *.py silent! 0r ~/.vim/templates/python-mode.template | cal cursor(8,4)
+"augroup END
 "} ===
 
 
@@ -402,7 +404,11 @@ if (g:JV_autocomplete == 1) && has('nvim') " || ( has('job') && has('timers') &&
     " Use tab to cycle matches
 endif
 
-if (g:JV_autocomplete == 1) && !has('nvim')
+
+let g:JV_autocomplete = 1
+
+"if (g:JV_autocomplete == 1) && !has('nvim')
+if (g:JV_autocomplete == 1)
     " Plug 'ervandew/supertab'            " Super tab completion
 
     Plug 'ajh17/VimCompletesMe'           " Light plugin like supertab
@@ -498,12 +504,18 @@ endif
 "=================================================================
 " UltiSnips Code Snippets {
 "=================================================================
+"let g:UltiSnipsExpandTrigger       = '<C-S-Null>'
+let g:UltiSnipsJumpForwardTrigger  = '<C-S-Null>'
+
 let g:UltiSnipsExpandTrigger       = '<C-Space>'
-let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
+"let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
+
 "let g:UltiSnipsJumpBackwardTrigger = '<C-S-d>'
 
 "Use Tab in select mode is skip keeping the defualt
+snoremap <C-@> <C-o>:call UltiSnips#JumpForwards()<CR>
 snoremap <Tab> <C-o>:call UltiSnips#JumpForwards()<CR>
+snoremap <C-Space> <C-o>:call UltiSnips#JumpForwards()<CR>
 
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
@@ -684,6 +696,7 @@ endif
 " Allow remapping
 imap <NUL> <C-Space>
 imap <C-@> <C-Space>
+
 "} ===
 
 
