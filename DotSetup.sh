@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  192
+#  Revision  195
 #  Modified  Thursday, 16 November 2017
 #=================================================================
 
@@ -417,7 +417,7 @@ Init()
 #-------------------------------------------------------------------------------
 CheckOptional()
 {
-    echo -n "Checking for optional packages:$RESET"
+    echo -n "Checking for recommended packages:$RESET"
     ERRFLAG=false
 
     for PKG in $OPTPKGS; do
@@ -572,7 +572,7 @@ AdminSetup()
                 echo -n "$BOLD$GREEN $PKG$RESET"
                 continue;
             fi
-            echo -n "$BOLD${GREEN}!$RESET"
+            echo -n "$BOLD${GREEN} !$RESET"
         fi
         echo "$BOLD$YELLOW $PKG$RESET"
         $APTCMD $APTOPT ${PKGS[$PKG]}
@@ -597,6 +597,7 @@ AdminSetup()
         fi
     done
 
+    echo ""
     echo -n "$BOLD${BLUE}Installing$BOLD$BLUE pip3 recommended$RESET Packages: "
     for PKG in $PIPPKGS; do
         echo "$PKG"
