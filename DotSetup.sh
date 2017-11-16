@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  175
+#  Revision  192
 #  Modified  Thursday, 16 November 2017
 #=================================================================
 
@@ -126,7 +126,7 @@ DetectOS()
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     #Defualt PKGS
-    declare -A
+    declare -A PKGS
     PKGS=( [git]=git [bc]=bc [curl]=curl [python3]=python3 [vim]=vim [nvim]=neovim )
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/git/gitconfig)
@@ -430,7 +430,7 @@ CheckOptional()
     done
     echo ""
     if [[  $ERRFLAG ]]; then
-        echo "$BOLD${YELLOW}Note:$RESET Recommended$BOLD$YELLOW NOT$RESET required package missing."
+        echo "$BOLD${YELLOW}Note:$RESET Recommended package(s) missing."
         unset ERRFLAG
     fi
     echo ""
@@ -565,26 +565,29 @@ AdminSetup()
         fi
     fi
 
-    echo -n "$BOLD${BLUE}Installing Packages: $RESET"
+    echo -n "${RESET}Installing $BOLD${BLUE}required$RESET Packages: "
     for PKG in "${!PKGS[@]}"; do
         if which $PKG 1>/dev/null 2>/dev/null; then
-            echo -n "$BOLD$GREEN $PKG$RESET"
-        else
-            echo "$BOLD$YELLOW $PKG$RESET"
-
-            $APTCMD $APTOPT ${PKGS[$PKG]}
+            if [[ $PKG != vim ]]; then
+                echo -n "$BOLD$GREEN $PKG$RESET"
+                continue;
+            fi
+            echo -n "$BOLD${GREEN}!$RESET"
         fi
+        echo "$BOLD$YELLOW $PKG$RESET"
+        $APTCMD $APTOPT ${PKGS[$PKG]}
+
     done
     echo ""
 
-    read -n 1 -p "Try to install$BOLD$BLUE Optional$RESET Packages (y/N): $GREEN" choice
+    read -n 1 -p "Install$BOLD$BLUE recommended$RESET Packages (y/N): $GREEN" choice
     echo "$RESET"
     case "$choice" in
         y|Y ) :;;
         n|N|* ) echo ""; echo ""; return;;
     esac
 
-    echo -n "$BOLD${BLUE}Installing Optional Packages: $RESET"
+    echo -n "$BOLD${BLUE}Installing$BOLD$BLUE recommended$RESET Packages: "
     for PKG in $OPTPKGS; do
         if which $PKG 1>/dev/null 2>/dev/null; then
             echo -n "$BOLD$GREEN $PKG$RESET"
@@ -592,6 +595,12 @@ AdminSetup()
             echo "$BOLD$YELLOW $PKG$RESET"
             $APTCMD $APTOPT $PKG
         fi
+    done
+
+    echo -n "$BOLD${BLUE}Installing$BOLD$BLUE pip3 recommended$RESET Packages: "
+    for PKG in $PIPPKGS; do
+        echo "$PKG"
+        pip3 install $PKG
     done
 
     echo ""
