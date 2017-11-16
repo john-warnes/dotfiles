@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  169
+#  Revision  175
 #  Modified  Thursday, 16 November 2017
 #=================================================================
 
@@ -126,7 +126,8 @@ DetectOS()
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     #Defualt PKGS
-    PKGS=( [git]=git [bc]=[bc] [curl]=curl [python3]=python3 [vim]=vim [nvim]=neovim )
+    declare -A
+    PKGS=( [git]=git [bc]=bc [curl]=curl [python3]=python3 [vim]=vim [nvim]=neovim )
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/git/gitconfig)
     LINKS=(           ~/.vimrc        ~/.vim ~/.tmux.conf             ~/.gitconfig)
@@ -143,7 +144,7 @@ ScriptSettings()
         PKGS[vim]="vim-gnome"
     elif [[  $OS == 'OSX' ]]; then  #OSX
         # NOTE: OSX needs to update the vim it comes with or you may have issues
-        PKGS[vim]='vim --with-python3'
+        PKGS[vim]="vim --with-python3"
     fi
 }
 
