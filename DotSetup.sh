@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  137
+#  Revision  140
 #  Modified  Wednesday, 15 November 2017
 #=================================================================
 
@@ -57,7 +57,6 @@ DetectOS()
             esac
 
     elif [[  $OS == "OSX" ]]; then
-        echo "OSX Detected $RESET"
         if which brew 2> /dev/null; then
             echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using BREW"
             BREW=1;
@@ -68,7 +67,6 @@ DetectOS()
         fi
 
    elif [[  $OS == "BABUN" ]]; then
-        echo "Cygwin Detected $RESET"
         if which pact 2> /dev/null; then
             echo "$BOLD${YELLOW}Note!$RESET Missing Packages will installed using PACT"
             PACT=1;
