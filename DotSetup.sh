@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  136
-#  Modified  A, d B Y
+#  Revision  137
+#  Modified  Wednesday, 15 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -235,21 +235,21 @@ Backup()
     fi
 
     #add .vimrc to tar (create needs to be first)
-    tar -vpcf $LOCALBACKUPFILE .vimrc
+    tar -vpcf $LOCALBACKUPFILE .vimrc 2>/dev/null
 
     #append autoexec targets
-    tar -vprf $LOCALBACKUPFILE .bash_profile
-    tar -vprf $LOCALBACKUPFILE .bash_login
-    tar -vprf $LOCALBACKUPFILE .profile
-    tar -vprf $LOCALBACKUPFILE .bashrc
-    tar -vprf $LOCALBACKUPFILE .zshrc
+    tar -vprf $LOCALBACKUPFILE .bash_profile 2>/dev/null
+    tar -vprf $LOCALBACKUPFILE .bash_login 2>/dev/null
+    tar -vprf $LOCALBACKUPFILE .profile 2>/dev/null
+    tar -vprf $LOCALBACKUPFILE .bashrc 2>/dev/null
+    tar -vprf $LOCALBACKUPFILE .zshrc 2>/dev/null
 
     #append other config to tar
-    tar -vprf $LOCALBACKUPFILE .tmux.conf
-    tar -vprf $LOCALBACKUPFILE .gitconfig
+    tar -vprf $LOCALBACKUPFILE .tmux.conf 2>/dev/null
+    tar -vprf $LOCALBACKUPFILE .gitconfig 2>/dev/null
 
     #append dir to tar
-    tar -vprf $LOCALBACKUPFILE .vim
+    tar -vprf $LOCALBACKUPFILE .vim 2>/dev/null
 
     popd
 }
