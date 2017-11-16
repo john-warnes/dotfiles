@@ -3,7 +3,7 @@ priority -50
 extends c
 
 # We want to overwrite everything in parent ft.
-priority -49
+priority -48
 
 ##################################################################
 #                        Global Functions                        #
@@ -40,11 +40,84 @@ def write_docstring_args(arglist, snip):
 
 endglobal
 
+
 ##################################################################
 #                            Snippets                            #
 ##################################################################
 
-snippet fun "Basic c doxygen function template" b
+
+snippet beginend "$1.begin(), $1.end() (beginend)"
+${1:v}${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), $1${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()
+endsnippet
+
+
+snippet class "class .. (class)"
+class ${1:`!p snip.rv = snip.basename or "name"`}
+{
+public:
+    ${1/(\w+).*/$1/} (${2:arguments});
+    virtual ~${1/(\w+).*/$1/} ();
+
+private:
+    ${0:/* data */}
+};
+endsnippet
+
+
+snippet ns "namespace .. (namespace)"
+namespace${1/.+/ /m}${1:`!p snip.rv = snip.basename or "name"`}
+{
+    ${VISUAL}$0
+}${1/.+/ \/* /m}$1${1/.+/ *\/ /m}
+endsnippet
+
+
+snippet readfile "read file (readF)"
+std::vector<char> v;
+if (FILE *fp = fopen(${1:"filename"}, "r"))
+{
+    char buf[1024];
+    while(size_t len = fread(buf, 1, sizeof(buf), fp))
+        v.insert(v.end(), buf, buf + len);
+    fclose(fp);
+}
+endsnippet
+
+
+snippet map "std::map (map)"
+std::map<${1:key}, ${2:value}> map$0;
+endsnippet
+
+
+snippet vector "std::vector (v)"
+std::vector<${1:char}> v$0;
+endsnippet
+
+
+snippet template "template <typename ..> (template)"
+template <typename ${1:_InputIter}>
+endsnippet
+
+
+snippet cla "An entire .h generator" b
+#ifndef ${2:`!v substitute(vim_snippets#Filename('$1_H','ClassName'),'.*','\U&\E','')`}
+#define $2
+
+class ${1:`!v substitute(substitute(vim_snippets#Filename('$1','ClassName'),'^.','\u&',''), '_\(\w\)', '\u\1', 'g')`}
+{
+private:
+    $3
+
+public:
+    $1();
+    virtual ~$1();
+};
+
+#endif /* $2 */
+endsnippet
+
+
+snippet fun "Basic c++ doxygen function template" b
 /**
 * @brief  ${4:brief}
 *
@@ -92,7 +165,7 @@ endsnippet
 ##################################################################
 #                            template                            #
 ##################################################################
-snippet _skel "c/h skeletion" b
+snippet _skel "cpp/hpp skeletion" b
 /** ============================================================================
  *  @file   `!v expand('%:t')`
  *  @brief  ${1:Brief Description}
@@ -117,20 +190,19 @@ snippet _skel "c/h skeletion" b
 
 `!p
 if isHeader():
-    snip.rv+='#ifndef __' + snip.fn.replace('.','_').upper() + '__\n'
-    snip.rv+='#define __' + snip.fn.replace('.','_').upper() + '__\n'
+	snip.rv+='#ifndef __' + snip.fn.replace('.','_').upper() + '__\n'
+	snip.rv+='#define __' + snip.fn.replace('.','_').upper() + '__\n'
 else:
-    snip.rv+='#define REVISION__ 0\n'
-    vim.command("let g:Jvim#metadata#Date = strftime(g:Jvim#metadata#DateFormat) ")
-    snip.rv+='#define MODIFIED__ "' + snip.opt('g:Jvim#metadata#Date') + '"\n'`
-#include <stdlib.h>
-#include <stdio.h>
+	snip.rv+='#define REVISION__ 0\n'
+	vim.command("let g:Jvim#metadata#Date = strftime(g:Jvim#metadata#DateFormat) ")
+	snip.rv+='#define MODIFIED__ "' + snip.opt('g:Jvim#metadata#Date') + '"\n'`
+#include <iostream>
 
 $0
 
 `!p
 if isHeader():
-    snip.rv += '#endif    // __' + snip.fn.replace('.','_').upper() + '__'`
+	snip.rv += '#endif    // __' + snip.fn.replace('.','_').upper() + '__'`
 endsnippet
 
 
