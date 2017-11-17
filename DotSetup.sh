@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  235
+#  Revision  242
 #  Modified  Thursday, 16 November 2017
 #=================================================================
 
@@ -116,15 +116,15 @@ DetectOS()
 
     #Optional
     #declare -A OPTPKGS
-    #OPTPKGS = () ( [clang]=clang [cppcheck]=cppcheck [luacheck]=lua-check [jsonlint-php]=jsonlint [pylint]=pylint [pip3]=python3-pip [ctags]=exuberant-ctags [cppman]=cppman )
-    OPTPKGS='clang cppcheck lua-check jsonlint pylint python3-pip python3-doc ctags cppman'
+    #OPTPKGS = () ( [clang]=clang [cppcheck]=cppcheck [luacheck]=lua-check [jsonlint-php]=jsonlint [pylint]=pylint [pip3]=python3-pip [ctags]=exuberant-ctags [cppman]=cppman [nvim]=neovim )
+    OPTPKGS='clang cppcheck lua-check pylint python3-pip python3-doc ctags cppman neovim'
     #declare -A PIPPKGS
     #PIPPKGS = ( [vim-vint]= [proselint]= [sphinx]= [virtualenvwrapper]= [neovim]= )
     PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
 
     #Defualt PKGS
     declare -A PKGS
-    PKGS=( [git]=git [bc]=bc [curl]=curl [python3]=python3 [vim]=vim [nvim]=neovim )
+    PKGS=( [git]=git [bc]=bc [curl]=curl [python3]=python3 [vim]=vim )
 
     FILES=($DOTFILES/vim/vimrc $DOTFILES/vim $DOTFILES/tmux/tmux.conf $DOTFILES/git/gitconfig)
     LINKS=(           ~/.vimrc        ~/.vim ~/.tmux.conf             ~/.gitconfig)
@@ -658,8 +658,6 @@ InstallPowerlineFonts()
     cd ..
     rm -rf fonts
 
-    dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font "'DejaVu Sans Mono for Powerline Book 12'"
-    dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/use-system-font "false"
 }
 
 
@@ -908,14 +906,6 @@ Install()
 
     AddToEnvironment
 
-    #Install Powerline Fonts?
-    read -n 1 -p  "Install$BOLD$BLUE PowerLine Fonts$RESET (Y/n): $GREEN" choice
-    case "$choice" in
-        n|N ) :;;
-        y|Y|* ) InstallPowerlineFonts;;
-
-    esac
-    echo "$RESET"
 
     CreatePersonalTemplate
     CreateGitConfig
@@ -933,6 +923,15 @@ Install()
         AddToEnvironment
     fi
 
+    #Install Powerline Fonts?
+    read -n 1 -p  "Install$BOLD$BLUE PowerLine Fonts$RESET (Y/n): $GREEN" choice
+    case "$choice" in
+        n|N ) :;;
+        y|Y|* ) InstallPowerlineFonts;;
+
+    esac
+    echo "$RESET"
+
     echo ''
     echo ''
     echo '      _       _                 _     _         '
@@ -944,6 +943,7 @@ Install()
     echo ''
     echo ''
     echo ''
+
     exit 0
 }
 #---  FUNCTION  ----------------------------------------------------------------
