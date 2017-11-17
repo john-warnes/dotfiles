@@ -100,9 +100,9 @@ snippet _skel "c/h skeletion" b
  *  @author `!p snip.rv = userinfo['AUTHOR']`
  *
  *  @internal
- *       Created  `!v strftime(g:Jvim#metadata#DateFormat)`
- *      Modified  `!v strftime(g:Jvim#metadata#DateFormat)`
- *      Revision  0
+ *       Created  `!v strftime(g:Jvim#metadata#dateFormat)`
+ *      Modified  Friday, 17 November 2017
+ *      Revision  1
  *      Compiler  ${3:gcc}
  *  Organization  `!p snip.rv = userinfo['ORGANIZATION']`
  *       Company  `!p snip.rv = userinfo['COMPANY']`
@@ -121,7 +121,7 @@ if isHeader():
     snip.rv+='#define __' + snip.fn.replace('.','_').upper() + '__\n'
 else:
     snip.rv+='#define REVISION__ 0\n'
-    vim.command("let g:Jvim#metadata#Date = strftime(g:Jvim#metadata#DateFormat) ")
+    vim.command("let g:Jvim#metadata#Date = strftime(g:Jvim#metadata#dateFormat) ")
     snip.rv+='#define MODIFIED__ "' + snip.opt('g:Jvim#metadata#Date') + '"\n'`
 #include <stdlib.h>
 #include <stdio.h>
