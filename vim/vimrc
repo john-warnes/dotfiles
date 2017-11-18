@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  594
-"  Modified  Friday, 17 November 2017
+"  Revision  785
+"  Modified  Saturday, 18 November 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -162,9 +162,9 @@ endif
 "} ===
 
 
-"=================================================================
-"= #######################= START Plugin =###################### {
-"=================================================================
+"===============================================================================
+"= #############################= START Plugin =############################## {
+"===============================================================================
 call plug#begin('~/.vim/bundle')
 
 " Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie    
@@ -232,7 +232,6 @@ if (has('job') && has('timers')) || has('nvim')
     let g:ale_sign_warning = '--'
     let g:ale_history_log_output=1           " :ALEInfo for full output
 
-
     " Write this in your vimrc file
     "let g:ale_set_loclist           = 1     " Use loclist
     "let g:ale_set_quickfix          = 1     " Use quickfix list
@@ -240,35 +239,7 @@ if (has('job') && has('timers')) || has('nvim')
     "let g:ale_keep_list_window_open = 0     " Keep the list window open
 
     nnoremap <F8> :ALEToggle<CR>
-else
-"=================================================================
-" Syntastic Syntax checking Plugin
-"=================================================================
-
-" Use :Erorrs to open location-list
-"     :lclose :lnext and :lprevious
-    Plug 'vim-syntastic/syntastic'
-
-    "set statusline+=%#warningmsg#
-    "set statusline+=%{SyntasticStatuslineFlag()}
-    "set statusline+=%*
-
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_auto_loc_list            = 1
-    let g:syntastic_check_on_open            = 0
-    let g:syntastic_check_on_wq              = 0
-    let g:syntastic_mode_map                 = {
-                \ 'mode': 'active',
-                \ 'passive_filetypes': ['python'] }
-
-    nnoremap <F8> :SyntasticToggleMode<CR>
-    nnoremap <C-F8> :SyntasticCheck<CR>
 endif
-
-"augroup signcolumn
-"    autocmd!
-"    autocmd ColorScheme Gruvbox highlight clear SignColumn
-"augroup end
 "} ===
 
 
@@ -362,69 +333,60 @@ Plug 'tpope/vim-fugitive'
 
 
 "=================================================================
-" Completion Systems {
+" Deoplete {
 "=================================================================
-set completeopt-=preview         " Disable the preview window, these use popups
-let g:JV_autocomplete = get(g:, 'JV_autocomplete', 1)
+let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
 
+Plug 'ervandew/supertab'
 
-let g:JV_autocomplete = 0
-if (g:JV_autocomplete == 1) && has('nvim') " || ( has('job') && has('timers') && has('python3') )
+if !has('nvim')
+    let g:Jvim#complete#engine=0
+endif
 
-    " # On GNU/Linux
-    "   [sudo] find / -name libclang.so
-    " # On macOS
-    "   mdfind -name libclang.dylib
+if (g:Jvim#complete#engine==1)
 
+    set completeopt-=preview              " Disable the preview window, these use popups
+    let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
+    let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
 
-    if has('macunix')
+    "[sudo] find / -name libclang.so
+    let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
+    let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
+
+    if has('macunix') " # OSX: mdfind -name libclang.dylib
         let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
         let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
-    else
-        let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
-        let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
     endif
 
-    if has('nvim')
-        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    else
+    if !has('nvim')
+        Plug 'Shougo/deoplete.nvim'
         let g:deoplete#enable_yarp = 1
         Plug 'Shougo/deoplete.nvim'     " One
         Plug 'roxma/nvim-yarp'          " of
         Plug 'roxma/vim-hug-neovim-rpc' " this is buggy on VIM8 for linux
+    else
+        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     endif
 
     Plug 'Shougo/neco-vim'
     Plug 'Shougo/neco-syntax'
     Plug 'Shougo/neoinclude.vim'
-
     Plug 'zchee/deoplete-clang'
 
-    let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
-    let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
-    "set completeopt+=noinsert            " Do not modify line inless selected
-    "set completeopt-=menuone             " Disable the complete menu for a single item
+    imap <expr><C-Space> pumvisible() ? "\<C-n>" : "\<C-Space>"
+    imap <expr><Down> pumvisible() ? "\<C-n>" : "\<Down>"
+    imap <expr><Up> pumvisible() ? "\<C-p>" : "\<Up>"
+    imap <expr><PageDown> pumvisible() ? "\<C-n>" : "\<PageDown>"
+    imap <expr><PageUp> pumvisible() ? "\<C-p>" : "\<PageUp>"
+    inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
 
-    " Use tab to cycle matches
 endif
 
-
-let g:JV_autocomplete = 0
-
-"if (g:JV_autocomplete == 1) && !has('nvim')
-if (g:JV_autocomplete == 1)
-    " Plug 'ervandew/supertab'            " Super tab completion
-
-    Plug 'ajh17/VimCompletesMe'           " Light plugin like supertab
-    augroup VCM_use_dict
-        autocmd!
-        autocmd FileType text,markdown let b:vcm_tab_complete = 'dict'
-    augroup END
-endif
-
-" Tab to move through the choices
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"if (g:Jvim#complete#engine==2)
+"    Plug 'ervandew/supertab'
+"    let g:vcm_default_maps = 0
+"    Plug 'ajh17/VimCompletesMe'
+"endif
 "} ===
 
 
@@ -433,7 +395,6 @@ endif
 "=================================================================
 Plug 'majutsushi/tagbar'
 let g:tagbar_width = 30             " width of tagnar window
-
 nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
 " } ===
 
@@ -447,15 +408,17 @@ let g:gen_tags#use_cache_dir  = 1  " Put tags in git or else home cache
 let g:loaded_gentags#gtags    = 1  " Disable gtags support not needed
 
 Plug 'jsfaint/gen_tags.vim'
-nnoremap <Leader>t :GenCtags<CR>   " if no autogen then force with <Leader>t
 
-"nnoremap <Leader>t
-"            \ :silent execute '!(rm tags)'<CR>
-"            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
-"            \ :redraw!<CR>
-"            \ :echom 'Generated cTags'<CR>
-"            \ execute 'set tags=./tags;~/.vim/tags;tags;'
-"set tags=./tags;~/.vim/tags;tags;
+nnoremap <Leader>t :GenCtags<CR>   " if tags didn't autogen force with <Leader>t
+
+" Backup gen Tags
+nnoremap <Leader>T
+            \ :silent execute '!(rm tags)'<CR>
+            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
+            \ :redraw!<CR>
+            \ :echom 'Generated cTags'<CR>
+            \ execute 'set tags=./tags;~/.vim/tags;tags;'
+set tags=./tags;~/.vim/tags;tags;
 "} ===
 
 
@@ -509,49 +472,14 @@ set nolangremap
 "=================================================================
 " UltiSnips Code Snippets {
 "=================================================================
-"let g:UltiSnipsExpandTrigger       = '<C-S-Null>'
-"let g:UltiSnipsJumpForwardTrigger  = '<C-S-Null>'
-
-"let g:UltiSnipsExpandTrigger       = '<C-@>'
 let g:UltiSnipsExpandTrigger       = '<Tab>'
 let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
-
-"let g:UltiSnipsJumpBackwardTrigger = '<C-S-d>'
-
+let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
 Plug 'SirVer/ultisnips'     " Track the engine
 Plug 'honza/vim-snippets'   " Snippets are separated from the engine
-
-
-"Use Tab in select mode is skip keeping the defualt
-"snoremap <C-@> <C-o>:call UltiSnips#JumpForwards()<CR>
-"snoremap <Tab> <C-o>:call UltiSnips#JumpForwards()<CR>
-"snoremap <C-Space> <C-o>:call UltiSnips#JumpForwards()<CR>
-
-
-"Use Tab in select mode is skip keeping the defualt
-"vnoremap <C-@> <C-o>:call UltiSnips#ExpandSnippitOrJump()<CR>
-"vnoremap <Tab> <C-o>:call UltiSnips#ExpandSnippitOrJump()<CR>
-"vnoremap <C-Space> <C-o>:call UltiSnips#ExpandSnippitOrJump()<CR>
-"} ===
-
-
-"=================================================================
-" Start Screen and Session Management {
-"=================================================================
-" :SLoad    load a session
-" :SSave    save a session
-" :SDelete  delete a session
-" :SClose   close current session
-"let g:startify_fortune_use_unicode = 1
-"let g:startify_session_persistence = 0
-"let g:startify_relative_path       = 1
-"let g:startify_change_to_dir       = 1
-"let g:startify_update_oldfiles     = 1
-"let g:startify_bookmarks           = [ {'v': '~/.vimrc'}, {'b': '~/.vim/bundle/jvim/plugin/jvim.vim'}]
-" Plug 'mhinz/vim-startify'
 "} ===
 
 
@@ -569,13 +497,12 @@ Plug 'godlygeek/tabular'
 "=================================================================
 " Vim Startup Time Profiler run  :StartupTime {
 "=================================================================
-" Only enable when needed
 " Plug 'tweekmonster/startuptime.vim'
 "} ===
 
-"=================================================================
-"=####################= END Plugin System =######################=
-"=================================================================
+"===============================================================================
+"=###########################= END Plugin System =#############################=
+"===============================================================================
 call plug#end()
 "} ===
 
@@ -659,6 +586,7 @@ set hlsearch                " Highlight all matches
 "} ===
 
 
+
 "=================================================================
 " Programming {
 "=================================================================
@@ -706,22 +634,14 @@ if has('macunix')
     map <ESC>OF <C-Right>
 endif
 
+
 " Map <NUL> and <C-@> as Control-Space as it commonly is
 " Allow remapping
-"imap <NUL> <C-Space>
-"imap <C-@> <C-Space>
+if !has('nvim')
+    imap <NUL> <C-Space>
+    imap <C-@> <C-Space>
+endif
 
-"} ===
-
-
-"=================================================================
-" Return to the last position in the file {
-"=================================================================
-augroup return_file_postion
-    autocmd!
-    au bufreadpost * if line("'\"") > 0 && line("'\"") <= line("$")
-                \ | exe "normal g'\"" | endif
-augroup END
 "} ===
 
 
@@ -751,6 +671,7 @@ augroup END
 " UltiSnips File Type Templates {
 "=================================================================
 if exists('g:UltiSnipsExpandTrigger')
+
     " UltiSnips Templates for new Files ===== {
     function! s:Try_insert(skel)
         execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
@@ -789,22 +710,8 @@ endif
 "} ===
 
 
-"=================================================================
-" Custom Start Screen {
-"=================================================================
-if exists('g:autoload startify')
-    let g:ascii = [
-                \ '     _       _                 _     _        ',
-                \ '    (_)_   _(_)_ __ ___       (_) __| | ___   ',
-                \ '    | \ \ / / | `_ ` _ \ _____| |/ _` |/ _ \  ',
-                \ '    | |\ V /| | | | | | |_____| | (_| |  __/  ',
-                \ '   _/ | \_/ |_|_| |_| |_|     |_|\__,_|\___|  ',
-                \ '  |__/                                        ',
-                \ '                                              '
-                \ ]
-    let g:startify_custom_header = g:ascii + startify#fortune#boxed()
-endif
-" http://patorjk.com/software/taag/#p=display&f=Ogre&t=jvim%0A
-"} ===
+imap <C-space> <Plug>vim_completes_me_forward
 
+
+" Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie    
 " EOF
