@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  242
-#  Modified  Thursday, 16 November 2017
+#  Revision  243
+#  Modified  Friday, 17 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -834,8 +834,8 @@ AddToEnvironment()
     done
 
     if [[  $OS == 'OSX' ]]; then
-        touch ~/.bash_profile
-        RCFILE="~/.bash_profile"
+        touch ~/.profile
+        RCFILE="~/.profile"
         echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
         echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
         echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
