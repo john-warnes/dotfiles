@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  900
+"  Revision  901
 "  Modified  Saturday, 18 November 2017
 "=================================================================
 scriptencoding utf-8
@@ -408,13 +408,13 @@ endif
 "=================================================================
 " Vim Mouse Settings {
 "=================================================================
-if exists('$TMUX')
-    if !has('nvim')
-        set ttymouse=xterm2
-    endif
-else
+"if exists('$TMUX')
+    "if !has('nvim')
+        "set ttymouse=xterm2
+    "endif
+"else
     set mouse=a
-endif
+"endif
 "} ===
 
 "=================================================================
