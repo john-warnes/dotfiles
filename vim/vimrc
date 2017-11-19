@@ -3,12 +3,13 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  785
+"  Revision  832
 "  Modified  Saturday, 18 November 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
 "=================================================================
+set nocompatible
 
 filetype plugin indent on
 set modeline
@@ -17,6 +18,9 @@ set modelines=10
 " Keep here keeps lang from remapping keys
 set nolangremap
 
+" proformace testing
+set ttyfast
+set lazyredraw
 
 "=================================================================
 " Leader Key {
@@ -123,31 +127,36 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 "} ===
 
-
 "=================================================================
 " Vim Color Support and Force {
 "=================================================================
+
+function! JvimColorInfo()
+    echoerr 'TERM =' . $TERM
+    echoerr 'COLORTERM =' . $COLORTERM
+    echoerr 'exisit($TMUX) = ' . exists('$TMUX')
+    echoerr 't_Co = ' . &t_Co
+    echoerr 't_ut = ' . &t_ut
+endfunction
+
+
 if ($COLORTERM ==? 'truecolor')
     if has('termguicolors')
         set termguicolors
-    endif
-    if exists('$TMUX')
-        let g:gruvbox_italic=0
+
+        if exists('$TMUX')
+            let g:gruvbox_italic=0
+            let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+            let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+        else
+            let g:gruvbox_italic=1
+        endif
         set t_ut=
-    else
-        let g:gruvbox_italic=1
-        set t_ut=
     endif
-else
-    " No true color. Hope term has 256 colors
+else " No true color. Hope term has 256 colors
     let g:gruvbox_italic=0
-    if !has('nvim')
-        set term=xterm-256color
-    endif
     set t_Co=256
     set t_ut=
-    "    set t_ut=set
-    "    set t_ut=y
 endif
 
 if ($TERM ==? 'linux')
@@ -161,14 +170,12 @@ if ($OS ==? 'OSX') && !has('nvim')
 endif
 "} ===
 
-
 "===============================================================================
 "= #############################= START Plugin =############################## {
 "===============================================================================
 call plug#begin('~/.vim/bundle')
 
 " Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie    
-
 
 Plug 'john-warnes/jvim'
 "} ===
@@ -275,9 +282,9 @@ let g:airline#extensions#tabline#show_tabs       = 1
 "let g:airline#extensions#tabline#close_symbol    = 'x'
 "let g:airline#extensions#tabline#show_close_button = 0
 
-let g:airline#extensions#tmuxline#enabled        = 1    " Theme tmux bar
-let g:airline#extensions#tmuxline#color_template = 'normal' " make tmux mode
-Plug 'edkolev/tmuxline.vim'     " airline Plugin that allows theming of tmux
+"let g:airline#extensions#tmuxline#enabled        = 1    " Theme tmux bar
+"let g:airline#extensions#tmuxline#color_template = 'normal' " make tmux mode
+"Plug 'edkolev/tmuxline.vim'     " airline Plugin that allows theming of tmux
 "} ===
 
 
@@ -336,8 +343,6 @@ Plug 'tpope/vim-fugitive'
 " Deoplete {
 "=================================================================
 let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
-
-Plug 'ervandew/supertab'
 
 if !has('nvim')
     let g:Jvim#complete#engine=0
@@ -452,6 +457,13 @@ function! GruvCycleContrast()
     colorscheme gruvbox
 endfunction
 "} ===
+
+
+
+
+
+
+
 
 
 "=================================================================
@@ -710,7 +722,7 @@ endif
 "} ===
 
 
-imap <C-space> <Plug>vim_completes_me_forward
+"imap <C-space> <Plug>vim_completes_me_forward
 
 
 " Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie    
