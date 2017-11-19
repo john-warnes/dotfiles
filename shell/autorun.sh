@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  044
-#  Modified  Wednesday, 15 November 2017
+#  Revision  047
+#  Modified  Sunday, 19 November 2017
 #=================================================================
 
 
@@ -146,6 +146,10 @@ main()
     DetectOS
 
     HASRUN=$(RunCheck)
+
+    if [[ $@ > 0 ]]; then
+        echo "autorun exec from: $1"
+    fi
 
     # Might need to force it
     #HASRUN=0
