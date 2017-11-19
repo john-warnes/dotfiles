@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  901
-"  Modified  Saturday, 18 November 2017
+"  Revision  916
+"  Modified  Sunday, 19 November 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -372,6 +372,8 @@ function! JvimColorInfo()
     echoerr 'exisit($TMUX) = ' . exists('$TMUX')
     echoerr 't_Co = ' . &t_Co
     echoerr 't_ut = ' . &t_ut
+    echoerr '&t_8f = ' . &t_8f
+    echoerr '&t_8b = ' . &t_8b
 endfunction
 
 if ($COLORTERM ==? 'truecolor')
@@ -491,10 +493,11 @@ set hlsearch                " Highlight all matches
 "=================================================================
 " Vim Indent and Programming Options {
 "=================================================================
-set autoindent              " Keep indent level on new line
-set nosmartindent           " Intelligent indenting for source code
+"set autoindent              " Keep indent level on new line
+"set nosmartindent           " Intelligent indenting for source code
 set cindent                 " Intelligent indenting for source code
-set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
+"set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
+set cinoptions=N-s
 set showmatch               " Show matching brackets / parenthesis
 set matchtime=5             " Show matching character for .3s
 set shiftwidth=4            " Spaces used for auto indents
