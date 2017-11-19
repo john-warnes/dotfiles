@@ -5,16 +5,8 @@
 #
 #         USAGE: ./watchlog.sh
 #
-#   DESCRIPTION:
-#
-#       OPTIONS: ---
-#  REQUIREMENTS: ---
-#          BUGS: ---
-#         NOTES: ---
 #        AUTHOR: John Warnes (jwarnes), johnwarnes@mail.weber.edu
-#  ORGANIZATION: WSU
 #       CREATED: 09/06/17 15:28:48
-#      REVISION:  ---
 #===============================================================================
 
 # Use colors, but only if connected to a terminal, and that terminal

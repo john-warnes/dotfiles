@@ -1,13 +1,13 @@
 #!/bin/bash
 
 case "$OSTYPE" in
-    solaris*) export OS="SOLARIS" ;;
-    darwin*)  export OS="OSX" ;;
-    linux*)   export OS="LINUX" ;;
-    bsd*)     export OS="BSD" ;;
-    cygwin*)  export OS="BABUN" ;;
-    msys*)    export OS="WINDOWS" ;;
-    *)        export OS="unknown: $OSTYPE" ;;
+    solaris*) export OS="SOLARIS";;
+    darwin*)  export OS="OSX";;
+    linux*)   export OS="LINUX";;
+    bsd*)     export OS="BSD";;
+    cygwin*)  export OS="BABUN";;
+    msys*)    export OS="WINDOWS";;
+    *)        export OS="unknown: $OSTYPE";;
 esac
 
 if [[ $OS != "LINUX" ]]; then

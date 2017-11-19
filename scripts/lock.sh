@@ -7,14 +7,8 @@
 #
 #   DESCRIPTION: encrypt the contents of secure
 #
-#       OPTIONS: ---
-#  REQUIREMENTS: ---
-#          BUGS: ---
-#         NOTES: ---
 #        AUTHOR: John Warnes (jwarnes), johnwarnes@mail.weber.edu
-#  ORGANIZATION: WSU
 #       CREATED: 06/06/2017 12:30:05 AM
-#      REVISION:  ---
 #===============================================================================
 
 SECURE=$DOTFILES/secure
@@ -26,9 +20,18 @@ if [[ -f "$SCRIPTS/colors.sh" ]]; then
     source $SCRIPTS/colors.sh
 fi
 
+if [[ -f "$SCRIPTS/detectOS" ]]; then
+    source $SCRIPTS/detectOS
+fi
+
+SHRED='shred'
+if [[ $OS == 'OSX' ]]; then
+    SHRED='gshred'
+fi
+
 if [[ -f $SECURE/secure.tar.xz.gpg ]]; then
     echo "'$BOLD${YELLOW}Note:$RESET$BOLD Shredding old encrypt file$RESET"
-    (shred -n 9 -uzf $SECURE/secure.tar.xz.gpg)
+    ($SHRED -n 9 -uzf $SECURE/secure.tar.xz.gpg)
 fi
 
 echo "$BOLD${BLUE}Compressing$RESET$BOLD files to tar.xz$RESET"
@@ -42,7 +45,7 @@ else
 fi
 
 echo "$BOLD${BLUE}Shredding$RESET$BOLD old tar.xz$RESET"
-(shred -n 9 -uzf $SECURE/secure.tar.xz)
+($SHRED -n 9 -uzf $SECURE/secure.tar.xz)
 
 if [[ -d $SECURE ]]; then
     if [[ -f $SECURE/secure.tar.xz.gpg ]]; then
