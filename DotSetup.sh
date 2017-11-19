@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  243
-#  Modified  Friday, 17 November 2017
+#  Revision  255
+#  Modified  Sunday, 19 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -181,20 +181,22 @@ PrintHelp()
 #-------------------------------------------------------------------------------
 Clean()
 {
-    pushd . > /dev/null
     printf "${BOLD}Cleaning Files and Directory: "
 
-    cd $DOTFILES/vim
-    printf "${BLUE}view, "
-    rm -rf view
-    printf "${BLUE}undo, "
-    rm -rf undo
-    printf "${BLUE}.netrwhist, "
-    rm .netrwhist
+    printf "${BLUE}view"
+    rm -rf $DOTFILES/view 2> /dev/null
+
+    printf "${BLUE}, undo"
+    rm -rf $DOTFILES/undo 2> /dev/null
+
+    printf "${BLUE}, .netrwhist"
+    rm $DOTFILES/.netrwhist 2> /dev/null
+
+    printf "${BLUE}, ~/.local/share/nvim/view"
+    rm -rf ~/.local/share/nvim/view 2> /dev/null
 
     printf "${RESET}\nDone\n"
-    rm .netrwhist
-    popd > /dev/null
+    echo ""
 }
 
 
@@ -826,7 +828,7 @@ AddToEnvironment()
                 echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
                 echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
                 echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
-                echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
+                echo "source $DOTFILES/shell/autorun.sh \$0" >> $RCFILE
             fi
         else
             echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
