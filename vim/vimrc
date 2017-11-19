@@ -3,29 +3,16 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  832
+"  Revision  900
 "  Modified  Saturday, 18 November 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
-"=================================================================
-set nocompatible
 
-filetype plugin indent on
-set modeline
-set modelines=10
-
-" Keep here keeps lang from remapping keys
-set nolangremap
-
-" proformace testing
-set ttyfast
-set lazyredraw
 
 "=================================================================
-" Leader Key {
+" Set the Leader Key {
 "=================================================================
-" Rebind <Leader> key
 let g:mapleader = ','
 "} ===
 
@@ -68,7 +55,7 @@ let g:Jvim#comment#enable      = 1 " Allow comment and uncomment system
 
 
 "=================================================================
-" Gnome-Terminal Font Control  Note: Only Gnome-Terminal {
+" Gnome-Terminal ONLY {
 "=================================================================
 " <F7> cycle though mono powerline fonts
 let g:powerlineFonts= [
@@ -115,8 +102,12 @@ nnoremap <F7> :call GnomeTermCycleFont()<CR>
 "} ===
 
 
+"===============================================================================
+"= #############################= START Plugin =############################## {
+"===============================================================================
+
 "=================================================================
-" Vim-Plug Plugin Manager Auto Install {
+" Vim-Plug auto Install {
 "=================================================================
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -127,10 +118,254 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 "} ===
 
-"=================================================================
-" Vim Color Support and Force {
-"=================================================================
+call plug#begin('~/.vim/bundle')
 
+Plug 'john-warnes/jvim'                     " Jvim
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " File Tree
+Plug 'Xuyuanp/nerdtree-git-plugin'          " File Tree
+Plug 'vim-airline/vim-airline'              " Status Bar
+Plug 'tpope/vim-fugitive'                   " :Gpush :Gdiff
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
+Plug 'jsfaint/gen_tags.vim'                 " ctags / gtags
+Plug 'morhetz/gruvbox'                      " Color scheme
+Plug 'christoomey/vim-tmux-navigator'       " tmux integration
+Plug 'SirVer/ultisnips'                     " Snippets engine
+Plug 'honza/vim-snippets'                   " Built in snippets
+Plug 'godlygeek/tabular'                    " Text aliment tool
+
+if (has('job') && has('timers')) || has('nvim')
+    Plug 'w0rp/ale'                         " Linter
+endif
+
+if !has('nvim') " Code Complete for nvim
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'Shougo/neco-vim'
+    Plug 'Shougo/neco-syntax'
+    Plug 'Shougo/neoinclude.vim'
+    Plug 'zchee/deoplete-clang'
+endif
+
+"Plug 'tpope/vim-rhubarb'                    " :Gbrowse for github
+"Plug 'vim-airline/vim-airline-themes'       " Airline themes
+"Plug 'tweekmonster/startuptime.vim'         " Startup profiler :StartupTime
+
+call plug#end()
+"===============================================================================
+"=###########################= END Plugin System =#############################=
+"}==============================================================================
+
+
+"===============================================================================
+"= #### Plugin Options #### {
+"===============================================================================
+
+"=================================================================
+" NerdTree [Ctrl-B] {
+"=================================================================
+nnoremap <C-b> :NERDTreeToggle<CR>
+let g:NERDTreeQuitOnOpen   = 1          " close NERDTree after  file is opened
+let g:NERDTreeShowHidden   = 1          " show hidden files in NERDTree
+let g:NERDTreeWinSize      = 20
+let g:NERDTreeMapOpenInTab = '<ENTER>'  " Open file in newtab
+let g:NERDTreeIndicatorMapCustom = {
+            \ 'Modified'  : '✹', 'Staged'    : '✚',
+            \ 'Untracked' : '✭', 'Renamed'   : '➜',
+            \ 'Unmerged'  : '═', 'Deleted'   : '✖',
+            \ 'Dirty'     : '✗', 'Clean'     : '✔︎',
+            \ 'Ignored'   : '☒', 'Unknown'   : '?'
+            \ }
+"} ===
+
+
+"=================================================================
+" ALE Linter <F8> to toggle {
+"=================================================================
+    "let g:ale_cpp_clang_options='-std=c14 -Wall'
+    "let g:ale_cpp_cppcheck_options=' --enable=style'
+    "let g:ale_cpp_gcc_options='-std=c++14 -Wall'
+
+    "define cpp linters to stop cling-check as it has errors
+    let g:ale_linters = {
+                \    'cpp': ['clang','gcc', 'cppcheck', 'cpplint']
+                \}
+
+    "let g:ale_sign_column_always = 1        " Always show sign column
+    let g:ale_sign_error = '>>'
+    let g:ale_sign_warning = '--'
+    let g:ale_history_log_output=1           " :ALEInfo for full output
+    if exists(':ALEToggle') 
+        nnoremap <F8> :ALEToggle<CR>
+    endif
+"} ===
+
+
+"=================================================================
+" Airline {
+"=================================================================
+let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is very slow disable it
+
+set laststatus=2                            " Always show the status line
+let g:airline_powerline_fonts = 1           " Use Powerline fonts
+let g:airline_detect_spell    = 0           " Don't show spell and lang
+"let g:airline_section_c = '%F'             " Show full Path if possable
+
+let g:airline_highlighting_cache                 = 1    " Performance cache
+let g:airline#extensions#ale#enabled             = 1    " Use ALE lint msgs
+let g:airline#extensions#tabline#enabled         = 1    " Theme the tabline
+let g:airline#extensions#tabline#show_buffers    = 0    " no buffers in tab bar
+let g:airline#extensions#tabline#show_splits     = 1
+let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
+"} ===
+
+
+"=================================================================
+" Deoplete nvim code complete {
+"=================================================================
+let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
+
+if !has('nvim')
+    let g:Jvim#complete#engine=0
+endif
+
+if (g:Jvim#complete#engine==1)
+
+    set completeopt-=preview              " Disable the preview window, these use popups
+    let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
+    let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
+
+    "[sudo] find / -name libclang.so
+    let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
+    let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
+
+    if has('macunix') " # OSX: mdfind -name libclang.dylib
+        let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+        let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
+    endif
+
+    imap <expr><C-Space> pumvisible() ? "\<C-n>" : "\<C-Space>"
+    imap <expr><Down> pumvisible() ? "\<C-n>" : "\<Down>"
+    imap <expr><Up> pumvisible() ? "\<C-p>" : "\<Up>"
+    imap <expr><PageDown> pumvisible() ? "\<C-n>" : "\<PageDown>"
+    imap <expr><PageUp> pumvisible() ? "\<C-p>" : "\<PageUp>"
+    inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
+endif
+"}===
+
+
+"=================================================================
+" TagBar - Requires Exuberant Ctags {
+"=================================================================
+let g:tagbar_width = 30             " width of tagnar window
+nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
+"}===
+
+
+"=================================================================
+" cTags {
+"=================================================================
+"let g:gen_tags#verbose = 1        " Give more feedback
+let g:gen_tags#ctags_auto_gen = 1  " Auto generate ctags if in git
+let g:gen_tags#use_cache_dir  = 1  " Put tags in git or else home cache
+let g:loaded_gentags#gtags    = 1  " Disable gtags support not needed
+nnoremap <Leader>t :GenCtags<CR>   " if tags didn't autogen force with <Leader>t
+
+" Backup old style ctags generator
+nnoremap <Leader>T
+            \ :silent execute '!(rm tags)'<CR>
+            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
+            \ :redraw!<CR>
+            \ :echom 'Generated cTags'<CR>
+            \ execute 'set tags=./tags;~/.vim/tags;tags;'
+set tags=./tags;~/.vim/tags;tags;
+"} ===
+
+
+"=================================================================
+" gruvbox Color Scheme {
+"=================================================================
+" <F5> to switch from dark to light
+" <F6> to cycle the 3 levels of contrast
+nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
+nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
+
+function! GruvCycleContrast()
+    if &background ==? 'dark'
+        if g:gruvbox_contrast_dark ==? 'soft'
+            let g:gruvbox_contrast_dark='medium'
+        elseif g:gruvbox_contrast_dark ==? 'medium'
+            let g:gruvbox_contrast_dark='hard'
+        elseif g:gruvbox_contrast_dark ==? 'hard'
+            let g:gruvbox_contrast_dark='soft'
+        endif
+    else
+        if g:gruvbox_contrast_light ==? 'soft'
+            let g:gruvbox_contrast_light='medium'
+        elseif g:gruvbox_contrast_light ==? 'medium'
+            let g:gruvbox_contrast_light='hard'
+        elseif g:gruvbox_contrast_light ==? 'hard'
+            let g:gruvbox_contrast_light='soft'
+        endif
+    endif
+    colorscheme gruvbox
+endfunction
+
+set background=dark            " Start with dark background theme
+silent! colorscheme gruvbox    " Color scheme supports truecolor
+"colorscheme default           " this is the default vim scheme
+"} ===
+
+"=================================================================
+" UltiSnips  {
+"=================================================================
+let g:UltiSnipsExpandTrigger       = '<Tab>'
+let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
+
+"===========  UltiSnips Templates for new files ========== {
+if exists('*UltiSnips#ExpandSnippet')
+    function! s:Try_insert(skel)
+        execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
+        if (g:ulti_expand_res ==? 0)
+            silent! undo
+        endif
+        return g:ulti_expand_res
+    endfunction
+
+    function! InsertSkeleton() abort
+        let l:filename = expand('%')
+        " Abort on non-empty buffer or extant file
+        if !(line('$') ==? 1 && getline('$') ==? '') || filereadable(l:filename)
+            return
+        endif
+        call s:Try_insert('skel')
+    endfunction
+
+    augroup UltiSnips_NewFileTemplate
+        autocmd!
+        autocmd BufNewFile * silent! call InsertSkeleton()
+    augroup END
+    "}===
+    if exists('*deoplete#custom#source') && (g:Jvim#complete#engine==1)
+        silent call deoplete#custom#source('ultisnips', 'rank', -1000)
+    endif
+endif
+
+"}===
+
+"}= #### Plugin Options END ####
+
+
+"===============================================================================
+"= #### Vim Settings #### {
+"===============================================================================
+
+set ttyfast          " Under testing
+set lazyredraw       " Under testing
+
+"=================================================================
+" Vim Color Support Setup {
+"=================================================================
 function! JvimColorInfo()
     echoerr 'TERM =' . $TERM
     echoerr 'COLORTERM =' . $COLORTERM
@@ -138,7 +373,6 @@ function! JvimColorInfo()
     echoerr 't_Co = ' . &t_Co
     echoerr 't_ut = ' . &t_ut
 endfunction
-
 
 if ($COLORTERM ==? 'truecolor')
     if has('termguicolors')
@@ -170,372 +404,31 @@ if ($OS ==? 'OSX') && !has('nvim')
 endif
 "} ===
 
-"===============================================================================
-"= #############################= START Plugin =############################## {
-"===============================================================================
-call plug#begin('~/.vim/bundle')
-
-" Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie    
-
-Plug 'john-warnes/jvim'
-"} ===
-
 
 "=================================================================
-" NerdTree to see files in tree mode {
+" Vim Mouse Settings {
 "=================================================================
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-
-" Activate with Ctrl-B
-nnoremap <C-b> :NERDTreeToggle<CR>
-
-let g:NERDTreeQuitOnOpen   = 0          " close NERDTree after  file is opened
-let g:NERDTreeShowHidden   = 1          " show hidden files in NERDTree
-let g:NERDTreeWinSize      = 20
-let g:NERDTreeMapOpenInTab = '<ENTER>'  " Open file in newtab
-"} ===
-
-
-"=================================================================
-" NerdTree git plugin {
-"=================================================================
-"Show git file status when browsing
-Plug 'Xuyuanp/nerdtree-git-plugin'
-
-let g:NERDTreeIndicatorMapCustom = {
-            \ 'Modified'  : '✹',
-            \ 'Staged'    : '✚',
-            \ 'Untracked' : '✭',
-            \ 'Renamed'   : '➜',
-            \ 'Unmerged'  : '═',
-            \ 'Deleted'   : '✖',
-            \ 'Dirty'     : '✗',
-            \ 'Clean'     : '✔︎',
-            \ 'Ignored'   : '☒',
-            \ 'Unknown'   : '?'
-            \ }
-
-"let g:NERDTreeShowIgnoredStatus = 1 "Heavy feature can be SLOW
-"} ===
-
-
-"=================================================================
-" ALE Syntax Checking Plugin {
-"=================================================================
-if (has('job') && has('timers')) || has('nvim')
-
-    "let g:ale_cpp_clang_options='-std=c14 -Wall'
-    let g:ale_cpp_cppcheck_options=' --enable=style'
-    "let g:ale_cpp_gcc_options='-std=c++14 -Wall'
-
-    let g:ale_linters = {
-                \    'cpp': ['clang','gcc', 'cppcheck', 'cpplint']
-                \}
-
-    Plug 'w0rp/ale'
-
-    "let g:ale_sign_column_always = 1        " Always show sign column
-    let g:ale_sign_error = '>>'
-    let g:ale_sign_warning = '--'
-    let g:ale_history_log_output=1           " :ALEInfo for full output
-
-    " Write this in your vimrc file
-    "let g:ale_set_loclist           = 1     " Use loclist
-    "let g:ale_set_quickfix          = 1     " Use quickfix list
-    "let g:ale_open_list             = 1     " Auto open the list
-    "let g:ale_keep_list_window_open = 0     " Keep the list window open
-
-    nnoremap <F8> :ALEToggle<CR>
-endif
-"} ===
-
-
-"=================================================================
-" Airline and TmuxLine {
-"=================================================================
-let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is very slow disable it
-
-Plug 'vim-airline/vim-airline'              " Airline plugin
-Plug 'vim-airline/vim-airline-themes'       " Many Airline themes
-
-"set noshowmode                             " Hide mode in status line below airline
-set laststatus=2                            " Always show the status line
-let g:airline_powerline_fonts = 1           " Use Powerline fonts
-let g:airline_detect_spell    = 0           " Don't show spell and lang
-"let g:airline_section_c = '%F'             " Show full Path if possable
-
-" Themes
-"let g:airline_theme='base16'
-"let g:airline_theme='murmur'
-"let g:airline_theme='powerlineish'
-
-let g:airline_highlighting_cache                 = 1    " Performance cache
-let g:airline#extensions#ale#enabled             = 1    " Use ALE lint msgs
-let g:airline#extensions#tabline#enabled         = 1    " Theme the tabline
-let airline#extensions#tabline#show_buffers      = 0
-
-let g:airline#extensions#tabline#show_splits     = 0
-let g:airline#extensions#tabline#show_tabs       = 1
-
-"let g:airline#extensions#tabline#show_tab_nr     = 0
-"let g:airline#extensions#tabline#show_tab_type   = 0
-"let g:airline#extensions#tabline#close_symbol    = 'x'
-"let g:airline#extensions#tabline#show_close_button = 0
-
-"let g:airline#extensions#tmuxline#enabled        = 1    " Theme tmux bar
-"let g:airline#extensions#tmuxline#color_template = 'normal' " make tmux mode
-"Plug 'edkolev/tmuxline.vim'     " airline Plugin that allows theming of tmux
-"} ===
-
-
-"=================================================================
-" Fugitive for GIT {
-"=================================================================
-" Try ":Gpush :Gdiff when file in reposory is open
-Plug 'tpope/vim-fugitive'
-" Allow :Gbrowse for github and other github support
-" Plug 'tpope/vim-rhubarb'
-"} ===
-
-
-"=================================================================
-" Language Support Only enable if needed {
-"=================================================================
-"let g:C_CreateMenusDelayed = 'yes'
-"let g:C_MapLeader          = ','
-"Plug 'WolfgangMehner/c-support'
-
-"let g:C_UseToolbox      = 'yes'
-"let g:C_UseTool_doxygen = 'yes'
-"let g:C_UseTool_cmake   = 'yes'
-
-"let g:Bash_MapLeader    = ','
-"let g:Latex_MapLeader   = ','
-"let g:Latex_MapLeader   = ','
-"let g:Lua_MapLeader     = ','
-"let g:Perl_MapLeader    = ','
-"let g:Vim_MapLeader     = ','
-"let g:Python_MapLeader  = ','
-
-"Plug 'WolfgangMehner/bash-support'
-"Plug 'WolfgangMehner/latex-support'
-"Plug 'WolfgangMehner/lua-support'
-"Plug 'WolfgangMehner/perl-support'
-"Plug 'WolfgangMehner/vim-support'
-"Plug 'WolfgangMehner/python-support'
-"} ===
-
-
-"=================================================================
-" Python mode {
-"=================================================================
-"Plug 'python-mode/python-mode'
-
-"load a Template for new .py files
-"augroup Python
-"    autocmd!
-"    autocmd BufNewFile *.py silent! 0r ~/.vim/templates/python-mode.template | cal cursor(8,4)
-"augroup END
-"} ===
-
-
-"=================================================================
-" Deoplete {
-"=================================================================
-let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
-
-if !has('nvim')
-    let g:Jvim#complete#engine=0
-endif
-
-if (g:Jvim#complete#engine==1)
-
-    set completeopt-=preview              " Disable the preview window, these use popups
-    let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
-    let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
-
-    "[sudo] find / -name libclang.so
-    let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
-    let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
-
-    if has('macunix') " # OSX: mdfind -name libclang.dylib
-        let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-        let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
-    endif
-
-    if !has('nvim')
-        Plug 'Shougo/deoplete.nvim'
-        let g:deoplete#enable_yarp = 1
-        Plug 'Shougo/deoplete.nvim'     " One
-        Plug 'roxma/nvim-yarp'          " of
-        Plug 'roxma/vim-hug-neovim-rpc' " this is buggy on VIM8 for linux
-    else
-        Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    endif
-
-    Plug 'Shougo/neco-vim'
-    Plug 'Shougo/neco-syntax'
-    Plug 'Shougo/neoinclude.vim'
-    Plug 'zchee/deoplete-clang'
-
-    imap <expr><C-Space> pumvisible() ? "\<C-n>" : "\<C-Space>"
-    imap <expr><Down> pumvisible() ? "\<C-n>" : "\<Down>"
-    imap <expr><Up> pumvisible() ? "\<C-p>" : "\<Up>"
-    imap <expr><PageDown> pumvisible() ? "\<C-n>" : "\<PageDown>"
-    imap <expr><PageUp> pumvisible() ? "\<C-p>" : "\<PageUp>"
-    inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
-
-endif
-
-"if (g:Jvim#complete#engine==2)
-"    Plug 'ervandew/supertab'
-"    let g:vcm_default_maps = 0
-"    Plug 'ajh17/VimCompletesMe'
-"endif
-"} ===
-
-
-"=================================================================
-" TagBar - Requires Exuberant Ctags {
-"=================================================================
-Plug 'majutsushi/tagbar'
-let g:tagbar_width = 30             " width of tagnar window
-nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
-" } ===
-
-
-"=================================================================
-" cTags {
-"=================================================================
-"let g:gen_tags#verbose = 1        " Give more feedback
-let g:gen_tags#ctags_auto_gen = 1  " Auto generate ctags if in git
-let g:gen_tags#use_cache_dir  = 1  " Put tags in git or else home cache
-let g:loaded_gentags#gtags    = 1  " Disable gtags support not needed
-
-Plug 'jsfaint/gen_tags.vim'
-
-nnoremap <Leader>t :GenCtags<CR>   " if tags didn't autogen force with <Leader>t
-
-" Backup gen Tags
-nnoremap <Leader>T
-            \ :silent execute '!(rm tags)'<CR>
-            \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
-            \ :redraw!<CR>
-            \ :echom 'Generated cTags'<CR>
-            \ execute 'set tags=./tags;~/.vim/tags;tags;'
-set tags=./tags;~/.vim/tags;tags;
-"} ===
-
-
-"=================================================================
-" gruvbox colorschene {
-"=================================================================
-Plug 'morhetz/gruvbox'
-" <F5> to switch from dark to light
-" <F6> to cycle the 3 levels of contrast
-nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
-nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
-
-function! GruvCycleContrast()
-    if &background ==? 'dark'
-        if g:gruvbox_contrast_dark ==? 'soft'
-            let g:gruvbox_contrast_dark='medium'
-        elseif g:gruvbox_contrast_dark ==? 'medium'
-            let g:gruvbox_contrast_dark='hard'
-        elseif g:gruvbox_contrast_dark ==? 'hard'
-            let g:gruvbox_contrast_dark='soft'
-        endif
-    else
-        if g:gruvbox_contrast_light ==? 'soft'
-            let g:gruvbox_contrast_light='medium'
-        elseif g:gruvbox_contrast_light ==? 'medium'
-            let g:gruvbox_contrast_light='hard'
-        elseif g:gruvbox_contrast_light ==? 'hard'
-            let g:gruvbox_contrast_light='soft'
-        endif
-    endif
-    colorscheme gruvbox
-endfunction
-"} ===
-
-
-
-
-
-
-
-
-
-"=================================================================
-" TMUX integration and support {
-"=================================================================
-" <Ctrl + [h,j,k,l]> Move to vim panes and tmux widows
-Plug 'christoomey/vim-tmux-navigator'
-
 if exists('$TMUX')
     if !has('nvim')
         set ttymouse=xterm2
     endif
+else
+    set mouse=a
 endif
 "} ===
 
-set nolangremap
-
 "=================================================================
-" UltiSnips Code Snippets {
+" Vim Editing and Behavior {
 "=================================================================
-let g:UltiSnipsExpandTrigger       = '<Tab>'
-let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
-
-let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
-
-Plug 'SirVer/ultisnips'     " Track the engine
-Plug 'honza/vim-snippets'   " Snippets are separated from the engine
-"} ===
-
-
-"=================================================================
-" Tabular Text Alignment Tool {
-"=================================================================
-" :Tab /<REGEX>
-" Example: c,c++ ``:Tab /\/\/``
-" Example: csv   ``:Tab /,``
-" Example: vim   ``:Tab /"``
-Plug 'godlygeek/tabular'
-"} ===
-
-
-"=================================================================
-" Vim Startup Time Profiler run  :StartupTime {
-"=================================================================
-" Plug 'tweekmonster/startuptime.vim'
-"} ===
-
-"===============================================================================
-"=###########################= END Plugin System =#############################=
-"===============================================================================
-call plug#end()
-"} ===
-
-
-"=================================================================
-" Color Scheme {
-"=================================================================
-set background=dark            " Start with dark background theme
-
-"colorscheme default           " or try the default scheme
-silent! colorscheme gruvbox    " Color scheme supports truecolor
-"} ===
-
-
-"=================================================================
-" Editing and Behavior {
-"=================================================================
-set nowritebackup              " only in case you don't want a backup file while editing
-set noswapfile                 " no swap files
-set nobackup                   " Just overwrite the file
-set printoptions=paper:letter,number:y,portrait:y
+set nocompatible               " Be vim
+filetype plugin indent on
+set nolangremap                " avoid mapping breaks
+set modeline                   " Files can use modeline(s)
+set modelines=10               " Check top and bottom 10 lines for modelines(s)
+set nobackup                   " No Backups
+set nowritebackup              " No Backups even when editing
+set noswapfile                 " Don't leave swap files
+set printoptions=paper:letter,number:y,portrait:y " defualt printing
 set shortmess+=filmnrxoOtT     " Abbrev. of messages (avoids 'hit enter')
 set formatoptions+=cq          " Basic formatting of text and comments
 set formatoptions-=t           " Don't automatically wrap text when typing
@@ -544,8 +437,6 @@ set wildmode=list:longest,full " Command <Tab> completion, list matches and,
                                "  complete the longest common part,
                                "  then, cycle through the matches
 set wildchar=<Tab>             " Use tab to move in the menu
-set mouse=a                    " Use mouse in all modes
-                               "  on OSX might have to press ALT and click
 set backspace=2                " Set backspace
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline              " Stay on current char on page commands
@@ -558,7 +449,7 @@ set termencoding=utf-8         " Lets try using Unicode
 
 
 "=================================================================
-" Editor Look and Decorations {
+" Vim Look and Decorations {
 "=================================================================
 set ruler                   " Show the line / column number of cursor
 "set showcmd                 " Show the partially completed command
@@ -566,7 +457,6 @@ set number                  " Display line number"
 set numberwidth=5           " Use 5 spaces for number column"
 set textwidth=79            " Width of document (used by gd)
 set nowrap                  " Don't automatically wrap on load
-set formatoptions-=t        " Don't automatically wrap text when typing
 set commentstring=\ #\ %s   " This how fold markers look
 set cursorline              " Highlight the current line
 set visualbell              " Visual bell instead of beeping
@@ -586,7 +476,7 @@ endif
 
 
 "=================================================================
-" Search {
+" Vim Search Options {
 "=================================================================
 set ignorecase              " Ignore case in search patterns
 set noinfercase             " Don't ignore case in auto completion
@@ -598,9 +488,8 @@ set hlsearch                " Highlight all matches
 "} ===
 
 
-
 "=================================================================
-" Programming {
+" Vim Indent and Programming Options {
 "=================================================================
 set autoindent              " Keep indent level on new line
 set nosmartindent           " Intelligent indenting for source code
@@ -608,12 +497,6 @@ set cindent                 " Intelligent indenting for source code
 set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
 set showmatch               " Show matching brackets / parenthesis
 set matchtime=5             " Show matching character for .3s
-" } ===
-
-
-"=================================================================
-" Tabs {
-"=================================================================
 set shiftwidth=4            " Spaces used for auto indents
 set tabstop=4               " Set the tab width to 4
 set softtabstop=4           " Spaces that a tab moves over
@@ -623,7 +506,7 @@ set smarttab                " Allow Tab to match previous line
 
 
 "=================================================================
-" Mappings and Keybindings {
+" Vim Mappings and Keybindings {
 "=================================================================
 " zM   "Close all folds
 " zR   "Open all folds
@@ -646,25 +529,16 @@ if has('macunix')
     map <ESC>OF <C-Right>
 endif
 
-
 " Map <NUL> and <C-@> as Control-Space as it commonly is
 " Allow remapping
 if !has('nvim')
     imap <NUL> <C-Space>
     imap <C-@> <C-Space>
 endif
-
 "} ===
 
 
-"=================================================================
-" auto source vimrc and jvim.vim when saving {
-"=================================================================
-augroup reload_vimrc
-    autocmd!
-    "autocmd bufwritepost .vimrc,vimrc,.jvim.vim,jvim.vim source %
-augroup END
-"} ===
+"}= #### Vim Settings END ####
 
 
 "=================================================================
@@ -678,52 +552,4 @@ augroup shift-K
 augroup END
 "} ===
 
-
-"=================================================================
-" UltiSnips File Type Templates {
-"=================================================================
-if exists('g:UltiSnipsExpandTrigger')
-
-    " UltiSnips Templates for new Files ===== {
-    function! s:Try_insert(skel)
-        execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
-        if (g:ulti_expand_res ==? 0)
-            silent! undo
-        endif
-
-        return g:ulti_expand_res
-    endfunction
-
-    function! InsertSkeleton() abort
-        let l:filename = expand('%')
-
-        " Abort on non-empty buffer or extant file
-        if !(line('$') ==? 1 && getline('$') ==? '') || filereadable(l:filename)
-            return
-        endif
-
-        call s:Try_insert('skel')
-    endfunction
-
-    augroup ultisnips_custom
-        autocmd!
-        autocmd BufNewFile * silent! call InsertSkeleton()
-    augroup END
-    "} ===
-
-    " Put UltiSnips at the bottom of Deoplete List {
-    if exists('g:JV_autocomplete') && exists('*deoplete#custom#source')
-        if (g:JV_autocomplete == 1)
-            silent call deoplete#custom#source('ultisnips', 'rank', -1000)
-        endif
-    endif
-    "} ===
-endif
-"} ===
-
-
-"imap <C-space> <Plug>vim_completes_me_forward
-
-
-" Testing Comment != <= >= x^2 y^3 1^2 pi 44^2 pie    
-" EOF
+" EOF != <= >= x^2 y^3 1^2 pi 44^2 pie    
