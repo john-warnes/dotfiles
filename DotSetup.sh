@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  257
-#  Modified  Wednesday, 22 November 2017
+#  Revision  258
+#  Modified  Thursday, 23 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -828,7 +828,7 @@ AddToEnvironment()
                 echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
                 echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
                 echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
-                echo "source $DOTFILES/shell/autorun.sh >> $RCFILE
+                echo "source $DOTFILES/shell/autorun.sh" >> $RCFILE
             fi
         else
             echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
