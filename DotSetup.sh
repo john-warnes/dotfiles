@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  255
-#  Modified  Sunday, 19 November 2017
+#  Revision  257
+#  Modified  Wednesday, 22 November 2017
 #=================================================================
 
 #!/bin/bash
@@ -828,7 +828,7 @@ AddToEnvironment()
                 echo "Adding to file:$BOLD$GREEN $RCFILE$RESET"
                 echo "export DOTFILES=\"$DOTFILES\"" >> $RCFILE
                 echo "export PATH=\"\$PATH:$DOTFILES/scripts\"" >> $RCFILE
-                echo "source $DOTFILES/shell/autorun.sh \$0" >> $RCFILE
+                echo "source $DOTFILES/shell/autorun.sh >> $RCFILE
             fi
         else
             echo "$YELLOW${BOLD}Note:$RESET$BOLD $RCFILE$RESET does not exist"
@@ -930,7 +930,6 @@ Install()
     case "$choice" in
         n|N ) :;;
         y|Y|* ) InstallPowerlineFonts;;
-
     esac
     echo "$RESET"
 
