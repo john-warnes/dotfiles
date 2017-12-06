@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  919
-"  Modified  Monday, 20 November 2017
+"  Revision  925
+"  Modified  Tuesday, 05 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -323,7 +323,8 @@ let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
 "===========  UltiSnips Templates for new files ========== {
-if exists('*UltiSnips#ExpandSnippet')
+"if exists('*UltiSnips#ExpandSnippet')
+if exists('g:UltiSnipsExpandTrigger')
     function! s:Try_insert(skel)
         execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
         if (g:ulti_expand_res ==? 0)
@@ -346,11 +347,11 @@ if exists('*UltiSnips#ExpandSnippet')
         autocmd BufNewFile * silent! call InsertSkeleton()
     augroup END
     "}===
+
     if exists('*deoplete#custom#source') && (g:Jvim#complete#engine==1)
         silent call deoplete#custom#source('ultisnips', 'rank', -1000)
     endif
 endif
-
 "}===
 
 "}= #### Plugin Options END ####
