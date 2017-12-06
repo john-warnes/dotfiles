@@ -192,7 +192,7 @@ create_edges()
 opt_add_node_decorcation()
 {
     if [[ $PRIMARY =~ $1 ]]; then
-        printf " [fillcolor=lightgreen, style=\"filled,rounded\", root=true];"
+        printf " [fillcolor=green, style=\"filled,rounded\", root=true];"
         return
 	fi
     if [[ $SECONDARY =~ $1 ]]; then

@@ -28,6 +28,13 @@ time.h
 uchar.h
 wchar.h
 wctype.h
+unistd.h
+
+#macos
+wait.h
+_endian.h
+_OSByteOrder.h
+
 
 #others? microschip?
 libio.h
