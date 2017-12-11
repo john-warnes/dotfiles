@@ -3,11 +3,13 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  981
-"  Modified  Sunday, 10 December 2017
+"  Revision  988
+"  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
+
+nnoremap <leader>r :!%:p<CR>
 
 
 "=================================================================
@@ -448,6 +450,10 @@ endif
 
 if ($OS ==? 'OSX') && !has('nvim')
     let g:gruvbox_italic=0
+    if ($TERM ==? 'screen' && $COLORTERM ==? 'truecolor')
+        set t_Co=255
+        set termguicolors
+    endif
 endif
 "} ===
 
