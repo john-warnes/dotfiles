@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  925
-"  Modified  Tuesday, 05 December 2017
+"  Revision  981
+"  Modified  Sunday, 10 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -122,7 +122,7 @@ call plug#begin('~/.vim/bundle')
 
 Plug 'john-warnes/jvim'                     " Jvim
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " File Tree
-Plug 'Xuyuanp/nerdtree-git-plugin'          " File Tree
+Plug 'Xuyuanp/nerdtree-git-plugin'          " File Tree Git Support
 Plug 'vim-airline/vim-airline'              " Status Bar
 Plug 'tpope/vim-fugitive'                   " :Gpush :Gdiff
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
@@ -137,13 +137,30 @@ if (has('job') && has('timers')) || has('nvim')
     Plug 'w0rp/ale'                         " Linter
 endif
 
-if !has('nvim') " Code Complete for nvim
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    Plug 'Shougo/neco-vim'
-    Plug 'Shougo/neco-syntax'
-    Plug 'Shougo/neoinclude.vim'
-    Plug 'zchee/deoplete-clang'
+
+" pip3 install --user neovim jedi psutil setproctitle
+" the framework
+Plug 'roxma/nvim-completion-manager'
+
+" Requires vim8 with has('python') or has('python3')
+" Requires the installation of msgpack-python. (pip3 install msgpack-python)
+if !has('nvim')
+    Plug 'roxma/vim-hug-neovim-rpc'
 endif
+
+
+" Completion Plugins
+Plug 'roxma/ncm-clang'          " C/C++ by Clang  REQ: clang in your $PATH
+Plug 'Shougo/neco-vim'          " Vim
+Plug 'Shougo/neco-syntax'       " Syntax
+Plug 'Shougo/neoinclude.vim'    " include
+
+
+" ################## DISABLED PLUGINS ##################
+
+"Plug 'lifepillar/vim-mucomplete'            " Builtin chainable autocomplete
+"Plug 'ajh17/VimCompletesMe'                 " Vim Builtin autocomplete
+
 
 "Plug 'tpope/vim-rhubarb'                    " :Gbrowse for github
 "Plug 'vim-airline/vim-airline-themes'       " Airline themes
@@ -158,6 +175,33 @@ call plug#end()
 "===============================================================================
 "= #### Plugin Options #### {
 "===============================================================================
+
+
+"=================================================================
+" nvim-completion-manager {
+"=================================================================
+"set omnifunc=syntaxcomplete#Complete
+set completeopt-=preview              " Disable the preview window, these use popups
+set completeopt+=menuone              " Allow menu for one detect completion
+set completeopt-=menu                 " Allow menu for one detect completion
+"set completeopt+=noinsert
+"set completeopt-=noselect
+"set completeopt-=longest
+
+let g:cm_sources_override = {
+    \ 'cm-tmux': {'enable':0}
+    \ }
+
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
+
+imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand)" : "\<CR>")
+imap <expr> <Plug>(expand) (cm#completed_is_snippet() ? "\<C-Space>":"")
+
+"} ===
+
+
 
 "=================================================================
 " NerdTree [Ctrl-B] {
@@ -221,34 +265,34 @@ let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
 "=================================================================
 " Deoplete nvim code complete {
 "=================================================================
-let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
-
-if !has('nvim')
-    let g:Jvim#complete#engine=0
-endif
-
-if (g:Jvim#complete#engine==1)
-
-    set completeopt-=preview              " Disable the preview window, these use popups
-    let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
-    let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
-
+"let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
+"
+"if !has('nvim')
+    "let g:Jvim#complete#engine=0
+"endif
+"
+"if (g:Jvim#complete#engine==1)
+"
+    "set completeopt-=preview              " Disable the preview window, these use popups
+    "let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
+    "let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
+"
     "[sudo] find / -name libclang.so
-    let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
-    let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
-
-    if has('macunix') " # OSX: mdfind -name libclang.dylib
-        let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-        let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
-    endif
-
-    imap <expr><C-Space> pumvisible() ? "\<C-n>" : "\<C-Space>"
-    imap <expr><Down> pumvisible() ? "\<C-n>" : "\<Down>"
-    imap <expr><Up> pumvisible() ? "\<C-p>" : "\<Up>"
-    imap <expr><PageDown> pumvisible() ? "\<C-n>" : "\<PageDown>"
-    imap <expr><PageUp> pumvisible() ? "\<C-p>" : "\<PageUp>"
-    inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
-endif
+    "let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
+    "let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
+"
+    "if has('macunix') " # OSX: mdfind -name libclang.dylib
+        "let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+        "let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
+    "endif
+"
+    "imap <expr><C-Space> pumvisible() ? "\<C-n>" : "\<C-Space>"
+    "imap <expr><Down> pumvisible() ? "\<C-n>" : "\<Down>"
+    "imap <expr><Up> pumvisible() ? "\<C-p>" : "\<Up>"
+    "imap <expr><PageDown> pumvisible() ? "\<C-n>" : "\<PageDown>"
+    "imap <expr><PageUp> pumvisible() ? "\<C-p>" : "\<PageUp>"
+    "inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
+"endif
 "}===
 
 
@@ -317,9 +361,9 @@ silent! colorscheme gruvbox    " Color scheme supports truecolor
 "=================================================================
 " UltiSnips  {
 "=================================================================
-let g:UltiSnipsExpandTrigger       = '<Tab>'
-let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'
+let g:UltiSnipsExpandTrigger       = '<C-Space>'
+let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
+let g:UltiSnipsJumpBackwardTrigger = '<none>'
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
 "===========  UltiSnips Templates for new files ========== {
@@ -348,9 +392,9 @@ if exists('g:UltiSnipsExpandTrigger')
     augroup END
     "}===
 
-    if exists('*deoplete#custom#source') && (g:Jvim#complete#engine==1)
-        silent call deoplete#custom#source('ultisnips', 'rank', -1000)
-    endif
+    "if exists('*deoplete#custom#source') && (g:Jvim#complete#engine==1)
+        "silent call deoplete#custom#source('ultisnips', 'rank', -1000)
+    "endif
 endif
 "}===
 
