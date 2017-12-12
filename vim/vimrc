@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1053
+"  Revision  1055
 "  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
@@ -483,7 +483,7 @@ set termencoding=utf-8         " Lets try using Unicode
 " Vim Look and Decorations {
 "=================================================================
 set ruler                   " Show the line / column number of cursor
-"set showcmd                 " Show the partially completed command
+set showcmd                 " Show current command virual selected char count
 set number                  " Display line number"
 set numberwidth=5           " Use 5 spaces for number column"
 set textwidth=79            " Width of document (used by gd)
