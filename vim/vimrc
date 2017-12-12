@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1055
+"  Revision  1074
 "  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
@@ -133,18 +133,22 @@ Plug 'SirVer/ultisnips'                     " Snippets engine
 " Plug 'honza/vim-snippets'                   " Built in snippets
 Plug 'godlygeek/tabular'                    " Text aliment tool
 
+"
+" REQ: pip3 install --user notedown
+Plug 'goerz/ipynb_notedown.vim'             " edit jupyter notebook (ipynb)
+                                            " as Markup using notedown
+
 if (has('job') && has('timers')) || has('nvim')
-    Plug 'w0rp/ale'                         " Linter
+    Plug 'w0rp/ale'                         " async Linter
 endif
 
 
 " ################## COMPLETION SYSTEM ##################
-" pip3 install --user neovim jedi psutil setproctitle msgpack-python
 
-" nvim-completion-manager framework
-Plug 'roxma/nvim-completion-manager'
+" REQ: pip3 install --user neovim jedi psutil setproctitle
+Plug 'roxma/nvim-completion-manager'      " nvim-completion-manager framework
 
-" Requires (pip3 install msgpack-python)
+" REQ: pip3 install --user msgpack-python
 if !has('nvim' && has('python3'))
     Plug 'roxma/vim-hug-neovim-rpc'
 endif
@@ -236,7 +240,7 @@ let g:NERDTreeIndicatorMapCustom = {
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '--'
     let g:ale_history_log_output=1           " :ALEInfo for full output
-    if exists(':ALEToggle') 
+    if exists(':ALEToggle')
         nnoremap <F8> :ALEToggle<CR>
     endif
 "} ===
@@ -266,7 +270,7 @@ let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
 "=================================================================
 let g:tagbar_width = 30             " width of tagnar window
 nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
-"}===
+"} ===
 
 
 "=================================================================
@@ -355,15 +359,15 @@ if exists('g:UltiSnipsExpandTrigger')
         autocmd!
         autocmd BufNewFile * silent! call InsertSkeleton()
     augroup END
-    "}===
+    "} ===
 
     "if exists('*deoplete#custom#source') && (g:Jvim#complete#engine==1)
         "silent call deoplete#custom#source('ultisnips', 'rank', -1000)
     "endif
 endif
-"}===
+"} ===
 
-"}= #### Plugin Options END ####
+"} === #### Plugin Options END ####
 
 
 "===============================================================================
@@ -430,7 +434,7 @@ if exists('$TMUX')
     map [1;5A <C-Up>
     map [1;5C <C-Right>
 endif
-"}===
+"} ===
 
 
 "=================================================================
@@ -570,7 +574,7 @@ endif
 "} ===
 
 
-"}= #### Vim Settings END ####
+"} === #### Vim Settings END ####
 
 
 "=================================================================
@@ -584,4 +588,4 @@ augroup shift-K
 augroup END
 "} ===
 
-" EOF != <= >= x^2 y^3 1^2 pi 44^2 pie    
+" EOF != <= >= x^2 y^3 1^2 pi 44^2 pie
