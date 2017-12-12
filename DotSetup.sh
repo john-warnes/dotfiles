@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  258
-#  Modified  Thursday, 23 November 2017
+#  Revision  261
+#  Modified  Monday, 11 December 2017
 #=================================================================
 
 #!/bin/bash
@@ -120,7 +120,7 @@ DetectOS()
     OPTPKGS='clang cppcheck lua-check pylint python3-pip python3-doc ctags cppman neovim'
     #declare -A PIPPKGS
     #PIPPKGS = ( [vim-vint]= [proselint]= [sphinx]= [virtualenvwrapper]= [neovim]= )
-    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim'
+    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim jedi psutil setproctitle msgpack-python'
 
     #Defualt PKGS
     declare -A PKGS
@@ -597,7 +597,7 @@ AdminSetup()
     echo -n "$BOLD${BLUE}Installing$BOLD$BLUE pip3 recommended$RESET Packages: "
     for PKG in $PIPPKGS; do
         echo "$BOLD$YELLOW $PKG$RESET"
-        pip3 install $PKG
+        pip3 install --user $PKG
     done
 
     echo ""
