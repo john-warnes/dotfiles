@@ -3,12 +3,11 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1085
+"  Revision  1092
 "  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
-
 
 "=================================================================
 " Set the Leader Key {
@@ -184,9 +183,9 @@ call plug#end()
 "=================================================================
 " ipynb_notedown.vim    jupyter notebook <-> notedown   editor for vim {
 "=================================================================
-g:notedown_enable=1         " Enable conversation and back by default
-g:notedown_code_match='all' " Try all, fence, or maybe language
-                            " (https://github.com/aaren/notedown)
+let g:notedown_enable=1         " Enable conversation and back by default
+let g:notedown_code_match='all' " Try all, fence, or maybe language
+                                " (https://github.com/aaren/notedown)
 
 
 "=================================================================
@@ -566,7 +565,6 @@ nnoremap <Leader>m <Esc>:tabnext<CR>
 vnoremap <Leader>s :sort<CR>
 
 nnoremap <C-n> <Esc>:nohl<CR>   " Remove highlight from search
-"inoremap <C-n> <Esc>:nohl<CR>i  " Remove hightight from search
 
 " mac os make <FN+Arrows> work as CTRL+Arrows
 if has('macunix')
