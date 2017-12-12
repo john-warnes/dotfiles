@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1074
+"  Revision  1085
 "  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
@@ -182,6 +182,14 @@ call plug#end()
 
 
 "=================================================================
+" ipynb_notedown.vim    jupyter notebook <-> notedown   editor for vim {
+"=================================================================
+g:notedown_enable=1         " Enable conversation and back by default
+g:notedown_code_match='all' " Try all, fence, or maybe language
+                            " (https://github.com/aaren/notedown)
+
+
+"=================================================================
 " nvim-completion-manager {
 "=================================================================
 "set omnifunc=syntaxcomplete#Complete
@@ -196,11 +204,14 @@ let g:cm_sources_override = {
     \ 'cm-tmux': {'enable':0}
     \ }
 
+" <S-Tab>
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
+" <Enter>
 imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
 imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-Space>":"\<CR>")
 
+" <Tab>
 imap <expr> <Tab>  (pumvisible() ?  "\<Plug>(expand_or_next)" : "\<Tab>")
 imap <expr> <Plug>(expand_or_next) (cm#completed_is_snippet() ? "\<c-y>\<C-Space>":"\<C-n>")
 "} ===
