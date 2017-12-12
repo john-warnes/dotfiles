@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1047
+"  Revision  1053
 "  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
@@ -130,7 +130,7 @@ Plug 'jsfaint/gen_tags.vim'                 " ctags / gtags
 Plug 'morhetz/gruvbox'                      " Color scheme
 Plug 'christoomey/vim-tmux-navigator'       " tmux integration
 Plug 'SirVer/ultisnips'                     " Snippets engine
-Plug 'honza/vim-snippets'                   " Built in snippets
+" Plug 'honza/vim-snippets'                   " Built in snippets
 Plug 'godlygeek/tabular'                    " Text aliment tool
 
 if (has('job') && has('timers')) || has('nvim')
@@ -138,16 +138,16 @@ if (has('job') && has('timers')) || has('nvim')
 endif
 
 
-" pip3 install --user neovim jedi psutil setproctitle
-" the framework
+" ################## COMPLETION SYSTEM ##################
+" pip3 install --user neovim jedi psutil setproctitle msgpack-python
+
+" nvim-completion-manager framework
 Plug 'roxma/nvim-completion-manager'
 
-" Requires vim8 with has('python') or has('python3')
-" Requires the installation of msgpack-python. (pip3 install msgpack-python)
-if !has('nvim')
+" Requires (pip3 install msgpack-python)
+if !has('nvim' && has('python3'))
     Plug 'roxma/vim-hug-neovim-rpc'
 endif
-
 
 " Completion Plugins
 Plug 'roxma/ncm-clang'          " C/C++ by Clang  REQ: clang in your $PATH
@@ -157,7 +157,7 @@ Plug 'Shougo/neoinclude.vim'    " include
 
 
 " ################## DISABLED PLUGINS ##################
-
+" Plug '', { 'for': 'html' }
 "Plug 'lifepillar/vim-mucomplete'            " Builtin chainable autocomplete
 "Plug 'ajh17/VimCompletesMe'                 " Vim Builtin autocomplete
 
