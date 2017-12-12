@@ -1,9 +1,9 @@
-priority -50
+#priority -50
 
-extends python
+# extends python
 
 # We want to overwrite everything in parent ft.
-priority -47
+priority 50
 
 ##################################################################
 #                        Global Functions                        #
@@ -39,26 +39,24 @@ endglobal
 ##################################################################
 
 
-
-
 snippet fun "Basic python doxygen function template"
 #
 # @brief  ${4:brief}
-#
 # @param  `!p write_docstring_args(t[2],snip)`
 #
 def ${1:FunctionName}(${2:param}):
     ${0:FunctionBody}
 endsnippet
 
-
-
 snippet if "if ... then (if)"
 if ( ${1:condition} ):
-    ${${VISUAL:#statements}}
+    ${${VISUAL:${0:#statements}}}
 endsnippet
 
 
+snippet print "print(...)"
+print(${1:"${2:...}"})$0
+endsnippet
 
 
 ##################################################################
@@ -75,8 +73,8 @@ snippet _skel "cpp/hpp skeletion" b
 #
 # @internal
 #      Created  `!v strftime(g:Jvim#metadata#dateFormat)`
-#     Modified  Friday, 17 November 2017
-#     Revision  1
+#     Modified  Monday, 11 December 2017
+#     Revision  23
 # Organization  `!p snip.rv = userinfo['ORGANIZATION']`
 #      Company  `!p snip.rv = userinfo['COMPANY']`
 #
@@ -91,10 +89,7 @@ def main():
     """
     Test your module
     """
-
-    $0
-
-    pass
+    ${0:pass}
 
 
 if __name__ == "__main__":

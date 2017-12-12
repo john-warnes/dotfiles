@@ -3,13 +3,11 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  988
+"  Revision  1047
 "  Modified  Monday, 11 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
-
-nnoremap <leader>r :!%:p<CR>
 
 
 "=================================================================
@@ -194,15 +192,14 @@ let g:cm_sources_override = {
     \ 'cm-tmux': {'enable':0}
     \ }
 
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<cr>"
 
-imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand)" : "\<CR>")
-imap <expr> <Plug>(expand) (cm#completed_is_snippet() ? "\<C-Space>":"")
+imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
+imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-Space>":"\<CR>")
 
+imap <expr> <Tab>  (pumvisible() ?  "\<Plug>(expand_or_next)" : "\<Tab>")
+imap <expr> <Plug>(expand_or_next) (cm#completed_is_snippet() ? "\<c-y>\<C-Space>":"\<C-n>")
 "} ===
-
 
 
 "=================================================================
@@ -262,40 +259,6 @@ let g:airline#extensions#tabline#show_buffers    = 0    " no buffers in tab bar
 let g:airline#extensions#tabline#show_splits     = 1
 let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
 "} ===
-
-
-"=================================================================
-" Deoplete nvim code complete {
-"=================================================================
-"let g:Jvim#complete#engine=get(g:, 'Jvim#complete#engine', 1)
-"
-"if !has('nvim')
-    "let g:Jvim#complete#engine=0
-"endif
-"
-"if (g:Jvim#complete#engine==1)
-"
-    "set completeopt-=preview              " Disable the preview window, these use popups
-    "let g:deoplete#enable_at_startup = 1  " Automagically use deoplete.
-    "let g:deoplete#enable_smart_case = 1  " Use smart case to find matches
-"
-    "[sudo] find / -name libclang.so
-    "let g:deoplete#sources#clang#libclang_path='/usr/lib/llvm-4.0/lib/libclang.so.1'
-    "let g:deoplete#sources#clang#clang_header='/usr/lib/llvm-4.0/lib/clang'
-"
-    "if has('macunix') " # OSX: mdfind -name libclang.dylib
-        "let g:deoplete#sources#clang#libclang_path='/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-        "let g:deoplete#sources#clang#clang_header='/Library/Developer/CommandLineTools/usr/lib/clang'
-    "endif
-"
-    "imap <expr><C-Space> pumvisible() ? "\<C-n>" : "\<C-Space>"
-    "imap <expr><Down> pumvisible() ? "\<C-n>" : "\<Down>"
-    "imap <expr><Up> pumvisible() ? "\<C-p>" : "\<Up>"
-    "imap <expr><PageDown> pumvisible() ? "\<C-n>" : "\<PageDown>"
-    "imap <expr><PageUp> pumvisible() ? "\<C-p>" : "\<PageUp>"
-    "inoremap <expr><CR> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
-"endif
-"}===
 
 
 "=================================================================
@@ -364,7 +327,7 @@ silent! colorscheme gruvbox    " Color scheme supports truecolor
 " UltiSnips  {
 "=================================================================
 let g:UltiSnipsExpandTrigger       = '<C-Space>'
-let g:UltiSnipsJumpForwardTrigger  = '<C-Space>'
+let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<none>'
 let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
 
@@ -565,7 +528,7 @@ set cindent                 " Intelligent indenting for source code
 "set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
 set cinoptions=N-s
 set showmatch               " Show matching brackets / parenthesis
-set matchtime=5             " Show matching character for .3s
+set matchtime=50            " Show matching character for 5s
 set shiftwidth=4            " Spaces used for auto indents
 set tabstop=4               " Set the tab width to 4
 set softtabstop=4           " Spaces that a tab moves over
@@ -588,7 +551,7 @@ nnoremap <Leader>m <Esc>:tabnext<CR>
 vnoremap <Leader>s :sort<CR>
 
 nnoremap <C-n> <Esc>:nohl<CR>   " Remove highlight from search
-inoremap <C-n> <Esc>:nohl<CR>i  " Remove hightight from search
+"inoremap <C-n> <Esc>:nohl<CR>i  " Remove hightight from search
 
 " mac os make <FN+Arrows> work as CTRL+Arrows
 if has('macunix')
