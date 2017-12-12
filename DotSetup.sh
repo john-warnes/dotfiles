@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  261
+#  Revision  263
 #  Modified  Monday, 11 December 2017
 #=================================================================
 
@@ -120,7 +120,7 @@ DetectOS()
     OPTPKGS='clang cppcheck lua-check pylint python3-pip python3-doc ctags cppman neovim'
     #declare -A PIPPKGS
     #PIPPKGS = ( [vim-vint]= [proselint]= [sphinx]= [virtualenvwrapper]= [neovim]= )
-    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim jedi psutil setproctitle msgpack-python'
+    PIPPKGS='vim-vint proselint sphinx virtualenvwrapper neovim jedi psutil setproctitle msgpack-python notedown'
 
     #Defualt PKGS
     declare -A PKGS
