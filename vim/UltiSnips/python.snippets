@@ -40,31 +40,45 @@ endglobal
 
 
 snippet fun "Basic python doxygen function template"
-#
-# @brief  ${4:brief}
-# @param  `!p write_docstring_args(t[2],snip)`
-#
 def ${1:FunctionName}(${2:param}):
-    ${0:FunctionBody}
+'''
+ @brief  ${4:brief}
+ @param  `!p write_docstring_args(t[2],snip)`
+'''
+    ${VISUAL:${0:pass}}
+
+
+endsnippet
+
+snippet while "while ...:"
+while ${1:condition}:
+    ${VISUAL:${0:pass}}
 endsnippet
 
 snippet if "if ... then (if)"
-if ( ${1:condition} ):
-    ${${VISUAL:${0:#statements}}}
+if ${1:condition}:
+    ${VISUAL:${0:pass}}
 endsnippet
-
 
 snippet print "print(...)"
 print(${1:"${2:...}"})$0
 endsnippet
 
+snippet for "for ... in ...:"
+for ${1:item} in ${2:iterable}:
+    ${VISUAL:${0:pass}}
+endsnippet
+
+snippet fori "for i in range(0,...):"
+for i in range(${1:0},${2:10}):
+    ${VISUAL:${0:pass}}
+endsnippet
 
 ##################################################################
 #                            template                            #
 ##################################################################
 snippet _skel "cpp/hpp skeletion" b
 #!/usr/bin/env python3
-
 # ============================================================================
 # @file   `!v expand('%:t')`
 # @brief  ${1:Brief Description}
@@ -74,7 +88,7 @@ snippet _skel "cpp/hpp skeletion" b
 # @internal
 #      Created  `!v strftime(g:Jvim#metadata#dateFormat)`
 #     Modified  Monday, 11 December 2017
-#     Revision  23
+#     Revision  `!p snip.rv = '0'`
 # Organization  `!p snip.rv = userinfo['ORGANIZATION']`
 #      Company  `!p snip.rv = userinfo['COMPANY']`
 #
