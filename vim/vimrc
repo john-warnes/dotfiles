@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1116
+"  Revision  1118
 "  Modified  Tuesday, 12 December 2017
 "=================================================================
 scriptencoding utf-8
@@ -50,6 +50,8 @@ let g:Jvim#metadata#maxSearch  = 50 " Max lines at top of file to search for met
 let g:Jvim#metadata#dateFormat = '%A, %d %B %Y' " Format for template and metadata dates (man date)
 
 let g:Jvim#comment#enable      = 1 " Allow comment and uncomment system
+
+let g:Jvim#vimstatus#enable    = 1 " Enable vimstatus status line
 "} ===
 
 
@@ -122,7 +124,7 @@ call plug#begin('~/.vim/bundle')
 Plug 'john-warnes/jvim'                     " Jvim
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " File Tree
 Plug 'Xuyuanp/nerdtree-git-plugin'          " File Tree Git Support
-Plug 'vim-airline/vim-airline'              " Status Bar
+"Plug 'vim-airline/vim-airline'              " Status Bar
 Plug 'tpope/vim-fugitive'                   " :Gpush :Gdiff
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
 Plug 'jsfaint/gen_tags.vim'                 " ctags / gtags
