@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1092
-"  Modified  Monday, 11 December 2017
+"  Revision  1116
+"  Modified  Tuesday, 12 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -132,11 +132,6 @@ Plug 'SirVer/ultisnips'                     " Snippets engine
 " Plug 'honza/vim-snippets'                   " Built in snippets
 Plug 'godlygeek/tabular'                    " Text aliment tool
 
-"
-" REQ: pip3 install --user notedown
-Plug 'goerz/ipynb_notedown.vim'             " edit jupyter notebook (ipynb)
-                                            " as Markup using notedown
-
 if (has('job') && has('timers')) || has('nvim')
     Plug 'w0rp/ale'                         " async Linter
 endif
@@ -205,7 +200,6 @@ let g:cm_sources_override = {
 
 " <S-Tab>
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
 " <Enter>
 imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
 imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-Space>":"\<CR>")
@@ -474,7 +468,7 @@ set nobackup                   " No Backups
 set nowritebackup              " No Backups even when editing
 set noswapfile                 " Don't leave swap files
 set printoptions=paper:letter,number:y,portrait:y " defualt printing
-set shortmess+=filmnrxoOtT     " Abbrev. of messages (avoids 'hit enter')
+set shortmess+=aoOtT           " Abbrev. of messages (avoids 'hit enter')
 set formatoptions+=cq          " Basic formatting of text and comments
 set formatoptions-=t           " Don't automatically wrap text when typing
 set wildmenu                   " Use the wildmenu
@@ -583,7 +577,8 @@ endif
 "} ===
 
 
-"} === #### Vim Settings END ####
+"} === #### Vim Settings END #####
+
 
 
 "=================================================================
@@ -594,6 +589,8 @@ augroup shift-K
     autocmd!
     autocmd FileType cpp set keywordprg=cppman
     autocmd FileType c set keywordprg=man\ -S3
+    autocmd FileType python set keywordprg=manpy3
+    autocmd FileType python3 set keywordprg=manpy3
 augroup END
 "} ===
 
