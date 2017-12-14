@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1118
-"  Modified  Tuesday, 12 December 2017
+"  Revision  1122
+"  Modified  Wednesday, 13 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -243,8 +243,8 @@ let g:NERDTreeIndicatorMapCustom = {
                 \}
 
     "let g:ale_sign_column_always = 1        " Always show sign column
-    let g:ale_sign_error = '>>'
-    let g:ale_sign_warning = '--'
+    let g:ale_sign_error = '>'
+    let g:ale_sign_warning = '-'
     let g:ale_history_log_output=1           " :ALEInfo for full output
     if exists(':ALEToggle')
         nnoremap <F8> :ALEToggle<CR>
@@ -255,19 +255,19 @@ let g:NERDTreeIndicatorMapCustom = {
 "=================================================================
 " Airline {
 "=================================================================
-let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is very slow disable it
-
-set laststatus=2                            " Always show the status line
-let g:airline_powerline_fonts = 1           " Use Powerline fonts
-let g:airline_detect_spell    = 0           " Don't show spell and lang
-"let g:airline_section_c = '%F'             " Show full Path if possable
-
-let g:airline_highlighting_cache                 = 1    " Performance cache
-let g:airline#extensions#ale#enabled             = 1    " Use ALE lint msgs
-let g:airline#extensions#tabline#enabled         = 1    " Theme the tabline
-let g:airline#extensions#tabline#show_buffers    = 0    " no buffers in tab bar
-let g:airline#extensions#tabline#show_splits     = 1
-let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
+"let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is very slow disable it
+"
+"set laststatus=2                            " Always show the status line
+"let g:airline_powerline_fonts = 1           " Use Powerline fonts
+"let g:airline_detect_spell    = 0           " Don't show spell and lang
+""let g:airline_section_c = '%F'             " Show full Path if possable
+"
+"let g:airline_highlighting_cache                 = 1    " Performance cache
+"let g:airline#extensions#ale#enabled             = 1    " Use ALE lint msgs
+"let g:airline#extensions#tabline#enabled         = 1    " Theme the tabline
+"let g:airline#extensions#tabline#show_buffers    = 0    " no buffers in tab bar
+"let g:airline#extensions#tabline#show_splits     = 1
+"let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
 "} ===
 
 
