@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1123
-"  Modified  Wednesday, 13 December 2017
+"  Revision  1129
+"  Modified  Saturday, 16 December 2017
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -124,7 +124,6 @@ call plug#begin('~/.vim/bundle')
 Plug 'john-warnes/jvim'                     " Jvim
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " File Tree
 Plug 'Xuyuanp/nerdtree-git-plugin'          " File Tree Git Support
-"Plug 'vim-airline/vim-airline'              " Status Bar
 Plug 'tpope/vim-fugitive'                   " :Gpush :Gdiff
 Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
 Plug 'jsfaint/gen_tags.vim'                 " ctags / gtags
@@ -163,7 +162,6 @@ Plug 'Shougo/neoinclude.vim'    " include
 
 
 "Plug 'tpope/vim-rhubarb'                    " :Gbrowse for github
-"Plug 'vim-airline/vim-airline-themes'       " Airline themes
 "Plug 'tweekmonster/startuptime.vim'         " Startup profiler :StartupTime
 
 call plug#end()
@@ -251,24 +249,6 @@ let g:NERDTreeIndicatorMapCustom = {
     endif
 "} ===
 
-
-"=================================================================
-" Airline {
-"=================================================================
-"let g:airline#extensions#tagbar#enabled = 0 " Tagbar plugin is very slow disable it
-"
-"set laststatus=2                            " Always show the status line
-"let g:airline_powerline_fonts = 1           " Use Powerline fonts
-"let g:airline_detect_spell    = 0           " Don't show spell and lang
-""let g:airline_section_c = '%F'             " Show full Path if possable
-"
-"let g:airline_highlighting_cache                 = 1    " Performance cache
-"let g:airline#extensions#ale#enabled             = 1    " Use ALE lint msgs
-"let g:airline#extensions#tabline#enabled         = 1    " Theme the tabline
-"let g:airline#extensions#tabline#show_buffers    = 0    " no buffers in tab bar
-"let g:airline#extensions#tabline#show_splits     = 1
-"let g:airline#extensions#tabline#show_tabs       = 1    " show tab bar
-"} ===
 
 
 "=================================================================
@@ -537,8 +517,8 @@ set hlsearch                " Highlight all matches
 set cindent                 " Intelligent indenting for source code
 "set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
 set cinoptions=N-s
-set showmatch               " Show matching brackets / parenthesis
-set matchtime=50            " Show matching character for 5s
+set noshowmatch               " Show matching brackets / parenthesis
+set matchtime=0            " Show matching character for 5s
 set shiftwidth=4            " Spaces used for auto indents
 set tabstop=4               " Set the tab width to 4
 set softtabstop=4           " Spaces that a tab moves over
