@@ -3,7 +3,7 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1129
+"  Revision  1137
 "  Modified  Saturday, 16 December 2017
 "=================================================================
 scriptencoding utf-8
@@ -461,7 +461,9 @@ set wildchar=<Tab>             " Use tab to move in the menu
 set backspace=2                " Set backspace
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline              " Stay on current char on page commands
-set visualbell                 " Don't beep, flash the screen instead
+set novisualbell               " Don't flash the screen
+set belloff=all                " Don't make beeps
+
 set scrolloff=1                " Use a 1 line (horizontal) scroll offset
 set sidescrolloff=10           " Use a 5 column (virtual) scroll offset
 set virtualedit=onemore        " Allow you to move the cursor to the newline
@@ -557,7 +559,6 @@ if !has('nvim')
     imap <C-@> <C-Space>
 endif
 "} ===
-
 
 "} === #### Vim Settings END #####
 
