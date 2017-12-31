@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  047
-#  Modified  Sunday, 19 November 2017
+#  Revision  052
+#  Modified  Sunday, 31 December 2017
 #=================================================================
 
 
@@ -50,7 +50,7 @@ DetectOS()
 #===============================================================================
 PythonVirtualEnvironments()
 {
-    if [[ -f $HOME/.local/bin/virtualenvwrapper.sh ]]; then
+    if [[ -f $HOME/.local/bin/virtualenvwrapper.sh ]] || [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
 
         if ! [[ -d $HOME/.virtualenvs ]]; then
             mkdir $HOME/.virtualenvs
@@ -66,7 +66,11 @@ PythonVirtualEnvironments()
         #what python to use
         export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 
-        source $HOME/.local/bin/virtualenvwrapper.sh
+        if [[ -f $HOME/.local/bin/virtualenvwrapper.sh ]]; then
+            source $HOME/.local/bin/virtualenvwrapper.sh
+        elif [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
+            source /usr/local/bin/virtualenvwrapper.sh
+        fi
         printf "${RESET}${GREEN}Python Virt Wrapper$RESET|"
     else
         printf "${RESET}${YELLOW}!! Python Virt Wrapper !!$RESET "
