@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  052
-#  Modified  Sunday, 31 December 2017
+#  Revision  053
+#  Modified  Thursday, 04 January 2018
 #=================================================================
 
 
@@ -64,7 +64,7 @@ PythonVirtualEnvironments()
         export PROJECT_HOME=$HOME/dev
 
         #what python to use
-        export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+        export VIRTUALENVWRAPPER_PYTHON=`which python3`
 
         if [[ -f $HOME/.local/bin/virtualenvwrapper.sh ]]; then
             source $HOME/.local/bin/virtualenvwrapper.sh
