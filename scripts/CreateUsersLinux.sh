@@ -40,8 +40,8 @@ if [[ $# == 1 ]]; then
     fi
 
     printf "$BLUE${BOLD}Adding user$GREEN %s$RESET\n" "$NAME"
-    echo "${BOLD}sudo useradd -m -s $SHELL -G $GROUP $NAME$RESET"
-    sudo useradd -m -s $SHELL -G $GROUP $NAME > /dev/null
+    echo "${BOLD}sudo useradd -m -s $SHELL -G $GROUPSUDO $NAME$RESET"
+    sudo useradd -m -s $SHELL -G $GROUPSUDO $NAME > /dev/null
     echo "${BOLD}echo -e \"${DEFAULTPASS}\n${DEFAULTPASS}\" | (sudo passwd -q $NAME) > /dev/null$RESET"
     echo -e "${DEFAULTPASS}\n${DEFAULTPASS}" | (sudo passwd $NAME)
     if [[ $NAME == *test* ]]; then
