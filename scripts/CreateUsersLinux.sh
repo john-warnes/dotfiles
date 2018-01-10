@@ -24,7 +24,9 @@ set +v #echo off
 
 source 'colors.sh'
 
-GROUP=$(groups | cut -d " " -f2- | sed 's/[ \t]+*/,/g')
+GROUP=$(groups | cut -d " " -f2- | sed 's/[ \t]+*/,/g' | sed 's/adm,//g' | sed 's/sudo,//g')
+GROUPSUDO=$(groups | cut -d " " -f2- | sed 's/[ \t]+*/,/g')
+DEFAULTPASS="bluesky"
 
 # echo "$# : $@"   #debug show args
 
@@ -32,7 +34,7 @@ if [[ $# == 1 ]]; then
 
     NAME=$1
     if [[ $NAME == $USER ]]; then
-        echo "$RED${BOLD}Error!$RESET$BOLD Atempted to Create $GREEN$NAME$RESET$BOLD with account $GREEN$USER$RESET"
+        echo "$RED${BOLD}Error!$RESET$BOLD Attempted to Create $GREEN$NAME$RESET$BOLD with account $GREEN$USER$RESET"
         echo "${BOLD}Try running$BLUE whoami$RESET"
         exit -1
     fi
@@ -40,8 +42,8 @@ if [[ $# == 1 ]]; then
     printf "$BLUE${BOLD}Adding user$GREEN %s$RESET\n" "$NAME"
     echo "${BOLD}sudo useradd -m -s $SHELL -G $GROUP $NAME$RESET"
     sudo useradd -m -s $SHELL -G $GROUP $NAME > /dev/null
-    echo "${BOLD}echo -e \"${NAME}\n${NAME}\" | (sudo passwd -q $NAME) > /dev/null$RESET"
-    echo -e "${NAME}\n${NAME}" | (sudo passwd $NAME)
+    echo "${BOLD}echo -e \"${DEFAULTPASS}\n${DEFAULTPASS}\" | (sudo passwd -q $NAME) > /dev/null$RESET"
+    echo -e "${DEFAULTPASS}\n${DEFAULTPASS}" | (sudo passwd $NAME)
     if [[ $NAME == *test* ]]; then
         echo "${BOLD}sudo passwd -q -u $NAME$RESET"
         sudo passwd -u $NAME
@@ -60,15 +62,15 @@ elif [[ -s "./CreateUsersLinux.list" ]]; then
     while IFS= read -r NAME; do
 
     if [[ $NAME == $USER ]]; then
-        echo "$YELLOW${BOLD}Warring!$RESET$BOLD Atempted to Create $GREEN$NAME$RESET$BOLD with account $GREEN$USER$YELLOW Skipping$RESET"
+        echo "$YELLOW${BOLD}Warring!$RESET$BOLD Attempted to Create $GREEN$NAME$RESET$BOLD with account $GREEN$USER$YELLOW Skipping$RESET"
         continue
     fi
 
         printf "${BOLD}${BLUE}Adding user$GREEN %s$RESET\n" "$NAME"
         echo "${BOLD}sudo useradd -m -s $SHELL -G $GROUP $NAME$RESET"
         sudo useradd -m -s $SHELL -G $GROUP $NAME > /dev/null
-        echo "${BOLD}echo -e \"${NAME}\n${NAME}\" | (sudo passwd $NAME) > /dev/null $RESET"
-        echo -e "${NAME}\n${NAME}" | (sudo passwd $NAME)
+        echo "${BOLD}echo -e \"${DEFAULTPASS}\n${DEFAULTPASS}\" | (sudo passwd $NAME) > /dev/null $RESET"
+        echo -e "${DEFAULTPASS}\n${DEFAULTPASS}" | (sudo passwd $NAME)
         echo "${BOLD}sudo passwd -q -e $NAME$RESET"
         sudo passwd -e $NAME
 
