@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1137
-"  Modified  Saturday, 16 December 2017
+"  Revision  1138
+"  Modified  Wednesday, 10 January 2018
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -441,8 +441,8 @@ set mouse=a
 "=================================================================
 set nocompatible               " Be vim
 filetype plugin indent on
-if !has('nvim')
-set nolangremap                " avoid mapping breaks
+if !has('nvim') && has('nolangremap')
+    set nolangremap                " avoid mapping breaks
 endif
 set modeline                   " Files can use modeline(s)
 set modelines=10               " Check top and bottom 10 lines for modelines(s)
