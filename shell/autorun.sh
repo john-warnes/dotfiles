@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  047
-#  Modified  Sunday, 19 November 2017
+#  Revision  052
+#  Modified  Thursday, 04 January 2018
 #=================================================================
 
 
@@ -44,7 +44,6 @@ DetectOS()
 }
 # } ===
 
-
 #===============================================================================
 # Python Virtual Environments {
 #===============================================================================
@@ -64,7 +63,7 @@ PythonVirtualEnvironments()
         export PROJECT_HOME=$HOME/dev
 
         #what python to use
-        export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+        export VIRTUALENVWRAPPER_PYTHON=`which python3`
 
         source $HOME/.local/bin/virtualenvwrapper.sh
         printf "${RESET}${GREEN}Python Virt Wrapper$RESET|"
