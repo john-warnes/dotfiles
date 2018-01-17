@@ -3,7 +3,7 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  265
+#  Revision  266
 #  Modified  Wednesday, 17 January 2018
 #=================================================================
 
@@ -751,8 +751,6 @@ CreateGitConfig()
     logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset%%C(auto)%%d%%n%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset%n'
     logshort = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
     s = status
-    arc_rm = \"!git tag archive/\$1 \$1 -m \\\"Archived on: \$(date '+%%Y-%%m-%%dT%%H:%%M:%%S%%z')\\\" && git branch -D \$1 && git push origin -d \$1 #\"
-    arc_ls = \"!git tag | grep '^archive' #\"
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
