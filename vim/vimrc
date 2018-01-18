@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1141
-"  Modified  Wednesday, 17 January 2018
+"  Revision  1142
+"  Modified  Thursday, 18 January 2018
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -568,14 +568,14 @@ endif
 " Shift-K Help support {
 "=================================================================
 " Use <Shift-K> to lookup help for word under the cursor
-augroup shift-K
-    autocmd!
-    autocmd FileType cpp set keywordprg=cppman
-    autocmd FileType c set keywordprg=man\ -S3
-    autocmd FileType python set keywordprg=manpy3.sh
-    autocmd FileType python3 set keywordprg=manpy3.sh
-    autocmd FileType html set keywordprg=manhtml.sh
-augroup END
+"augroup shift-K
+"    autocmd!
+"    autocmd FileType cpp set keywordprg=cppman
+"    autocmd FileType c set keywordprg=man\ -S3
+"    autocmd FileType python set keywordprg=manpy3.sh
+"    autocmd FileType python3 set keywordprg=manpy3.sh
+"    autocmd FileType html set keywordprg=manhtml.sh
+"augroup END
 "} ===
 
 " EOF != <= >= x^2 y^3 1^2 pi 44^2 pie
