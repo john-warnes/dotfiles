@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1138
-"  Modified  Wednesday, 10 January 2018
+"  Revision  1141
+"  Modified  Wednesday, 17 January 2018
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -572,8 +572,9 @@ augroup shift-K
     autocmd!
     autocmd FileType cpp set keywordprg=cppman
     autocmd FileType c set keywordprg=man\ -S3
-    autocmd FileType python set keywordprg=manpy3
-    autocmd FileType python3 set keywordprg=manpy3
+    autocmd FileType python set keywordprg=manpy3.sh
+    autocmd FileType python3 set keywordprg=manpy3.sh
+    autocmd FileType html set keywordprg=manhtml.sh
 augroup END
 "} ===
 
