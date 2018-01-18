@@ -3,8 +3,8 @@
 # Written by John Warnes
 # Based on vimrc setup from Hugo Valle
 #=================================================================
-#  Revision  263
-#  Modified  Monday, 11 December 2017
+#  Revision  266
+#  Modified  Wednesday, 17 January 2018
 #=================================================================
 
 #!/bin/bash
@@ -745,14 +745,12 @@ CreateGitConfig()
 [credential]
     helper = cache --timeout=28800
 [alias]
-    export = archive -o latest.tar.gz -9 --prefix=latest/
+    tar = archive -o latest.tar.gz -9 --prefix=latest/
     amend = !git log -n 1 --pretty=tformat:%%s%%n%%n%%b | git commit -F - --amend
     details = log -n1 -p --format=fuller
     logpretty = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset%%C(auto)%%d%%n%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset%n'
     logshort = log --graph --decorate --pretty=format:'%%C(yellow)%%h%%Creset -%%C(auto)%%h %%d%%Creset %%s %%C(green)(%%cr) %%C(blue)<%%an>%%Creset' --abbrev-commit
     s = status
-    arc = \"!git tag archive/\$1 \$1 -m \\\"Archived on: \$(date '+%%Y-%%m-%%dT%%H:%%M:%%S%%z')\\\" && git branch -D \$1 && git push origin -d \$1 #\"
-    arcl = \"!git tag | grep '^archive' #\"
 [url \"https://github.com/\"]
     insteadOf = gh:
 " "$name" "$email" > $DOTFILES/git/gitconfig
