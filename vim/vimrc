@@ -3,11 +3,14 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1142
-"  Modified  Thursday, 18 January 2018
+"  Revision  1202
+"  Modified  Thursday, 15 March 2018
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
+
+" get current script path
+let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 "=================================================================
 " Set the Leader Key {
@@ -58,218 +61,32 @@ let g:Jvim#vimstatus#enable    = 1 " Enable vimstatus status line
 "=================================================================
 " Gnome-Terminal ONLY {
 "=================================================================
-" <F7> cycle though mono powerline fonts
-let g:powerlineFonts= [
-            \'DejaVu Sans Mono for Powerline',
-            \'Droid Sans Mono for Powerline',
-            \'Droid Sans Mono Dotted for Powerline',
-            \'Droid Sans Mono Slashed for Powerline',
-            \'Fria Mono for Powerline'
-            \'Go Mono for Powerline',
-            \'Hack',
-            \'Inconsolata for Powerline',
-            \'Inconsolata-dz for Powerline',
-            \'Inconsolata-g for Powerline',
-            \'Literation Mono Powerline',
-            \'Monofur for Powerline',
-            \'Noto Mono for Powerline',
-            \'NovaMono for Powerline',
-            \'Roboto Mono for Powerline',
-            \'Space Mono for Powerline'
-            \'Ubuntu Mono derivative Powerline',
-            \]
-
-let g:font='DejaVu Sans Mono for Powerline'
-let g:fontsize='11'
-
-if has('gui_running')
-    set guifont=DejaVu\ Sans\ Mono\ for\ Powerline
-endif
-
-function! GnomeTermSetFont()
-    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . ' ' . g:fontsize . "\'\"")
-endfunction
-
-function! GnomeTermCycleFont()
-    call add(g:powerlineFonts, g:font)
-    let g:font = get(g:powerlineFonts,0,'mono')
-    let g:powerlineFonts=g:powerlineFonts[1:]
-    call system ("dconf write /org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9/font \"\'" . g:font . ' ' . g:fontsize . "\'\"")
-    echom g:font
-endfunction
-
-" Cycle fonts with Gnome Terminal
-nnoremap <F7> :call GnomeTermCycleFont()<CR>
-"} ===
-
-
-"===============================================================================
-"= #############################= START Plugin =############################## {
-"===============================================================================
-
-"=================================================================
-" Vim-Plug auto Install {
-"=================================================================
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    augroup plugmanager
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | q
-    augroup end
-endif
-"} ===
-
-call plug#begin('~/.vim/bundle')
-
-Plug 'john-warnes/jvim'                     " Jvim
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " File Tree
-Plug 'Xuyuanp/nerdtree-git-plugin'          " File Tree Git Support
-Plug 'tpope/vim-fugitive'                   " :Gpush :Gdiff
-Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
-Plug 'jsfaint/gen_tags.vim'                 " ctags / gtags
-Plug 'morhetz/gruvbox'                      " Color scheme
-Plug 'christoomey/vim-tmux-navigator'       " tmux integration
-Plug 'SirVer/ultisnips'                     " Snippets engine
-" Plug 'honza/vim-snippets'                   " Built in snippets
-Plug 'godlygeek/tabular'                    " Text aliment tool
-
-if (has('job') && has('timers')) || has('nvim')
-    Plug 'w0rp/ale'                         " async Linter
-endif
-
-
-" ################## COMPLETION SYSTEM ##################
-
-" REQ: pip3 install --user neovim jedi psutil setproctitle
-Plug 'roxma/nvim-completion-manager'      " nvim-completion-manager framework
-
-" REQ: pip3 install --user msgpack-python
-if !has('nvim' && has('python3'))
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
-
-" Completion Plugins
-Plug 'roxma/ncm-clang'          " C/C++ by Clang  REQ: clang in your $PATH
-Plug 'Shougo/neco-vim'          " Vim
-Plug 'Shougo/neco-syntax'       " Syntax
-Plug 'Shougo/neoinclude.vim'    " include
-
-
-" ################## DISABLED PLUGINS ##################
-" Plug '', { 'for': 'html' }
-"Plug 'lifepillar/vim-mucomplete'            " Builtin chainable autocomplete
-"Plug 'ajh17/VimCompletesMe'                 " Vim Builtin autocomplete
-
-
-"Plug 'tpope/vim-rhubarb'                    " :Gbrowse for github
-"Plug 'tweekmonster/startuptime.vim'         " Startup profiler :StartupTime
-
-call plug#end()
-"===============================================================================
-"=###########################= END Plugin System =#############################=
-"}==============================================================================
+execute 'source ' . s:path . '/' . 'gnometerm.vim'
+" } ===
 
 
 "===============================================================================
 "= #### Plugin Options #### {
 "===============================================================================
 
-
 "=================================================================
-" ipynb_notedown.vim    jupyter notebook <-> notedown   editor for vim {
-"=================================================================
-let g:notedown_enable=1         " Enable conversation and back by default
-let g:notedown_code_match='all' " Try all, fence, or maybe language
-                                " (https://github.com/aaren/notedown)
-
-
-"=================================================================
-" nvim-completion-manager {
-"=================================================================
-"set omnifunc=syntaxcomplete#Complete
-set completeopt-=preview              " Disable the preview window, these use popups
-set completeopt+=menuone              " Allow menu for one detect completion
-set completeopt-=menu                 " Allow menu for one detect completion
-"set completeopt+=noinsert
-"set completeopt-=noselect
-"set completeopt-=longest
-
-let g:cm_sources_override = {
-    \ 'cm-tmux': {'enable':0}
-    \ }
-
-" <S-Tab>
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" <Enter>
-imap <expr> <CR>  (pumvisible() ?  "\<c-y>\<Plug>(expand_or_nl)" : "\<CR>")
-imap <expr> <Plug>(expand_or_nl) (cm#completed_is_snippet() ? "\<C-Space>":"\<CR>")
-
-" <Tab>
-imap <expr> <Tab>  (pumvisible() ?  "\<Plug>(expand_or_next)" : "\<Tab>")
-imap <expr> <Plug>(expand_or_next) (cm#completed_is_snippet() ? "\<c-y>\<C-Space>":"\<C-n>")
-"} ===
-
-
-"=================================================================
-" NerdTree [Ctrl-B] {
-"=================================================================
-nnoremap <C-b> :NERDTreeToggle<CR>
-let g:NERDTreeQuitOnOpen   = 1          " close NERDTree after  file is opened
-let g:NERDTreeShowHidden   = 1          " show hidden files in NERDTree
-let g:NERDTreeWinSize      = 20
-let g:NERDTreeMapOpenInTab = '<ENTER>'  " Open file in newtab
-let g:NERDTreeIndicatorMapCustom = {
-            \ 'Modified'  : '✹', 'Staged'    : '✚',
-            \ 'Untracked' : '✭', 'Renamed'   : '➜',
-            \ 'Unmerged'  : '═', 'Deleted'   : '✖',
-            \ 'Dirty'     : '✗', 'Clean'     : '✔︎',
-            \ 'Ignored'   : '☒', 'Unknown'   : '?'
-            \ }
-"} ===
-
-
-"=================================================================
-" ALE Linter <F8> to toggle {
-"=================================================================
-    "let g:ale_cpp_clang_options='-std=c14 -Wall'
-    "let g:ale_cpp_cppcheck_options=' --enable=style'
-    "let g:ale_cpp_gcc_options='-std=c++14 -Wall'
-
-    "define cpp linters to stop cling-check as it has errors
-    let g:ale_linters = {
-                \    'cpp': ['clang','gcc', 'cppcheck', 'cpplint']
-                \}
-
-    "let g:ale_sign_column_always = 1        " Always show sign column
-    let g:ale_sign_error = '>'
-    let g:ale_sign_warning = '-'
-    let g:ale_history_log_output=1           " :ALEInfo for full output
-    if exists(':ALEToggle')
-        nnoremap <F8> :ALEToggle<CR>
-    endif
-"} ===
-
-
-
-"=================================================================
-" TagBar - Requires Exuberant Ctags {
+" TagBar - Requires Exuberant Ctags
 "=================================================================
 let g:tagbar_width = 30             " width of tagnar window
 nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
-"} ===
+
+"=================================================================
+" gruvbox Color Scheme Options 
+"=================================================================
+execute 'source ' . s:path . '/' . 'gruvbox_options.vim'
+
+"} === #### Plugin Options END ####
 
 
 "=================================================================
-" cTags {
+" cTags Command '<Leader>t' {
 "=================================================================
-"let g:gen_tags#verbose = 1        " Give more feedback
-let g:gen_tags#ctags_auto_gen = 1  " Auto generate ctags if in git
-let g:gen_tags#use_cache_dir  = 1  " Put tags in git or else home cache
-let g:loaded_gentags#gtags    = 1  " Disable gtags support not needed
-nnoremap <Leader>t :GenCtags<CR>   " if tags didn't autogen force with <Leader>t
-
-" Backup old style ctags generator
-nnoremap <Leader>T
+nnoremap <Leader>t
             \ :silent execute '!(rm tags)'<CR>
             \ :silent execute '!(ctags-exuberant -R -f %:p:h/tags *)&'<CR>
             \ :redraw!<CR>
@@ -279,87 +96,9 @@ set tags=./tags;~/.vim/tags;tags;
 "} ===
 
 
-"=================================================================
-" gruvbox Color Scheme {
-"=================================================================
-" <F5> to switch from dark to light
-" <F6> to cycle the 3 levels of contrast
-nnoremap <silent> <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
-nnoremap <silent> <F6> :call GruvCycleContrast()<CR>
-
-function! GruvCycleContrast()
-    if &background ==? 'dark'
-        if g:gruvbox_contrast_dark ==? 'soft'
-            let g:gruvbox_contrast_dark='medium'
-        elseif g:gruvbox_contrast_dark ==? 'medium'
-            let g:gruvbox_contrast_dark='hard'
-        elseif g:gruvbox_contrast_dark ==? 'hard'
-            let g:gruvbox_contrast_dark='soft'
-        endif
-    else
-        if g:gruvbox_contrast_light ==? 'soft'
-            let g:gruvbox_contrast_light='medium'
-        elseif g:gruvbox_contrast_light ==? 'medium'
-            let g:gruvbox_contrast_light='hard'
-        elseif g:gruvbox_contrast_light ==? 'hard'
-            let g:gruvbox_contrast_light='soft'
-        endif
-    endif
-    colorscheme gruvbox
-endfunction
-
-set background=dark            " Start with dark background theme
-silent! colorscheme gruvbox    " Color scheme supports truecolor
-"colorscheme default           " this is the default vim scheme
-"} ===
-
-"=================================================================
-" UltiSnips  {
-"=================================================================
-let g:UltiSnipsExpandTrigger       = '<C-Space>'
-let g:UltiSnipsJumpForwardTrigger  = '<Tab>'
-let g:UltiSnipsJumpBackwardTrigger = '<none>'
-let g:UltiSnipsEditSplit           = 'vertical'  " If you want :UltiSnipsEdit to split your window.
-
-"===========  UltiSnips Templates for new files ========== {
-"if exists('*UltiSnips#ExpandSnippet')
-if exists('g:UltiSnipsExpandTrigger')
-    function! s:Try_insert(skel)
-        execute 'normal! i_' . a:skel . "\<C-r>=UltiSnips#ExpandSnippet()\<CR>"
-        if (g:ulti_expand_res ==? 0)
-            silent! undo
-        endif
-        return g:ulti_expand_res
-    endfunction
-
-    function! InsertSkeleton() abort
-        let l:filename = expand('%')
-        " Abort on non-empty buffer or extant file
-        if !(line('$') ==? 1 && getline('$') ==? '') || filereadable(l:filename)
-            return
-        endif
-        call s:Try_insert('skel')
-    endfunction
-
-    augroup UltiSnips_NewFileTemplate
-        autocmd!
-        autocmd BufNewFile * silent! call InsertSkeleton()
-    augroup END
-    "} ===
-
-    "if exists('*deoplete#custom#source') && (g:Jvim#complete#engine==1)
-        "silent call deoplete#custom#source('ultisnips', 'rank', -1000)
-    "endif
-endif
-"} ===
-
-"} === #### Plugin Options END ####
-
-
 "===============================================================================
 "= #### Vim Settings #### {
 "===============================================================================
-
 set ttyfast          " Under testing
 set lazyredraw       " Under testing
 
@@ -412,7 +151,7 @@ endif
 
 
 "=================================================================
-" Vim Mouse Settings {
+" Vim Tmux Settings {
 "=================================================================
 if exists('$TMUX')
     map [1;5D <C-Left>
@@ -426,23 +165,26 @@ endif
 "=================================================================
 " Vim Mouse Settings {
 "=================================================================
-"if exists('$TMUX')
-    "if !has('nvim')
-        "set ttymouse=xterm2
-    "endif
-"else
     set mouse=a
-"endif
 "} ===
 
-set mouse=a
+    
 "=================================================================
 " Vim Editing and Behavior {
 "=================================================================
-set nocompatible               " Be vim
+" For a paranoia.
+" Normally `:set nocp` is not needed, because it is done automatically
+" when .vimrc is found.
+if &compatible
+    " `:set nocp` has many side effects. Therefore this should be done
+    " only when 'compatible' is set.
+    set nocompatible           " Be vim
+endif
+
+
 filetype plugin indent on
 if !has('nvim') && has('nolangremap')
-    set nolangremap                " avoid mapping breaks
+    set nolangremap            " avoid mapping breaks
 endif
 set modeline                   " Files can use modeline(s)
 set modelines=10               " Check top and bottom 10 lines for modelines(s)
@@ -563,19 +305,14 @@ endif
 "} === #### Vim Settings END #####
 
 
-
 "=================================================================
-" Shift-K Help support {
+" Load plugins {
 "=================================================================
-" Use <Shift-K> to lookup help for word under the cursor
-"augroup shift-K
-"    autocmd!
-"    autocmd FileType cpp set keywordprg=cppman
-"    autocmd FileType c set keywordprg=man\ -S3
-"    autocmd FileType python set keywordprg=manpy3.sh
-"    autocmd FileType python3 set keywordprg=manpy3.sh
-"    autocmd FileType html set keywordprg=manhtml.sh
-"augroup END
+if has('nvim') || ( has('job') && has('packages') )
+    execute 'source ' . s:path . '/' . 'vim8.vim'
+else
+    execute 'source ' . s:path . '/' . 'vim7.vim'
+endif
 "} ===
 
 " EOF != <= >= x^2 y^3 1^2 pi 44^2 pie
