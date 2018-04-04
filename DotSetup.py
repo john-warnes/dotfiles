@@ -7,8 +7,8 @@
 #
 # @internal
 #      Created  Thursday, 04 January 2018
-#     Modified  Thursday, 22 March 2018
-#     Revision  210
+#     Modified  Friday, 23 March 2018
+#     Revision  257
 #
 # @Copyright  Copyright (c) 2018, John Warnes
 #
@@ -18,6 +18,7 @@
 #
 
 import os
+import sys
 import platform
 import subprocess
 
@@ -46,13 +47,17 @@ SETTINGS = {
 SYSDATA = {}
 
 
+def get_script_path():
+    return os.path.dirname(os.path.realpath(sys.argv[0]))
+
 def collect_system_data():
     '''
     Used to collect current system state
     '''
     global SYSDATA
-    SYSDATA['script_dir'] = str(os.path.dirname(__file__))
-    SYSDATA['script_file'] = str(__file__)
+    SYSDATA['home'] = os.path.expanduser('~')
+    SYSDATA['sdir'] = get_script_path()
+    SYSDATA['sfile'] = str(__file__)
     SYSDATA['os_kind'] = os.name
     SYSDATA['os'] = platform.system()
     SYSDATA['os_release'] = platform.release()
@@ -74,8 +79,9 @@ def display_system_data():
     Display current system infromation
     '''
     print("== JVIM ", SETTINGS['version'], " ==")
-    print(' Script File: ', SYSDATA['script_file'])
-    print(' Script Directory: ', SYSDATA['script_dir'])
+    print(' Script File: ', SYSDATA['sfile'])
+    print(' Script Directory: ', SYSDATA['sdir'])
+    print(' Home Directory: ', SYSDATA['home'])
     print()
     print('-- OS --')
     print(' Kind: {}'.format(SYSDATA['os_kind']))
@@ -119,38 +125,40 @@ def askUserData():
     user = {}
 
     print("=== User information ===")
+    print(" Please enter your user information.")
 
-    user["name"] = input("Enter your Full Name 'John Smith': ")
+    user["name"] = input(" Full Name 'John Smith': ")
     if user["name"] == '':
         print("Error! Must enter a fist and last name. example: John Smith")
         quit()
     first, *mid, last = user["name"].split()
 
-    user["user"] = input("Enter your username '{}{}' [Enter] for default: ".format(first[0].lower(), last.lower()))
+    user["user"] = input(" Username '{}{}' [Enter] for default: ".format(first[0].lower(), last.lower()))
     if user["user"] == '':
         user["user"] = first[0].lower() + last.lower()
 
-    user["company"] = input("Enter your organization 'Weber State University' [Enter] for default: ")
+    user["company"] = input(" Company 'Weber State University' [Enter] for default: ")
     if user["company"] == '':
         user["company"] = 'Weber State University'
 
-    user["org"] = input("Enter your organization 'Computer Science' [Enter] for default: ")
+    user["org"] = input(" Organization 'Computer Science' [Enter] for default: ")
     if user["org"] == '':
         user["org"] = 'Computer Science'
 
-    user["email"] = input("Enter your email '{}{}@mail.weber.edu' [Enter] for default: ".format(first.lower(), last.lower()))
+    user["email"] = input(" Email '{}{}@mail.weber.edu' [Enter] for default: ".format(first.lower(), last.lower()))
     if user["email"] == '':
         user["email"] = first.lower() + last.lower() + '@mail.weber.edu'
-    
-    user["vim"] = input("Enter your default editor '{}' [Enter] for default: ".format('nvim'))
-    if user["vim"] == '':
-        user["vim"] = 'nvim'
 
-    print("--- User ---")
-    print(user)
-    print("=== User information ===")
+    user["vim"] = input(" Default editor '{}' [Enter] for default: ".format('vim'))
+    if user["vim"] == '':
+        user["vim"] = 'vim'
+
+    print(" --- User Data ---")
+    print(' ',user)
+    print('')
 
 def createUserVim():
+    print("=== creating user.vim ===")
     f = open('vim/user.vim', 'w')
     f.write('let g:_NAME_    = {}\n'.format(user["name"]))
     f.write('let g:_USER_    = {}\n'.format(user["user"]))
@@ -161,6 +169,7 @@ def createUserVim():
     f.close()
 
 def createUserGit():
+    print("=== creating gitconfig ===")
     f = open('git/gitconfig', 'w')
     f.write('''[user]
     name = {name}
@@ -200,10 +209,56 @@ def createUserGit():
 '''.format(name=user["name"], email=user["email"], vim=user["vim"]) )
     f.close()
 
+
+def createSysLinks():
+    '''
+    dotifles/vim -> ~/.vim
+    dotfiles/vim/vimrc -> ~/.vimrc
+    dotfiles/git/gitconfig -> ~/.gitconfig
+    '''
+    symlinks = {
+            SYSDATA['sdir'] + '/vim' : SYSDATA['home'] + '/.vim',
+            SYSDATA['sdir'] + '/vim/vimrc' : SYSDATA['home'] + '/.vimrc',
+            SYSDATA['sdir'] + '/git/gitconfig' : SYSDATA['home'] + '/.gitconfig',
+            }
+    print('=== Creating symlinks ===')
+
+    for src, dest in symlinks.items():
+        if os.path.isfile(dest):
+            os.remove(dest)
+        if os.path.islink(dest):
+            os.unlink(dest)
+        print(' {} -> {}'.format(src,dest))
+        os.symlink(src, dest)
+
+
+def exportDOTFILES():
+    print('=== Exporting DOTFILES Environment Variable ===')
+    if SYSDATA['os'] == 'Darwin':
+        print(' Darwin detected: Selecting file ~/.bash_profile')
+
+        fn = SYSDATA['home'] + '/.bash_profile'
+        exportline = 'export DOTFILES=' + SYSDATA['sdir'] + '\n'
+        autoruncode = 'export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n'
+
+        if os.path.isfile(fn) or os.path.islink(fn):
+            with open(fn) as f:
+                if any(line == exportline for line in f):
+                    print(' .bash_profile already modified')
+                else:
+                    print(' modifying .bash_profile')
+                    f = open(fn, 'a')
+                    f.write(exportline)
+                    f.write(autoruncode)
+                    f.close()
+
 def install():
     askUserData()
     createUserVim()
     createUserGit()
+    createSysLinks()
+    exportDOTFILES()
+    print('\n=== DONE ===\n')
 
 
 def main():

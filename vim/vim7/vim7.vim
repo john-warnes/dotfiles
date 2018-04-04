@@ -12,13 +12,19 @@ endif
 
 call plug#begin('~/.vim/bundle')
 
+" Normal
 Plug 'john-warnes/jvim'                     " Jvim
-Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
 Plug 'morhetz/gruvbox'                      " Color scheme
+
+" Extra
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' } " Tag listing
 Plug 'christoomey/vim-tmux-navigator'       " tmux integration
 Plug 'godlygeek/tabular'                    " Text aliment tool
 
 Plug 'lifepillar/vim-mucomplete'            " Builtin chainable autocomplete
+
+"vim7
+Plug 'lifepillar/vim-mucomplete'
 
 " ################## DISABLED PLUGINS ##################
 "Plug 'tweekmonster/startuptime.vim'         " Startup profiler :StartupTime

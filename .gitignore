@@ -1,5 +1,8 @@
 .*.swp
 secure
-vim vim/.netrwhist
-
+vim/user.vim
+vim/.netrwhist
+vim/undo
+vim/view
+vim/pack/minpac/start
 

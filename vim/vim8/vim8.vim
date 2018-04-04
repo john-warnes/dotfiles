@@ -26,11 +26,13 @@ if exists('*minpac#init')
     call minpac#add('morhetz/gruvbox')     " Color Scheme
 
     " More Plugins
-    call minpac#add('w0rp/ale')                       " async linting engine
     call minpac#add('majutsushi/tagbar')              " Tag listing
     call minpac#add('christoomey/vim-tmux-navigator') " tmux integration
     call minpac#add('godlygeek/tabular')              " Text aliment tool
+
+    " Vim 8
     call minpac#add('lifepillar/vim-mucomplete')      " Builtin chainable autocomplete
+    call minpac#add('w0rp/ale')                       " async linting engine
 
 
     "call minpac#update()

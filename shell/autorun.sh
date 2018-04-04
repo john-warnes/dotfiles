@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  054
-#  Modified  Thursday, 11 January 2018
+#  Revision  061
+#  Modified  Friday, 23 March 2018
 #=================================================================
 
 
@@ -38,8 +38,8 @@ RunCheck()
 #===============================================================================
 DetectOS()
 {
-    if [[ -f $DOTFILES/scripts/detectOS ]]; then
-        source $DOTFILES/scripts/detectOS
+    if [[ -f $DOTFILES/scripts/detectOS.sh ]]; then
+        source $DOTFILES/scripts/detectOS.sh
     fi
 }
 # } ===
@@ -108,7 +108,7 @@ PersonalAliases ()
 OSXBashCompletion ()
 {
     if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
-        if [ -f $(brew --prefix)/etc/bash_completion ]; then
+        if [[ -f $(brew --prefix)/etc/bash_completion ]]; then
             source $(brew --prefix)/etc/bash_completion
             printf "${RESET}${GREEN}OSX Bash Complete$RESET|"
         else
@@ -164,12 +164,12 @@ main()
         echo "]"
     else
         printf "["
-        PythonVirtualEnvironments
+        #PythonVirtualEnvironments
 
         ShellAliases
         PersonalAliases
 
-        OSXBashCompletion
+        #OSXBashCompletion
         BashGit-Prompt
 
         echo "]"
