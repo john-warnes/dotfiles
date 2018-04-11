@@ -259,6 +259,8 @@ def install():
     createSysLinks()
     exportDOTFILES()
     print('\n=== DONE ===\n')
+    print('run the command: "vim +PackUpdate +qall")')
+    print('Then close and reopen ALL terminal windows to finish setup.')
 
 
 def main():
