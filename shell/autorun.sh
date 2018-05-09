@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  061
-#  Modified  Friday, 23 March 2018
+#  Revision  071
+#  Modified  Tuesday, 08 May 2018
 #=================================================================
 
 
@@ -118,10 +118,18 @@ OSXBashCompletion ()
 }
 #} ===
 
-
 #===============================================================================
 # Bash Git-Prompt {
 #===============================================================================
+checkvenv()
+{
+    if [[ ${VIRTUAL_ENV:-0} == 0 ]]; then
+        echo ""
+    else
+        echo "(`basename \"$VIRTUAL_ENV\"`)\n"
+    fi
+}
+
 BashGit-Prompt ()
 {
     if [[ $SHELL == '/bin/bash' ]]; then
@@ -129,8 +137,10 @@ BashGit-Prompt ()
             source $DOTFILES/shell/git-prompt.sh
 
             export GIT_PS1_SHOWCOLORHINTS=1
-            #PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
-            PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "'
+            #PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "' # orginal
+            #PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
+            PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
+
             printf "${RESET}${GREEN}Bash git-Prompt$RESET"
         else
             printf "${RESET}${YELLOW}!! Bash git-Prompt !!$RESET"

@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1206
-"  Modified  Monday, 02 April 2018
+"  Revision  1207
+"  Modified  Wednesday, 02 May 2018
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -22,7 +22,7 @@ let g:mapleader = ','
 "=================================================================
 " jvim plugin options {
 "=================================================================
-let g:Jvim#vimopts#colorColumn        = 81 " Set long line guide
+let g:Jvim#vimopts#colorColumn        = 121 " Set long line guide
 let g:Jvim#vimopts#useSystemClipboard = 1  " Try to use system clipboard
 
 let g:Jvim#highlightRed = 'GruvboxRedBold' " Highlight to link for Red

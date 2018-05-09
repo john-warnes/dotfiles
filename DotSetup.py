@@ -7,8 +7,8 @@
 #
 # @internal
 #      Created  Thursday, 04 January 2018
-#     Modified  Friday, 23 March 2018
-#     Revision  257
+#     Modified  Tuesday, 01 May 2018
+#     Revision  258
 #
 # @Copyright  Copyright (c) 2018, John Warnes
 #
@@ -241,16 +241,21 @@ def exportDOTFILES():
         exportline = 'export DOTFILES=' + SYSDATA['sdir'] + '\n'
         autoruncode = 'export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n'
 
-        if os.path.isfile(fn) or os.path.islink(fn):
-            with open(fn) as f:
-                if any(line == exportline for line in f):
-                    print(' .bash_profile already modified')
-                else:
-                    print(' modifying .bash_profile')
-                    f = open(fn, 'a')
-                    f.write(exportline)
-                    f.write(autoruncode)
-                    f.close()
+    else:
+        fn = SYSDATA['home'] + '/.bashrc'
+        exportline = 'export DOTFILES=' + SYSDATA['sdir'] + '\n'
+        autoruncode = 'export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n'
+
+    if os.path.isfile(fn) or os.path.islink(fn):
+        with open(fn) as f:
+            if any(line == exportline for line in f):
+                print(' .bash_profile already modified')
+            else:
+                print(' modifying .bash_profile')
+                f = open(fn, 'a')
+                f.write(exportline)
+                f.write(autoruncode)
+                f.close()
 
 def install():
     askUserData()
