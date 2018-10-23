@@ -3,8 +3,8 @@
 "=================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 "=================================================================
-"  Revision  1207
-"  Modified  Wednesday, 02 May 2018
+"  Revision  1213
+"  Modified  Tuesday, 23 October 2018
 "=================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
@@ -108,7 +108,7 @@ set lazyredraw       " Under testing
 function! JvimColorInfo()
     echoerr 'TERM =' . $TERM
     echoerr 'COLORTERM =' . $COLORTERM
-    echoerr 'exisit($TMUX) = ' . exists('$TMUX')
+    echoerr 'exist($TMUX) = ' . exists('$TMUX')
     echoerr 't_Co = ' . &t_Co
     echoerr 't_ut = ' . &t_ut
     echoerr '&t_8f = ' . &t_8f
@@ -204,7 +204,9 @@ set backspace=2                " Set backspace
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline              " Stay on current char on page commands
 set novisualbell               " Don't flash the screen
-set belloff=all                " Don't make beeps
+if exists('&belloff')
+    set belloff=all            " Don't make beeps
+endif
 
 set scrolloff=1                " Use a 1 line (horizontal) scroll offset
 set sidescrolloff=10           " Use a 5 column (virtual) scroll offset
@@ -314,6 +316,8 @@ if has('nvim') || ( has('job') && has('packages') )
 else
     execute 'source ' . s:path . '/' . 'vim7/vim7.vim'
 endif
+
+silent! colorscheme gruvbox " Sometime other plugins will reset the colorscheme so set it at the end once more
 "} ===
 
 " EOF != <= >= x^2 y^3 1^2 pi 44^2 pie

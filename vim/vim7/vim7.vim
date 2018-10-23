@@ -23,9 +23,6 @@ Plug 'godlygeek/tabular'                    " Text aliment tool
 
 Plug 'lifepillar/vim-mucomplete'            " Builtin chainable autocomplete
 
-"vim7
-Plug 'lifepillar/vim-mucomplete'
-
 " ################## DISABLED PLUGINS ##################
 "Plug 'tweekmonster/startuptime.vim'         " Startup profiler :StartupTime
 
