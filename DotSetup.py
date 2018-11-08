@@ -7,8 +7,8 @@
 #
 # @internal
 #      Created  Thursday, 04 January 2018
-#     Modified  Tuesday, 01 May 2018
-#     Revision  258
+#     Modified  Thursday, 08 November 2018
+#     Revision  261
 #
 # @Copyright  Copyright (c) 2018, John Warnes
 #
@@ -28,7 +28,7 @@ from pkg_resources import parse_version
 
 SETTINGS = {
     # Script
-    'version': '3.0',
+    'version': '3.1',
 
     # Directorys
     'dotfiles': '~/dotfiles',
@@ -37,8 +37,8 @@ SETTINGS = {
     'backup_file': '~/.jvimBackup',
 
     # vim
-    'vim_recommended': '8.0',
-    'vim_required': '7.4',
+    'vim_recommended': '8.1',
+    'vim_required': '8.0',
 
     'nvim_recommended': '0.2.0',
     }
@@ -98,6 +98,7 @@ def display_system_data():
     print(' Recommended Version: {:6}'.format(SETTINGS['nvim_recommended']))
     print(' Current Version: {:5}'.format(SYSDATA['nvim_version']))
     print()
+    print('To install run ./Dotfiles -i or ./Dotfiles --install')
 
 
 def hasDependences():
@@ -219,6 +220,7 @@ def createSysLinks():
     symlinks = {
             SYSDATA['sdir'] + '/vim' : SYSDATA['home'] + '/.vim',
             SYSDATA['sdir'] + '/vim/vimrc' : SYSDATA['home'] + '/.vimrc',
+            SYSDATA['sdir'] + '/tmux/tmux.conf' : SYSDATA['home'] + '/.tmux.conf',
             SYSDATA['sdir'] + '/git/gitconfig' : SYSDATA['home'] + '/.gitconfig',
             }
     print('=== Creating symlinks ===')
