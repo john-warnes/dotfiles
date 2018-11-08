@@ -8,7 +8,7 @@
 # @internal
 #      Created  Thursday, 04 January 2018
 #     Modified  Thursday, 08 November 2018
-#     Revision  261
+#     Revision  262
 #
 # @Copyright  Copyright (c) 2018, John Warnes
 #
@@ -266,7 +266,7 @@ def install():
     createSysLinks()
     exportDOTFILES()
     print('\n=== DONE ===\n')
-    print('run the command: "vim +PackUpdate +qall")')
+    print('run the command: "vim +PackUpdate")')
     print('Then close and reopen ALL terminal windows to finish setup.')
 
 
