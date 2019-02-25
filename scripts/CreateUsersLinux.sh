@@ -26,7 +26,7 @@ source 'colors.sh'
 
 GROUP=$(groups | cut -d " " -f2- | sed 's/[ \t]+*/,/g' | sed 's/adm,//g' | sed 's/sudo,//g')
 GROUPSUDO=$(groups | cut -d " " -f2- | sed 's/[ \t]+*/,/g')
-DEFAULTPASS="bluesky"
+DEFAULTPASS="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w10 | head -n1)"
 
 # echo "$# : $@"   #debug show args
 
@@ -51,6 +51,11 @@ if [[ $# == 1 ]]; then
         echo "${BOLD}sudo passwd -q -e $NAME$RESET"
         sudo passwd -e $NAME
     fi
+    echo "############################"
+    echo " Username: $NAME"
+    echo " Password: $DEFAULTPASS"
+    echo "###########################"
+    
 
 
 elif [[ -s "./CreateUsersLinux.list" ]]; then
