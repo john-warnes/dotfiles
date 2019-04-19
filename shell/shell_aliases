@@ -2,20 +2,20 @@
 
 # enable color support of ls and also add handy aliases
 if [[ $OS == 'LINUX' ]]; then
-    alias ls='ls -GFh --color=auto'
-    alias ll='ls -GFhl --color=auto'
-    alias la='ls -GFha --color=auto'
-    alias lr='ls -Gfhlrt --color=auto'
+    alias ls='ls -Fh --color=auto'
+    alias ll='ls -Fhl --color=auto'
+    alias la='ls -Fha --color=auto'
+    alias lr='ls -fhlrt --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 
 elif [[ $OS == 'OSX' ]]; then
-    alias ls='ls -GFh'
-    alias ll='ls -GFhl'
-    alias la='ls -GFha' 
-    alias lr='ls -Gfhlrt'
+    alias ls='ls -Fh'
+    alias ll='ls -Fhl'
+    alias la='ls -Fha'
+    alias lr='ls -fhlrt'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
