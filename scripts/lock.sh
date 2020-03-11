@@ -1,14 +1,10 @@
 #!/bin/bash -
 #===============================================================================
-#
 #          FILE: lock.sh
-#
 #         USAGE: ./lock.sh
-#
 #   DESCRIPTION: encrypt the contents of secure
 #
-#        AUTHOR: John Warnes (jwarnes), johnwarnes@mail.weber.edu
-#       CREATED: 06/06/2017 12:30:05 AM
+#        AUTHOR: John Warnes (jwarnes), john@warnes.net
 #===============================================================================
 
 SECURE=$DOTFILES/secure

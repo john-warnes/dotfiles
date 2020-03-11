@@ -1,20 +1,8 @@
 #!/bin/bash -
 #===============================================================================
-#
 #          FILE: CreateUserLinux.sh
-#
 #         USAGE: ./CreateUserLinux.sh
-#
-#   DESCRIPTION:
-#
-#       OPTIONS: ---
-#  REQUIREMENTS: ---
-#          BUGS: ---
-#         NOTES: ---
-#        AUTHOR: John Warnes (), johnwarnes@mail.weber.edu
-#  ORGANIZATION: WSU
-#       CREATED: 06/01/2017 03:36:42 PM
-#      REVISION:  ---
+#        AUTHOR: John Warnes (), john@warnes.email
 #===============================================================================
 
 set -o nounset                              # Treat unset variables as an error
