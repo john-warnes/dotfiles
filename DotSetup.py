@@ -33,7 +33,7 @@ SETTINGS = {
     "backup_file": "~/.dotfiles_Backup", # Files
 
     # VIM
-    "vim_required": "8.1",
+    "vim_required": "8.0",
     "nvim_recommended": "0.2.0",
 }
 
