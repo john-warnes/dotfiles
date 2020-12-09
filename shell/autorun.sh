@@ -79,6 +79,21 @@ PythonVirtualEnvironments()
 
 
 #===============================================================================
+# Script Path {
+#===============================================================================
+ScriptsPath()
+{
+    if [[ -d $DOTFILES/scripts ]]; then
+        export PATH="$PATH:$DOTFILES/scripts"
+        printf "${RESET}${GREEN}Scripts Path$RESET|"
+    else
+        printf "${RESET}${YELLOW}!! Scripts Path !!$RESET "
+    fi
+}
+# } ===
+
+
+#===============================================================================
 # Shell Aliases {
 #===============================================================================
 ShellAliases()
@@ -178,6 +193,7 @@ main()
 
         ShellAliases
         PersonalAliases
+        ScriptsPath
 
         #OSXBashCompletion
         BashGit-Prompt
