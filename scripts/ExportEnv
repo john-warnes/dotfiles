@@ -41,17 +41,16 @@ eval set -- "${POSITIONAL_ARGS[@]}"
 input=${POSITIONAL_ARGS[0]}
 
 # Check if we have at least one
-if [[ ${#POSITIONAL_ARGS[@]} < 1 ]]; then
-    help
-fi
+[[ ${#POSITIONAL_ARGS[@]} < 1 ]] && help
 
-echo "Adding environment variables from \`$input\`"
-
-while read -r line; do 
-    [[ $line =~ ^\s*#.* ]] && continue
-    [[ -z "$line" ]] && continue
-    export "$line";
-done < $input
+for i in "${POSITIONAL_ARGS[@]}"; do
+    echo "Adding environment variables from \`$input\`"
+    while read -r line; do 
+        [[ $line =~ ^\s*#.* ]] && continue
+        [[ -z "$line" ]] && continue
+        export "$line";
+    done < $input
+done
 
 #while IFS== read -r key value; do
 #  printf -v "$key" %s "$value" && export "$key"
