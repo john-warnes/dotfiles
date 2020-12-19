@@ -151,29 +151,35 @@ def createUserGit():
     f = open("git/gitconfig", "w")
     f.write(
 """[user]
-    name = {name}
-    email = {email}
+	name = {name}
+	email = {email}
 [core]
-    editor = {vim}
-    autocrlf = input
+	editor = {vim}
+	autocrlf = input
 [help]
-    autocorrect = 1
+	autocorrect = 1
 [color]
-    ui = auto
+	ui = auto
     branch = auto
     diff = auto
     interactive = auto
     status = auto
+    grep = auto
+    pager = true
+    decorate = auto
+    showbranch = auto
 [push]
-    default = simple
+	default = simple
 [credential]
-    helper = cache --timeout=28800
+	helper = cache --timeout=28800
 [alias]
-    export = archive -o latest.tar.gz -9 --prefix=latest/
-    details = log -n1 -p --format=fuller
-    logpretty = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset%C(auto)%d%n%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset'
-    logshort = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset -%C(auto)%h %d%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset' --abbrev-commit
-    s = status
+	export = archive -o latest.tar.gz -9 --prefix=latest/
+	details = log -n1 -p --format=fuller
+	logpretty = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset%C(auto)%d%n%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset'
+	logshort = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset -%C(auto)%h %d%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset' --abbrev-commit
+	s = status
+[pull]
+	ff = only
 """.format(name=user["name"], email=user["email"], vim=user["vim"])
     )
     f.close()
