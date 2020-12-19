@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  071
-#  Modified  Tuesday, 08 May 2018
+#  Revision  0101
+#  Modified  Sunday, 18 October 2020
 #=================================================================
 
 
@@ -156,14 +156,26 @@ BashGit-Prompt ()
             #PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
             PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
 
-            printf "${RESET}${GREEN}Bash git-Prompt$RESET"
+            printf "${RESET}${GREEN}Bash git-Prompt$RESET|"
         else
-            printf "${RESET}${YELLOW}!! Bash git-Prompt !!$RESET"
+            printf "${RESET}${YELLOW}!! Bash git-Prompt !!$RESET|"
         fi
     fi
 }
 #} ===
 
+#===============================================================================
+# flutter bash completion {
+#===============================================================================
+FlutterBashCompletion () {
+    if [[ -f $DOTFILES/shell/flutter_bash_completion.sh ]]; then
+        source $DOTFILES/shell/flutter_bash_completion.sh
+        printf "${RESET}${GREEN}Flutter Bash Completion$RESET"
+    else
+        printf "${RESET}${YELLOW}!! Flutter Bash Completion !!$RESET"
+    fi
+}
+#} ===
 
 #===============================================================================
 # main {
@@ -197,6 +209,7 @@ main()
 
         #OSXBashCompletion
         BashGit-Prompt
+        FlutterBashCompletion
 
         echo "]"
         echo "${RESET}DOTFILES${GREEN} Ready$RESET"
