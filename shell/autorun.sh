@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  0101
-#  Modified  Sunday, 18 October 2020
+#  Revision  0102
+#  Modified  Friday, 14 May 2021
 #=================================================================
 
 
@@ -215,6 +215,9 @@ main()
         echo "${RESET}DOTFILES${GREEN} Ready$RESET"
     fi
 
+    # Set History to 200k lines, memory and file
+    export HISTSIZE=200000
+    export HISTFILESIZE=200000
 }
 #} ===
 main "$@"     #remember to pass all command line args

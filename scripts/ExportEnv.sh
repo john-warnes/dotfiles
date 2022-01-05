@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -a
+
 function help {
 cat <<EOF
     Usage: $0 [env file]
@@ -51,6 +53,9 @@ for i in "${POSITIONAL_ARGS[@]}"; do
         export "$line";
     done < $input
 done
+
+
+set +a
 
 #while IFS== read -r key value; do
 #  printf -v "$key" %s "$value" && export "$key"
