@@ -10,6 +10,7 @@ cat <<EOF
     -c|--connect [ip address]    Connect to the Android device
     -d|--disconnect              Disconnect from all Android devices
     -l|--logcat [logcat params]  Output the logcat for connect Android device
+    -s|--shell                   Connect to ADB shell on device
 
 EOF
 exit
@@ -44,6 +45,11 @@ while (( "$#" )); do
     -l|--logcat)
         shift 1
         $ADB logcat $@
+        exit
+    ;;
+    -s|--shell)
+        shift 1
+        $ADB shell $@
         exit
     ;;
     -?|-h|--help)
