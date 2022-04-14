@@ -7,8 +7,8 @@
 #
 # @internal
 #      Created  Thursday, 04 January 2018
-#     Modified  11 March 2020
-#     Revision  265
+#     Modified  Wednesday, 21 July 2021
+#     Revision  279
 #
 # @Copyright  Copyright (c) 2020, John Warnes
 #
@@ -210,31 +210,40 @@ def createSysLinks():
 
 
 def exportDOTFILES():
+
+    def safe_append(fn, datas):
+        if os.path.isfile(fn) or os.path.islink(fn):
+            for data in datas:
+                with open(fn) as f:
+                    for line in f:
+                        if line == data:
+                            print(" {} already contains: {}".format(fn, data))
+                            continue;
+                        else:
+                            print(" modifying {} with: {}".format(fn, data))
+                            with open(fn, "a") as appendfile:
+                                appendfile.write(data)
+
     print()
     print(" Exporting DOTFILES environment variable")
     fn=""
     if SYS_DATA["os"] == "Darwin":
-        print(" Darwin detected: Selecting file ~/.bash_profile")
+        print(" Darwin detected: Selecting file '~/.bash_profile' and '~/.zshrc'")
 
         fn = SYS_DATA["home"] + "/.bash_profile"
         exportline = "export DOTFILES=" + SYS_DATA["sdir"] + "\n"
         autoruncode = "export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n"
+        safe_append(fn, [exportline, autoruncode ])
+
+        fn = SYS_DATA["home"] + "/.zshrc"
+        zshprompt = 'prompt=\'%F{028}%n@%m %F{025}%~%f %% \''
+        safe_append(fn, [exportline, autoruncode, zshprompt])
     else:
         print(" Selecting file ~/.bashrc")
         fn = SYS_DATA["home"] + "/.bashrc"
         exportline = "export DOTFILES=" + SYS_DATA["sdir"] + "\n"
         autoruncode = "export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n"
 
-    if os.path.isfile(fn) or os.path.islink(fn):
-        with open(fn) as f:
-            if any(line == exportline for line in f):
-                print(" {} already modified".format(fn))
-            else:
-                print(" modifying {}".format(fn))
-                f = open(fn, "a")
-                f.write(exportline)
-                f.write(autoruncode)
-                f.close()
 
 def install():
     askUserData()

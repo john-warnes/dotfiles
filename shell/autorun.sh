@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================================
-#  Revision  0102
-#  Modified  Friday, 14 May 2021
+#  Revision  0104
+#  Modified  Wednesday, 21 July 2021
 #=================================================================
 
 
@@ -168,6 +168,7 @@ BashGit-Prompt ()
 # flutter bash completion {
 #===============================================================================
 FlutterBashCompletion () {
+    # Currently is working in zsh and bash
     if [[ -f $DOTFILES/shell/flutter_bash_completion.sh ]]; then
         source $DOTFILES/shell/flutter_bash_completion.sh
         printf "${RESET}${GREEN}Flutter Bash Completion$RESET"
