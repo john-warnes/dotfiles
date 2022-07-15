@@ -5,13 +5,9 @@
 #=================================================================
 
 
-#===============================================================================
-# Check if this has already been run {
-#===============================================================================
-Colors()
-{
-    if [[ -f $DOTFILES/scripts/colors.sh ]]; then
-        source $DOTFILES/scripts/colors.sh
+Colors() {
+    if [[ -f $DOT_FILES/scripts/colors.sh ]]; then
+        source $DOT_FILES/scripts/colors.sh
     fi
 }
 # } ===
@@ -19,14 +15,11 @@ Colors()
 
 #===============================================================================
 # Check if this has already been run {
-#===============================================================================
-RunCheck()
-{
-    if [[ $DOTFILESAUTO == 1 ]]; then
-        #echo "$RESET${GREEN}[dotfiles Already Loaded]$RESET"
+    if [[ $DOT_FILES_AUTO == 1 ]]; then
+        #echo "$RESET${GREEN}[dot files Already Loaded]$RESET"
         echo 1
     else
-        export DOTFILESAUTO=1
+        export DOT_FILES_AUTO=1
         echo 0
     fi
 }
@@ -35,11 +28,8 @@ RunCheck()
 
 #===============================================================================
 # Detect OS {
-#===============================================================================
-DetectOS()
-{
-    if [[ -f $DOTFILES/scripts/detectOS.sh ]]; then
-        source $DOTFILES/scripts/detectOS.sh
+    if [[ -f $DOT_FILES/scripts/detectOS.sh ]]; then
+        source $DOT_FILES/scripts/detectOS.sh
     fi
 }
 # } ===
@@ -80,11 +70,8 @@ PythonVirtualEnvironments()
 
 #===============================================================================
 # Script Path {
-#===============================================================================
-ScriptsPath()
-{
-    if [[ -d $DOTFILES/scripts ]]; then
-        export PATH="$PATH:$DOTFILES/scripts"
+    if [[ -d $DOT_FILES/scripts ]]; then
+        export PATH="$PATH:$DOT_FILES/scripts"
         printf "${RESET}${GREEN}Scripts Path$RESET|"
     else
         printf "${RESET}${YELLOW}!! Scripts Path !!$RESET "
@@ -95,11 +82,8 @@ ScriptsPath()
 
 #===============================================================================
 # Shell Aliases {
-#===============================================================================
-ShellAliases()
-{
-    if [[ -f $DOTFILES/shell/shell_aliases ]]; then
-        source $DOTFILES/shell/shell_aliases
+    if [[ -f $DOT_FILES/shell/shell_aliases ]]; then
+        source $DOT_FILES/shell/shell_aliases
     fi
 }
 # } ===
@@ -107,11 +91,8 @@ ShellAliases()
 
 #===============================================================================
 # Personal Aliases {
-#===============================================================================
-PersonalAliases ()
-{
-    if [[ -f $DOTFILES/secure/personal_aliases ]]; then
-        source $DOTFILES/secure/personal_aliases
+    if [[ -f $DOT_FILES/secure/personal_aliases ]]; then
+        source $DOT_FILES/secure/personal_aliases
     fi
 }
 # } ===
@@ -127,7 +108,7 @@ OSXBashCompletion ()
             source $(brew --prefix)/etc/bash_completion
             printf "${RESET}${GREEN}OSX Bash Complete$RESET|"
         else
-            printf "${RESET}${YELLOW}!! OSX Bash Completion !!$RESEET "
+            printf "${RESET}${YELLOW}!! OSX Bash Completion !!$RESET "
         fi
     fi
 }
@@ -136,44 +117,67 @@ OSXBashCompletion ()
 #===============================================================================
 # Bash Git-Prompt {
 #===============================================================================
-checkvenv()
-{
+checkvenv() {
     if [[ ${VIRTUAL_ENV:-0} == 0 ]]; then
         echo ""
     else
-        echo "(`basename \"$VIRTUAL_ENV\"`)\n"
+        echo "($(basename \"$VIRTUAL_ENV\"))\n"
     fi
 }
 
-BashGit-Prompt ()
-{
-    if [[ $SHELL == '/bin/bash' ]]; then
-        if [[ -f $DOTFILES/shell/git-prompt.sh ]]; then
-            source $DOTFILES/shell/git-prompt.sh
+BashGit-Prompt() {
 
-            export GIT_PS1_SHOWCOLORHINTS=1
-            #PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "' # orginal
-            #PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
-            PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
+    if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/zsh' ]]; then
 
-            printf "${RESET}${GREEN}Bash git-Prompt$RESET|"
+        if [[ -f $DOT_FILES/shell/git-prompt.sh ]]; then
+
+            source $DOT_FILES/shell/git-prompt.sh
+
+            # VSCODE Imbedded Shell
+            if [ ! -z $VSCODE_SHELL_INTEGRATION ]; then
+                export GIT_PS1_SHOWDIRTYSTATE=1
+                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(__git_ps1 " (\[\033[01;32m\]%s\[\033[00m\])")\$ '
+                printf "${RESET}${GREEN}VsCode git-prompt$RESET|"
+                builtin return
+            fi
+
+            # Bash
+            if [[ $SHELL == '/bin/bash' ]]; then
+                export GIT_PS1_SHOWCOLORHINTS=1
+                # PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "' # original
+                # PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
+                PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
+                printf "${RESET}${GREEN}Bash git-prompt$RESET|"
+                builtin return
+            fi
+
+            # Zsh
+            if [[ $SHELL == '/bin/zsh' ]]; then
+                export GIT_PS1_SHOWCOLORHINTS=1
+                precmd() {
+                    __git_ps1 "%n" ":%~$ " "|%s"
+                }
+                printf "${RESET}${GREEN}Zsh git-prompt$RESET|"
+                builtin return
+            fi
+            printf "${RESET}${YELLOW}!! Unknown shell: skip git-prompt !!$RESET|"
         else
-            printf "${RESET}${YELLOW}!! Bash git-Prompt !!$RESET|"
+            printf "${RESET}${YELLOW}!! Bash git-prompt !!$RESET|"
         fi
     fi
 }
 #} ===
 
 #===============================================================================
-# flutter bash completion {
+# flutter completion {
 #===============================================================================
-FlutterBashCompletion () {
-    # Currently is working in zsh and bash
-    if [[ -f $DOTFILES/shell/flutter_bash_completion.sh ]]; then
-        source $DOTFILES/shell/flutter_bash_completion.sh
-        printf "${RESET}${GREEN}Flutter Bash Completion$RESET"
+FlutterBashCompletion() {
+    # Currently works in both zsh and bash
+    if [[ -f $DOT_FILES/shell/flutter_bash_completion.sh ]]; then
+        source $DOT_FILES/shell/flutter_bash_completion.sh
+        printf "${RESET}${GREEN}Flutter Completion$RESET"
     else
-        printf "${RESET}${YELLOW}!! Flutter Bash Completion !!$RESET"
+        printf "${RESET}${YELLOW}!! Flutter Completion !!$RESET"
     fi
 }
 #} ===
@@ -181,23 +185,22 @@ FlutterBashCompletion () {
 #===============================================================================
 # main {
 #===============================================================================
-main()
-{
+main() {
     Colors
     DetectOS
 
-    HASRUN=$(RunCheck)
+    HAS_RUN=$(RunCheck)
 
     if [[ $@ > 0 ]]; then
-        echo "autorun exec from: $1"
+        echo "auto run exec from: $1"
     fi
 
     # Might need to force it
-    #HASRUN=0
+    #HAS_RUN=0
     # this need more testing to see if detecting loaded or not
 
-    if ! [[ $HASRUN ]]; then
-        printf "$RESET[dotfiles reload: "
+    if ! [[ $HAS_RUN ]]; then
+        printf "$RESET[dot files reload: "
         BashGit-Prompt
         echo "]"
     else
@@ -213,7 +216,7 @@ main()
         FlutterBashCompletion
 
         echo "]"
-        echo "${RESET}DOTFILES${GREEN} Ready$RESET"
+        echo "${RESET}DOT_FILES${GREEN} Ready$RESET"
     fi
 
     # Set History to 200k lines, memory and file
@@ -221,4 +224,4 @@ main()
     export HISTFILESIZE=200000
 }
 #} ===
-main "$@"     #remember to pass all command line args
+main "$@" #remember to pass all command line args

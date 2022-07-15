@@ -1,21 +1,20 @@
 #!/bin/bash
 # This file was originally taken from iterm2 https://github.com/gnachman/iTerm2/blob/master/tests/24-bit-color.sh
 #
-#   This file echoes a bunch of 24-bit color codes
-#   to the terminal to demonstrate its functionality.
+#   This file echoes four gradients with 24-bit color codes
+#   to the terminal to demonstrate their functionality.
 #   The foreground escape sequence is ^[38;2;<r>;<g>;<b>m
 #   The background escape sequence is ^[48;2;<r>;<g>;<b>m
 #   <r> <g> <b> range from 0 to 255 inclusive.
 #   The escape sequence ^[0m returns output to default
 
-setBackgroundColor()
-{
-    #printf '\x1bPtmux;\x1b\x1b[48;2;%s;%s;%sm' $1 $2 $3
-    printf '\x1b[48;2;%s;%s;%sm' $1 $2 $3
+SEPARATOR=':'
+
+setBackgroundColor() {
+    echo -en "\x1b[48${SEPARATOR}2${SEPARATOR}$1${SEPARATOR}$2${SEPARATOR}$3""m"
 }
 
-resetOutput()
-{
+resetOutput() {
     echo -en "\x1b[0m\n"
 }
 
@@ -24,30 +23,23 @@ resetOutput()
 # Echoes "$red $green $blue" where
 # $red $green and $blue are integers
 # ranging between 0 and 255 inclusive
-rainbowColor()
-{ 
+rainbowColor() {
     let h=$1/43
     let f=$1-43*$h
     let t=$f*255/43
     let q=255-t
 
-    if [ $h -eq 0 ]
-    then
+    if [ $h -eq 0 ]; then
         echo "255 $t 0"
-    elif [ $h -eq 1 ]
-    then
+    elif [ $h -eq 1 ]; then
         echo "$q 255 0"
-    elif [ $h -eq 2 ]
-    then
+    elif [ $h -eq 2 ]; then
         echo "0 255 $t"
-    elif [ $h -eq 3 ]
-    then
+    elif [ $h -eq 3 ]; then
         echo "0 $q 255"
-    elif [ $h -eq 4 ]
-    then
+    elif [ $h -eq 4 ]; then
         echo "$t 0 255"
-    elif [ $h -eq 5 ]
-    then
+    elif [ $h -eq 5 ]; then
         echo "255 0 $q"
     else
         # execution should never reach here
@@ -55,46 +47,58 @@ rainbowColor()
     fi
 }
 
-for i in `seq 0 127`; do
+echo -n "1: "
+for i in $(seq 0 127); do
     setBackgroundColor $i 0 0
     echo -en " "
 done
 resetOutput
-for i in `seq 255 -1 128`; do
+
+echo -n "2: "
+for i in $(seq 255 128); do
     setBackgroundColor $i 0 0
     echo -en " "
 done
 resetOutput
 
-for i in `seq 0 127`; do
-    setBackgroundColor 0 $i 0
-    echo -n " "
-done
-resetOutput
-for i in `seq 255 -1 128`; do
+echo -n "3: "
+for i in $(seq 0 127); do
     setBackgroundColor 0 $i 0
     echo -n " "
 done
 resetOutput
 
-for i in `seq 0 127`; do
-    setBackgroundColor 0 0 $i
+echo -n "4: "
+for i in $(seq 255 128); do
+    setBackgroundColor 0 $i 0
     echo -n " "
 done
 resetOutput
-for i in `seq 255 -1 128`; do
+
+echo -n "5: "
+for i in $(seq 0 127); do
     setBackgroundColor 0 0 $i
     echo -n " "
 done
 resetOutput
 
-for i in `seq 0 127`; do
-    setBackgroundColor `rainbowColor $i`
+echo -n "6: "
+for i in $(seq 255 128); do
+    setBackgroundColor 0 0 $i
     echo -n " "
 done
 resetOutput
-for i in `seq 255 -1 128`; do
-    setBackgroundColor `rainbowColor $i`
+
+echo -n "7: "
+for i in $(seq 0 127); do
+    setBackgroundColor $(rainbowColor $i)
+    echo -n " "
+done
+resetOutput
+
+echo -n "8: "
+for i in $(seq 255 128); do
+    setBackgroundColor $(rainbowColor $i)
     echo -n " "
 done
 resetOutput

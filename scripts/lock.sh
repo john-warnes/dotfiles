@@ -7,8 +7,8 @@
 #        AUTHOR: John Warnes (jwarnes), john@warnes.net
 #===============================================================================
 
-SECURE=$DOTFILES/secure
-SCRIPTS=$DOTFILES/scripts
+SECURE=$DOT_FILES/secure
+SCRIPTS=$DOT_FILES/scripts
 
 DATE=`date +%Y-%m-%d`
 

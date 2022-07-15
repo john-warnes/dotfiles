@@ -33,7 +33,7 @@ let g:Jvim#hidden#showIndent   = 0 " Show indent guides when (F2 Toggles)
 let g:Jvim#hidden#codePretty   = 1 " Replace some chars with alternatives (F2 Toggles)
 
 let g:Jvim#presistentUndo#enable = 1 " Use persistent Undo
-let g:Jvim#presistentUndo#dir    = expand($DOTFILES.'/vim/undo') " Where to store persistent files
+let g:Jvim#presistentUndo#dir    = expand($DOT_FILES.'/vim/undo') " Where to store persistent files
 
 let g:Jvim#folding#syntax = 1 " Enable folding by syntax for all files
                               "  NOTE: Might be slow on older systems
@@ -76,7 +76,7 @@ let g:tagbar_width = 30             " width of tagnar window
 nnoremap <C-t> :TagbarToggle<CR>    " Toggle Tagbar with Ctrl-T
 
 "=================================================================
-" gruvbox Color Scheme Options 
+" gruvbox Color Scheme Options
 "=================================================================
 execute 'source ' . s:path . '/' . 'gruvbox_options.vim'
 
@@ -168,7 +168,7 @@ endif
     set mouse=a
 "} ===
 
-    
+
 "=================================================================
 " Vim Editing and Behavior {
 "=================================================================
@@ -311,7 +311,9 @@ endif
 "=================================================================
 " Load plugins {
 "=================================================================
-if has('nvim') || ( has('job') && has('packages') )
+if has('nvim')
+    execute 'source ' . s:path . '/' . 'nvim/nvim.vim'
+elseif ( has('job') && has('packages') )
     execute 'source ' . s:path . '/' . 'vim8/vim8.vim'
 else
     execute 'source ' . s:path . '/' . 'vim7/vim7.vim'

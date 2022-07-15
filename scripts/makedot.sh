@@ -3,15 +3,15 @@
 # all fucntions  (func)#(file)
 # cscope -f cscope.out -RL2 ".*" | awk -F ' ' '{print $2 "#" $1}' | sort | uniq
 
-#AUTHOR John Warnes johnwarnes@mail.weber.edu copywrite 2017
+#AUTHOR John Warnes johnwarnes@mail.weber.edu Copywrite 2017
 
 #usage makedot.sh [GRAPH TITLE] [primary function to highlight in green] [another primary]...
 
 #EXAMPLE: makedot.sh "Atmosniffer\ CallGraph\ 12/02/17" main
 #EXAMPLE: makedot.sh "Atmosniffer\ CallGraph\ 12/01/17" SYSTEM_Initialize main
 
-FILTERNAMES="$DOTFILES/scripts/filter_names.txt"
-FILTERFILES="$DOTFILES/scripts/filter_files.txt"
+FILTERNAMES="$DOT_FILES/scripts/filter_names.txt"
+FILTERFILES="$DOT_FILES/scripts/filter_files.txt"
 
 
 graph_end()

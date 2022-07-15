@@ -10,8 +10,8 @@
 #       CREATED: 06/06/2017 12:39:00 AM
 #===============================================================================
 
-SECURE=$DOTFILES/secure
-SCRIPTS=$DOTFILES/scripts
+SECURE=$DOT_FILES/secure
+SCRIPTS=$DOT_FILES/scripts
 
 if [[ -f "$SCRIPTS/colors.sh" ]]; then
     source $SCRIPTS/colors.sh

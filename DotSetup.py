@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # ============================================================================
 # @file   DotSetup.py
-# @brief  Install my dotfiles
+# @brief  Install Dot files
 #
 # @author John Warnes
 #
 # @internal
-#      Created  Thursday, 04 January 2018
-#     Modified  Wednesday, 21 July 2021
+#      Created  2018 January 04, Thursday
+#     Modified  2022 July 15, Friday
 #     Revision  279
 #
-# @Copyright  Copyright (c) 2020, John Warnes
-#
+# @copyright  Copyright (c) 2020, John Warnes
 # ============================================================================
 
 # Required Python3 and Pip3
@@ -34,7 +33,7 @@ SETTINGS = {
 
     # VIM
     "vim_required": "8.0",
-    "nvim_recommended": "0.2.0",
+    "nvim_required": "0.2.0",
 }
 
 def box_draw(text):
@@ -51,6 +50,7 @@ def collect_system_data():
     """
     global SYS_DATA
     SYS_DATA["home"] = os.path.expanduser("~")
+    SYS_DATA["nvim_config"] = BAR = os.environ.get('XDG_CONFIG_HOME', SYS_DATA["home"] + '/.config/nvim/')  # None
     SYS_DATA["sdir"] = get_script_path()
     SYS_DATA["sfile"] = str(__file__)
     SYS_DATA["os_kind"] = os.name
@@ -58,11 +58,11 @@ def collect_system_data():
     SYS_DATA["os_release"] = platform.release()
 
     SYS_DATA["vim_version"] = (
-        subprocess.check_output("vim --version | head -1 | cut -d ' ' -f 5", shell=True).decode("ascii").strip()
+        subprocess.check_output("vim --version | head -1 | cut -d ' ' -f 5", shell=True).decode("ascii").strip() or "[Unknown]"
     )
 
     SYS_DATA["nvim_version"] = (
-        subprocess.check_output("nvim --version | head -1 | cut -d ' ' -f 2", shell=True).decode("ascii").strip()[1:]
+        subprocess.check_output("nvim --version | head -1 | cut -d ' ' -f 2", shell=True).decode("ascii").strip()[1:] or "[Unknown]"
     )
     # print(os.getcwd())  # Current DIR
     # os.chdir(current_dir)  # Chance DIR
@@ -82,8 +82,8 @@ def display_system_data():
     print("║ Current Version : {:{pad}} ║".format(SYS_DATA["vim_version"], pad=34))
     print("║ Required Version: {:{pad}} ║".format(SETTINGS["vim_required"], pad=34))
     print("╠═ NEOVIM ═════════════════════════════════════════════╣")
-    print("║ Current Version    : {:{pad}} ║".format(SYS_DATA["nvim_version"], pad=31))
-    print("║ Recommended Version: {:{pad}} ║".format(SETTINGS["nvim_recommended"], pad=31))
+    print("║ Current Version  : {:{pad}} ║".format(SYS_DATA["nvim_version"], pad=33))
+    print("║ Required Version : {:{pad}} ║".format(SETTINGS["nvim_required"], pad=33))
     print("╚══════════════════════════════════════════════════════╝")
     print()
 
@@ -92,14 +92,18 @@ def hasDependencies():
     print()
     dependencies = True
     if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]):
-        print(" ERROR: Vim version is below the required version")
-        dependencies = False
+        print(" Warning: Vim version is below the required version")
     else:
         print(" Vim version: OK")
-    if parse_version(SETTINGS["nvim_recommended"]) > parse_version(SYS_DATA["nvim_version"]):
-        print(" Warring: Neovim version is below the recommend version")
+    if parse_version(SETTINGS["nvim_required"]) > parse_version(SYS_DATA["nvim_version"]):
+        print(" Warning: Neovim version is below the recommend version")
     else:
         print(" Neovim version: OK")
+
+    if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]) and parse_version(SETTINGS["nvim_required"]) > parse_version(SYS_DATA["nvim_version"]):
+        dependencies = False
+        print(" ERROR: Vim or Neovim must be above the required version")
+
     return dependencies
 
 def flat_string(text):
@@ -185,17 +189,27 @@ def createUserGit():
     f.close()
 
 
+def createFolders():
+    dir = SYS_DATA["home"] + '/.config/nvim/'
+    if os.path.isdir(dir):
+        return
+    else:
+        os.makedirs(dir)
+
 def createSysLinks():
     """
-    dotifles/vim -> ~/.vim
-    dotfiles/vim/vimrc -> ~/.vimrc
-    dotfiles/git/gitconfig -> ~/.gitconfig
+    {DOT_FILES}/vim -> ~/.vim
+    {DOT_FILES}/vim/vimrc -> ~/.vimrc
+    {DOT_FILES}/git/gitconfig -> ~/.gitconfig
+    {DOT_FILES}/nvim/init.vim -> ~/.config/nvim/init.vim
+
     """
     symlinks = {
         SYS_DATA["sdir"] + "/vim": SYS_DATA["home"] + "/.vim",
         SYS_DATA["sdir"] + "/vim/vimrc": SYS_DATA["home"] + "/.vimrc",
         SYS_DATA["sdir"] + "/tmux/tmux.conf": SYS_DATA["home"] + "/.tmux.conf",
         SYS_DATA["sdir"] + "/git/gitconfig": SYS_DATA["home"] + "/.gitconfig",
+        SYS_DATA["sdir"] + "/nvim/init.vim": SYS_DATA["home"] + "/.config/nvim/init.vim",
     }
     print()
     print(" Creating symlinks")
@@ -209,7 +223,7 @@ def createSysLinks():
         os.symlink(src, dest)
 
 
-def exportDOTFILES():
+def exportDotFiles():
 
     def safe_append(fn, datas):
         if os.path.isfile(fn) or os.path.islink(fn):
@@ -225,14 +239,14 @@ def exportDOTFILES():
                                 appendfile.write(data)
 
     print()
-    print(" Exporting DOTFILES environment variable")
+    print(" Exporting DOT_FILES environment variable")
     fn=""
     if SYS_DATA["os"] == "Darwin":
         print(" Darwin detected: Selecting file '~/.bash_profile' and '~/.zshrc'")
 
         fn = SYS_DATA["home"] + "/.bash_profile"
-        exportline = "export DOTFILES=" + SYS_DATA["sdir"] + "\n"
-        autoruncode = "export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n"
+        exportline = "export DOT_FILES=" + SYS_DATA["sdir"] + "\n"
+        autoruncode = "export CLICOLOR=1\nsource $DOT_FILES/shell/autorun.sh\n"
         safe_append(fn, [exportline, autoruncode ])
 
         fn = SYS_DATA["home"] + "/.zshrc"
@@ -241,16 +255,17 @@ def exportDOTFILES():
     else:
         print(" Selecting file ~/.bashrc")
         fn = SYS_DATA["home"] + "/.bashrc"
-        exportline = "export DOTFILES=" + SYS_DATA["sdir"] + "\n"
-        autoruncode = "export CLICOLOR=1\nsource $DOTFILES/shell/autorun.sh\n"
+        exportline = "export DOT_FILES=" + SYS_DATA["sdir"] + "\n"
+        autoruncode = "export CLICOLOR=1\nsource $DOT_FILES/shell/autorun.sh\n"
 
 
 def install():
     askUserData()
     createUserVim()
     createUserGit()
+    createFolders()
     createSysLinks()
-    exportDOTFILES()
+    exportDotFiles()
     print()
     box_draw("Final Steps")
     print()
