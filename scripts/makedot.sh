@@ -13,15 +13,11 @@
 FILTERNAMES="$DOT_FILES/scripts/filter_names.txt"
 FILTERFILES="$DOT_FILES/scripts/filter_files.txt"
 
-
-graph_end()
-{
+graph_end() {
     printf "\n}\n"
 }
 
-
-graph_start()
-{
+graph_start() {
     printf "strict digraph iftree {\n"
     printf "\tgraph [rankdir=\"LR\", truecolor=true, concentrate=false];\n"
     #printf "\tgraph [dpi=300];\n"  # Default 96
@@ -32,9 +28,7 @@ graph_start()
     printf "\n"
 }
 
-
-cluster_start()
-{
+cluster_start() {
     printf "subgraph cluster_$1 {\n"
     #printf "\tnode [style=filled, color=\"grey\"];\n"
     printf "\tgraph [fontcolor=blue, fontsize=\"16\", label=\"$1\", color=blue, style=\"rounded\"];\n"
@@ -42,41 +36,32 @@ cluster_start()
     printf "\n"
 }
 
-
-basepath()
-{
+basepath() {
     local cline
     while read -a cline; do
         printf "$(basename ${cline[0]}) ${cline[1]}\n"
     done
 }
 
-
-__all_called()
-{
+__all_called() {
     cscope -RL2 '.*' | awk -F ' ' '{print $2}'
     cscope -RL2 'main' | awk -F ' ' '{print $2}'
     printf "main\n"
 }
 
-
-all_called()
-{
+all_called() {
     __all_called | sort | uniq
     #sed '/ __/ d' | sed '/ _/ d'
 }
 
-add_location()
-{
+add_location() {
     local line
     while read line; do
         cscope -RL1 $line | awk -F ' ' '{print $1" "$2}'
     done
 }
 
-
-filter_names()
-{
+filter_names() {
     local line
     while read line; do
 
@@ -85,7 +70,7 @@ filter_names()
             continue
         fi
 
-        if grep -Fxq "$line" $FILTERNAMES ; then
+        if grep -Fxq "$line" $FILTERNAMES; then
             continue
         fi
 
@@ -94,9 +79,7 @@ filter_names()
     done
 }
 
-
-filter_files()
-{
+filter_files() {
     local line
     while read -a line; do
 
@@ -110,7 +93,7 @@ filter_files()
             continue
         fi
 
-        if grep -Fxq "${line[0]}" $FILTERFILES ; then
+        if grep -Fxq "${line[0]}" $FILTERFILES; then
             continue
         fi
 
@@ -119,9 +102,7 @@ filter_files()
     done
 }
 
-
-filter_edges()
-{
+filter_edges() {
     local line
     while read -a line; do
 
@@ -130,7 +111,7 @@ filter_edges()
             continue
         fi
 
-        if ( grep -Fxq "${line[0]}" $FILTERNAMES || grep -Fxq "${line[2]}" $FILTERNAMES ); then
+        if (grep -Fxq "${line[0]}" $FILTERNAMES || grep -Fxq "${line[2]}" $FILTERNAMES); then
             continue
         fi
 
@@ -138,22 +119,16 @@ filter_edges()
     done
 }
 
-
-all_called_by()
-{
+all_called_by() {
     cscope -f cscope.out -RL2 "$1" | awk -F ' ' -v header="$2" -v tailer="$3" '{print header $2 tailer}'
 }
 
-
-get_edges()
-{
-	local OPT=$(opt_add_edge_decorcation $1)
+get_edges() {
+    local OPT=$(opt_add_edge_decorcation $1)
     all_called_by $1 "$1 -> " "$OPT" | filter_edges
 }
 
-
-create_clusters()
-{
+create_clusters() {
     local current_cluster="1!Z"
 
     local word
@@ -172,38 +147,34 @@ create_clusters()
             cluster_start $current_cluster
         fi
 
-        printf "\t${word[1]}" #add node
+        printf "\t${word[1]}"               #add node
         opt_add_node_decorcation ${word[1]} #add optional decorations
-        printf "\n"           #end node
+        printf "\n"                         #end node
     done
 
     printf "}\n\n" #close the last cluster
 }
 
-
-create_edges()
-{
+create_edges() {
     local word
     while read word; do
         get_edges $word #add all edges for this node
     done
 }
 
-opt_add_node_decorcation()
-{
+opt_add_node_decorcation() {
     if [[ $PRIMARY =~ $1 ]]; then
         printf " [fillcolor=green, style=\"filled,rounded\", root=true];"
         return
-	fi
+    fi
     if [[ $SECONDARY =~ $1 ]]; then
         printf " [fillcolor=lightblue, style=\"filled,rounded\"];"
         return
     fi
-	printf ""
+    printf ""
 }
 
-opt_add_edge_decorcation()
-{
+opt_add_edge_decorcation() {
     if [[ $PRIMARY =~ $1 ]]; then
         printf " [color=green, arrowsize=\"1.5\"];\n"
         return
@@ -212,19 +183,18 @@ opt_add_edge_decorcation()
         printf " [color=blue, arrowsize=\"1.5\"];\n"
         return
     fi
-	printf ""
+    printf ""
 }
 
-get_sec()
-{
-	local RET=""
-	local TEMP
-	for word in $*; do
-		TEMP=$(all_called_by $word | sort | uniq | filter_names )
-		TEMP=${TEMP//$'\n'/ }
-		RET+="$TEMP "
-	done
-	printf "$RET"
+get_sec() {
+    local RET=""
+    local TEMP
+    for word in $*; do
+        TEMP=$(all_called_by $word | sort | uniq | filter_names)
+        TEMP=${TEMP//$'\n'/ }
+        RET+="$TEMP "
+    done
+    printf "$RET"
 }
 ###################### MAIN BELOW ###################
 
@@ -236,7 +206,7 @@ fi
 
 if [[ $# > 1 ]]; then
     shift 1
-	PRIMARY=$*
+    PRIMARY=$*
 else
     PRIMARY="main"
 fi
@@ -254,16 +224,16 @@ echo "[Building] cscope.out"
 cscope -bkRu -f cscope.out
 
 echo "[Generating] graph"
-graph_start > graph.dot
+graph_start >graph.dot
 echo "[Generating] clusters"
-all_called | filter_names | add_location | basepath | filter_files | sort | uniq | create_clusters >> graph.dot
+all_called | filter_names | add_location | basepath | filter_files | sort | uniq | create_clusters >>graph.dot
 echo "[Generating] edges"
-all_called | filter_names | sort | uniq | create_edges >> graph.dot
+all_called | filter_names | sort | uniq | create_edges >>graph.dot
 echo "[Generating] completing graph"
-graph_end >> graph.dot
+graph_end >>graph.dot
 
 echo "[Converting] graph.dot -> graph.svg"
-dot -Tsvg graph.dot -o graph.svg;
+dot -Tsvg graph.dot -o graph.svg
 
 printf "\n[Opening] graph.svg\n"
 xdg-open graph.svg
@@ -277,7 +247,5 @@ exit 0
 #dot -Tpng graph.dot -o graph.png;
 #dot -Tsvg graph.dot -o graph.svg;
 
-
 #gsettings set org.gnome.Evince page-cache-size 200
 #tfile=/tmp/makedot.temp.$RANDOM
-

@@ -8,7 +8,7 @@
 #      Modified  Friday, 23 March 2018
 #=================================================================
 
-set -o nounset                  # Treat unset variables as an error
+set -o nounset # Treat unset variables as an error
 
 # Use colors, but only if connected to a terminal, and that terminal
 # supports them.
@@ -31,9 +31,8 @@ else
     RESET=""
 fi
 
-if [[  $# > 0 ]]; then
+if [[ $# > 0 ]]; then
     echo "$BOLD${RED}C${GREEN}O${YELLOW}L${BLUE}O${RED}R${GREEN}S$RESET$BOLD support$GREEN ON$RESET"
 fi
 
-set +o nounset                  # Do Not treat unset variables as an error
-
+set +o nounset # Do Not treat unset variables as an error

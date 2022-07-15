@@ -3,7 +3,7 @@
 ADB=~/Android/Sdk/platform-tools/adb
 
 function help {
-cat <<EOF
+    cat <<EOF
     Usage: $0 [options]
 
     -h|--help                    Display this text.
@@ -13,15 +13,14 @@ cat <<EOF
     -s|--shell                   Connect to ADB shell on device
 
 EOF
-exit
+    exit
 }
-
 
 POSITIONAL_ARGS=""
 
-while (( "$#" )); do
+while (("$#")); do
     case "$1" in
-    -c|--connect)
+    -c | --connect)
         IP=$2
         shift 2
 
@@ -36,83 +35,42 @@ while (( "$#" )); do
         $ADB tcpip 5555
         $ADB connect $IP:5555
         exit
-    ;;
-    -d|--disconnect)
+        ;;
+    -d | --disconnect)
         $ADB disconnect
         shift 1
         exit
-    ;;
-    -l|--logcat)
+        ;;
+    -l | --logcat)
         shift 1
         $ADB logcat $@
         exit
-    ;;
-    -s|--shell)
+        ;;
+    -s | --shell)
         shift 1
         $ADB shell $@
         exit
-    ;;
-    -?|-h|--help)
+        ;;
+    -? | -h | --help)
         shift 1
         help
-    ;;
+        ;;
     --) # end argument parsing
         shift
         break
-    ;;
-    -*|--*=) # unsupported flags
+        ;;
+    -* | --*=) # unsupported flags
         echo "Error: Unsupported flag $1" >&2
         help
         exit 1
-    ;;
+        ;;
     *) # preserve positional arguments
         POSITIONAL_ARGS="$POSITIONAL_ARGS $1"
         shift
-    ;;
+        ;;
     esac
 done
 
 # set positional arguments in their proper place
-eval set -- "$PARAMS"
-
-
-
-
-# if [[ $# < 1 ]]; then
-
-
-#     if [[ $1 == "--help" ]]; then
-#         $ADB logcat
-#         exit
-#     fi
-
-
-#     if [[ $1 == "--logcat" ]]; then
-#         $ADB logcat
-#         exit
-#     fi
-
-#     if [[ $1 == "--disconnect" ]]; then
-#         $ADB disconnect
-#         exit
-#     fi
-
-#     if [[ $1 == "--connect" ]]; then
-#         if [[ $# < 2 ]]; then
-#             read -p "Enter the IP address of the phone: " ip
-#         else
-
-#         # hope it's a IP address
-#         echo "Ip detected as" $2
-#         ip=$2
-
-#         $ADB tcpip 5555
-#         $ADB connect $ip:5555
-#         exit
-#     fi
-
-#     help()
-
-# fi
-
+eval set -- "$POSITIONAL_ARGS"
 

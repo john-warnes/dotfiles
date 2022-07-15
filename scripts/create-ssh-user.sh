@@ -3,35 +3,35 @@
 # TODO: Add a flag to toggle adding user to SUDO or not
 
 function help {
-cat <<EOF
+    cat <<EOF
     Usage: $0 [username] ["full name"] ["SSH Public Key"]
 
     -h|--help                    Display this text.
 EOF
-exit
+    exit
 }
 
 POSITIONAL_ARGS=()
 
-while (( "$#" )); do
+while (("$#")); do
     case "$1" in
-    -?|-h|--help)
+    -? | -h | --help)
         shift 1
         help
-    ;;
+        ;;
     --) # end argument parsing
         shift
         break
-    ;;
-    -*|--*=) # unsupported flags
+        ;;
+    -* | --*=) # unsupported flags
         echo "Error: Unsupported flag $1" >&2
         help
         exit 1
-    ;;
+        ;;
     *) # preserve positional arguments
         POSITIONAL_ARGS+=("$1")
         shift
-    ;;
+        ;;
     esac
 done
 
@@ -41,7 +41,6 @@ eval set -- "${POSITIONAL_ARGS[@]}"
 
 # Check if we have at least one
 [[ ${#POSITIONAL_ARGS[@]} < 3 ]] && help
-
 
 username=${POSITIONAL_ARGS[0]}
 fullname=${POSITIONAL_ARGS[1]}

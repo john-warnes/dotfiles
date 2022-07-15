@@ -1,5 +1,5 @@
 #!/bin/bash -
-#===============================================================================
+# ============================================================================
 #
 #          FILE: unlock.sh
 #
@@ -8,7 +8,7 @@
 #        AUTHOR: John Warnes (jwarnes), johnwarnes@mail.weber.edu
 #  ORGANIZATION: WSU
 #       CREATED: 06/06/2017 12:39:00 AM
-#===============================================================================
+# ============================================================================
 
 SECURE=$DOT_FILES/secure
 SCRIPTS=$DOT_FILES/scripts
@@ -57,5 +57,3 @@ echo "$BOLD${BLUE}Decompressing tar.zx to files$RESET"
 
 echo "$BOLD${BLUE}Shredding$RESET$BOLD old tar.xz file$RESET"
 ($SHRED -n 9 -uzf $SECURE/secure.tar.xz)
-
-
