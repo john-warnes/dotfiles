@@ -21,53 +21,58 @@ import platform
 import subprocess
 
 import argparse
+from unittest import skip
 
 from pkg_resources import parse_version
 
-user = {}
 SYS_DATA = {}
 SETTINGS = {
-    "version"    : "3.2",                # Script
-    "dotfiles"   : "~/dotfiles",         # Directories
-    "backup_file": "~/.dotfiles_Backup", # Files
-
+    # DotSetup Script Version
+    "version": "3.5",
+    # Directories
+    "dotfiles": "~/dotfiles",
+    # Files
+    "backup_file": "~/.dotfiles_Backup",
     # VIM
     "vim_required": "8.0",
     "nvim_required": "0.2.0",
 }
 
-def box_draw(text):
+
+def box_draw(text: str) -> None:
     print("╔═{:═^{pad}}═╗".format("", pad=len(text)))
     print("║ {:═^{pad}} ║".format(text, pad=len(text)))
     print("╚═{:═^{pad}}═╝".format("", pad=len(text)))
 
-def get_script_path():
+
+def get_script_path() -> str:
     return os.path.dirname(os.path.realpath(sys.argv[0]))
+
 
 def collect_system_data():
     """
     Used to collect current system state
     """
-    global SYS_DATA
     SYS_DATA["home"] = os.path.expanduser("~")
-    SYS_DATA["nvim_config"] = BAR = os.environ.get('XDG_CONFIG_HOME', SYS_DATA["home"] + '/.config/nvim/')  # None
+    SYS_DATA["nvim_config"] = BAR = os.environ.get("XDG_CONFIG_HOME", SYS_DATA["home"] + "/.config/nvim/")  # None
     SYS_DATA["sdir"] = get_script_path()
     SYS_DATA["sfile"] = str(__file__)
     SYS_DATA["os_kind"] = os.name
     SYS_DATA["os"] = platform.system()
     SYS_DATA["os_release"] = platform.release()
-
     SYS_DATA["vim_version"] = (
-        subprocess.check_output("vim --version | head -1 | cut -d ' ' -f 5", shell=True).decode("ascii").strip() or "[Unknown]"
+        subprocess.check_output("vim --version | head -1 | cut -d ' ' -f 5", shell=True).decode("ascii").strip()
+        or "[Unknown]"
     )
-
     SYS_DATA["nvim_version"] = (
-        subprocess.check_output("nvim --version | head -1 | cut -d ' ' -f 2", shell=True).decode("ascii").strip()[1:] or "[Unknown]"
+        subprocess.check_output("nvim --version | head -1 | cut -d ' ' -f 2", shell=True).decode("ascii").strip()[1:]
+        or "[Unknown]"
     )
     # print(os.getcwd())  # Current DIR
     # os.chdir(current_dir)  # Chance DIR
 
-def display_system_data():
+
+def display_system_data(skipUser: bool = False):
     """
     Display current system information
     """
@@ -80,17 +85,22 @@ def display_system_data():
     print("║ Script Directory: {:{pad}} ║".format(SYS_DATA["sdir"], pad=34))
     print("║ Home Directory  : {:{pad}} ║".format(SYS_DATA["home"], pad=34))
     print("║ Current Version : {:{pad}} ║".format(SYS_DATA["vim_version"], pad=34))
-    print("║ Required Version: {:{pad}} ║".format(SETTINGS["vim_required"], pad=34))
+    print("║ Required Version: {:{pad}} ║".format(SETTINGS["vim_required"], pad=34)) if not skipUser else False
     print("╠═ NEOVIM ═════════════════════════════════════════════╣")
     print("║ Current Version  : {:{pad}} ║".format(SYS_DATA["nvim_version"], pad=33))
-    print("║ Required Version : {:{pad}} ║".format(SETTINGS["nvim_required"], pad=33))
+    print("║ Required Version : {:{pad}} ║".format(SETTINGS["nvim_required"], pad=33)) if not skipUser else False
     print("╚══════════════════════════════════════════════════════╝")
     print()
 
-def hasDependencies():
+
+def hasDependencies(skipUser: bool = False) -> bool:
     box_draw("Checking Dependencies")
     print()
     dependencies = True
+
+    if skipUser:
+        return dependencies
+
     if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]):
         print(" Warning: Vim version is below the required version")
     else:
@@ -100,18 +110,23 @@ def hasDependencies():
     else:
         print(" Neovim version: OK")
 
-    if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]) and parse_version(SETTINGS["nvim_required"]) > parse_version(SYS_DATA["nvim_version"]):
+    if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]) and parse_version(
+        SETTINGS["nvim_required"]
+    ) > parse_version(SYS_DATA["nvim_version"]):
         dependencies = False
         print(" ERROR: Vim or Neovim must be above the required version")
 
     return dependencies
 
-def flat_string(text):
+
+def flat_string(text: str) -> str:
     text = text.replace(" ", "")
     text = text.lower()
     return text
 
-def askUserData():
+
+def askUserData() -> dict:
+    user = {}
     print()
     box_draw("User information")
     print()
@@ -130,16 +145,25 @@ def askUserData():
         print("Error! Must enter a company name.")
         quit()
 
-    user["email"] = input(" Email '{}{}@{}.net [Enter] for default': ".format(first.lower(), last[0].lower(), flat_string(user["company"])))
-    if user["email"] == '':
-        user["email"] = '{}{}@{}.net'.format(first.lower(), last[0].lower(), flat_string(user["company"]))
+    user["email"] = input(
+        " Email '{}{}@{}.net [Enter] for default': ".format(
+            first.lower(), last[0].lower(), flat_string(user["company"])
+        )
+    )
+    if user["email"] == "":
+        user["email"] = "{}{}@{}.net".format(first.lower(), last[0].lower(), flat_string(user["company"]))
 
     user["vim"] = input(" Default console editor '{}' [Enter] for default: ".format("[vim], nvim, nano, code"))
     if user["vim"] == "":
         user["vim"] = "vim"
-    print()
 
-def createUserVim():
+    print("")
+    return user
+
+
+def createUserVim(user: dict) -> None:
+    if not user:
+        return
     print(" Creating user.vim")
     f = open("vim/user.vim", "w")
     f.write("let g:_NAME_    = {}\n".format(user["name"]))
@@ -150,51 +174,57 @@ def createUserVim():
     f.close()
 
 
-def createUserGit():
-    print(" Creating gitconfig")
+def createUserGit(user: dict) -> None:
+    print("Creating gitconfig")
     f = open("git/gitconfig", "w")
     f.write(
-"""[user]
-	name = {name}
-	email = {email}
-[core]
-	editor = {vim}
-	autocrlf = input
-[help]
-	autocorrect = 1
-[color]
-	ui = auto
-    branch = auto
-    diff = auto
-    interactive = auto
-    status = auto
-    grep = auto
-    pager = true
-    decorate = auto
-    showbranch = auto
-[push]
-	default = simple
-[credential]
-	helper = cache --timeout=28800
-[alias]
-	export = archive -o latest.tar.gz -9 --prefix=latest/
-	details = log -n1 -p --format=fuller
-	logpretty = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset%C(auto)%d%n%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset'
-	logshort = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset -%C(auto)%h %d%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset' --abbrev-commit
-	s = status
-[pull]
-	ff = only
-""".format(name=user["name"], email=user["email"], vim=user["vim"])
+        "\n".join(
+            [
+                "[user]",
+                f"	name = {user['name']}" if user else "",
+                f"	email = {user['email']}" if user else "",
+                "[core]",
+                f"	editor = {user['vim']}" if user else "",
+                "	autocrlf = input",
+                "[help]",
+                "	autocorrect = 1",
+                "[color]",
+                "	ui = auto",
+                "	branch = auto",
+                "	diff = auto",
+                "	interactive = auto",
+                "	status = auto",
+                "	grep = auto",
+                "	pager = true",
+                "	decorate = auto",
+                "	showbranch = auto",
+                "[push]",
+                "	default = simple",
+                "[credential]",
+                "	helper = cache --timeout=28800",
+                "[alias]",
+                "	export = archive -o latest.tar.gz -9 --prefix=latest/",
+                "	details = log -n1 -p --format=fuller",
+                r"	logpretty = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset%C(auto)%d%n%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset'",
+                r"	logshort = log --graph --decorate --pretty=format:'%C(yellow)%h%Creset -%C(auto)%h %d%Creset %s %C(green)(%cr) %C(blue)<%an>%Creset' --abbrev-commit",
+                "	stats-commits = git shortlog -sn --no-merges",
+                "	s = status",
+                "[pull]",
+                "	ff = only",
+                "",  # Ends in newline
+            ]
+        )
     )
     f.close()
 
 
 def createFolders():
-    dir = SYS_DATA["home"] + '/.config/nvim/'
+    dir = SYS_DATA["home"] + "/.config/nvim/"
     if os.path.isdir(dir):
         return
     else:
         os.makedirs(dir)
+
 
 def createSysLinks():
     """
@@ -212,7 +242,7 @@ def createSysLinks():
         SYS_DATA["sdir"] + "/nvim/init.vim": SYS_DATA["home"] + "/.config/nvim/init.vim",
     }
     print()
-    print(" Creating symlinks")
+    print("Creating symlinks")
 
     for src, dest in symlinks.items():
         if os.path.isfile(dest):
@@ -224,55 +254,69 @@ def createSysLinks():
 
 
 def exportDotFiles():
+    def safe_append(fileName: str, exportLines: list[str]) -> None:
+        if not exportLines:
+            # No lines to export
+            return
 
-    def safe_append(fn, datas):
-        if os.path.isfile(fn) or os.path.islink(fn):
-            for data in datas:
-                with open(fn) as f:
-                    for line in f:
-                        if line == data:
-                            print(" {} already contains: {}".format(fn, data))
-                            continue;
-                        else:
-                            print(" modifying {} with: {}".format(fn, data))
-                            with open(fn, "a") as appendfile:
-                                appendfile.write(data)
+        if not (os.path.isfile(fileName) or os.path.islink(fileName)):
+            print(f" Error file not found: {fileName}")
+            return
+
+        with open(fileName) as readFile:
+            for line in readFile:
+                if line in exportLines:
+                    exportLines.remove(line)
+                    print(" Skip line: {}".format(line.replace("\n", "")))
+
+        with open(fileName, "a") as appendFile:
+            for exportLine in exportLines:
+                print(" Add line: {}".format(exportLine.replace("\n", ""), fileName))
+                appendFile.write(exportLine)
 
     print()
-    print(" Exporting DOT_FILES environment variable")
-    fn=""
+    print("Exporting DOT_FILES environment variable")
+    fn = ""
     if SYS_DATA["os"] == "Darwin":
         print(" Darwin detected: Selecting file '~/.bash_profile' and '~/.zshrc'")
 
         fn = SYS_DATA["home"] + "/.bash_profile"
         exportline = "export DOT_FILES=" + SYS_DATA["sdir"] + "\n"
         autoruncode = "export CLICOLOR=1\nsource $DOT_FILES/shell/autorun.sh\n"
-        safe_append(fn, [exportline, autoruncode ])
+        safe_append(fn, [exportline, autoruncode])
 
         fn = SYS_DATA["home"] + "/.zshrc"
-        zshprompt = 'prompt=\'%F{028}%n@%m %F{025}%~%f %% \''
+        zshprompt = "prompt='%F{028}%n@%m %F{025}%~%f %% '"
         safe_append(fn, [exportline, autoruncode, zshprompt])
     else:
-        print(" Selecting file ~/.bashrc")
-        fn = SYS_DATA["home"] + "/.bashrc"
-        exportline = "export DOT_FILES=" + SYS_DATA["sdir"] + "\n"
-        autoruncode = "export CLICOLOR=1\nsource $DOT_FILES/shell/autorun.sh\n"
+
+        safe_append(
+            f'{SYS_DATA["home"]}/.bashrc',
+            [
+                f'export DOT_FILES={SYS_DATA["sdir"]}\n',
+                "export CLICOLOR=1\n",
+                "source $DOT_FILES/shell/autorun.sh\n",
+            ],
+        )
 
 
-def install():
-    askUserData()
-    createUserVim()
-    createUserGit()
+def install(skipUser: bool = False):
+    user = None
+    if not skipUser:
+        user = askUserData()
+
+    createUserVim(user)
+    createUserGit(user)
     createFolders()
     createSysLinks()
     exportDotFiles()
     print()
     box_draw("Final Steps")
     print()
-    print(' 1. For vim 8.0>: run `vim +PackUpdate`')
-    print('    For vim <7.4: run `vim`')
-    print(' 2. Ingore any errors in vim and quit with `:q!`')
-    print(' 3. Close `exit` all terminal windows and reopen them to finish setup.')
+    print(" 1. For vim 8.0>: run `vim +PackUpdate`")
+    print("    For vim <7.4: run `vim`")
+    print(" 2. Ingore any errors in vim and quit with `:q!`")
+    print(" 3. Close `exit` all terminal windows and reopen them to finish setup.")
     print()
 
 
@@ -286,26 +330,28 @@ def main():
     xorgroup.add_argument("-i", "--install", help="Install Files", action="store_true", default=False)
     xorgroup.add_argument("-r", "--remove", help="Remove Files", action="store_true", default=False)
     # parser.add_argument('-', help="Column to show", type=int, default=16, dest="col")
+    parser.add_argument(
+        "--skip-user", help="Install, Skipping user setup", action="store_true", default=False, dest="skipUser"
+    )
     args = parser.parse_args()
 
     collect_system_data()
-    display_system_data()
+    display_system_data(skipUser=args.skipUser)
 
-    if not hasDependencies():
-        print()
-        print("Error: Missing dependencies.")
-        print()
+    if not hasDependencies(skipUser=args.skipUser):
+        print("\nError: Missing dependencies.\n")
         quit()
 
-    if args.install:
-        install()
+    if args.install or args.skipUser:
+        install(skipUser=args.skipUser)
     elif args.remove:
-        remove() # TODO: Add remove
+        remove()  # TODO: Add remove
     else:
         print()
         box_draw("Help")
         print(" Usage: ./Dotfiles --install")
         print()
+    return
 
 
 if __name__ == "__main__":
