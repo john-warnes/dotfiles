@@ -260,8 +260,9 @@ def exportDotFiles():
             return
 
         if not (os.path.isfile(fileName) or os.path.islink(fileName)):
-            print(f" Error file not found: {fileName}")
-            return
+            with open(fileName, 'a'):
+                # Create file if does not exist
+                pass
 
         with open(fileName) as readFile:
             for line in readFile:
