@@ -132,7 +132,8 @@ checkvenv() {
 
 BashGit-Prompt() {
 
-    if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/zsh' ]]; then
+    if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/zsh' || $SHELL == '/bin/ash' ]]; then
+    # ash = https://en.wikipedia.org/wiki/Almquist_shell
 
         if [[ -f $DOT_FILES/shell/git-prompt.sh ]]; then
 
@@ -147,7 +148,7 @@ BashGit-Prompt() {
             fi
 
             # Bash
-            if [[ $SHELL == '/bin/bash' ]]; then
+            if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/ash' ]]; then
                 export GIT_PS1_SHOWCOLORHINTS=1
                 # PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "' # original
                 # PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
