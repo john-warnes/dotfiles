@@ -3,37 +3,117 @@
 #          FILE  colors.sh
 #         USAGE  ./colors.sh
 #
-#        AUTHOR  John Warnes (), johnwarnes@mail.weber.edu
-#      Revision  016
-#      Modified  Friday, 23 March 2018
+#        AUTHOR  John Warnes (), john@warnes.email
+#      Revision  020
+#      Modified  Friday, 19 March 2022
 #=================================================================
 
-set -o nounset # Treat unset variables as an error
+# set -o nounset # Treat unset variables as an error
 
-# Use colors, but only if connected to a terminal, and that terminal
-# supports them.
-if (($CLICOLOR == 1)); then
-    ncolors=16
-else
-    if which tput >/dev/null 2>&1; then
-        ncolors=$(tput colors)
-    fi
-fi
+# Use colors
+# If connected to a terminal [ -t 1 ] and the CLICOLOR env set set
+if [ -t 1 ] && (($CLICOLOR == 1)); then
 
-if [ -t 1 ] && [ -n "$ncolors" ] && (( $ncolors >= 8 )); then
-    RED="$(tput setaf 1)"
-    GREEN="$(tput setaf 2)"
-    YELLOW="$(tput setaf 3)"
-    BLUE="$(tput setaf 4)"
-    BOLD="$(tput bold)"
-    RESET="$(tput sgr0)"
+    # This function evaluates the echo to turn the ESC sequence into a true byte value
+    esc() {
+        local ESC="\x1B" # "\e"
+        eval 'echo -e "$ESC$1"'
+    }
+
+    # Reset
+    RESET=$(esc '[0m')  # Reset all modes and colors
+
+    # Foreground
+    BLACK=$(esc '[30m')
+    RED=$(esc '[31m')
+    GREEN=$(esc '[32m')
+    YELLOW=$(esc '[33m')
+    BLUE=$(esc '[34m')
+    MAGENTA=$(esc '[35m')
+    CYAN=$(esc '[36m')
+    WHITE=$(esc '[37m')
+    DEFAULT=$(esc '[39m')
+
+    # Background
+    BACK_BLACK=$(esc '[40m')
+    BACK_RED=$(esc '[41m')
+    BACK_GREEN=$(esc '[42m')
+    BACK_YELLOW=$(esc '[43m')
+    BACK_BLUE=$(esc '[44m')
+    BACK_MAGENTA=$(esc '[45m')
+    BACK_CYAN=$(esc '[46m')
+    BACK_WHITE=$(esc '[47m')
+    BACK_DEFAULT=$(esc '[49m')
+
+    # Modes
+    BOLD=$(esc '[1m')
+    NORMAL=$(esc '[22m')
+    DIM=$(esc '[2m')
+
+    # Advanced Modes
+    ITALIC=$(esc '[3m')
+    UNDERLINE=$(esc '[4m')
+    BLINK=$(esc '[5m')
+    INVERSE=$(esc '[7m')
+    HIDDEN=$(esc '[8m')
+    STRIKETHROUGH=$(esc '[9m')
+
+    # Reset Modes (Only upsets the mode)
+    BOLD_RESET=$(esc '[22m')
+    DIM_RESET=$(esc '[22m')
+    ITALIC_RESET=$(esc '[23m')
+    UNDERLINE_RESET=$(esc '[24m')
+    BLINK_RESET=$(esc '[25m')
+    INVERSE_RESET=$(esc '[27m')
+    HIDDEN_RESET=$(esc '[28m')
+    STRIKETHROUGH_RESET=$(esc '[29m')
 else
-    RED=""
-    GREEN=""
-    YELLOW=""
-    BLUE=""
-    BOLD=""
-    RESET=""
+    unset RESET
+
+    # Foreground
+    unset BLACK
+    unset RED
+    unset GREEN
+    unset YELLOW
+    unset BLUE
+    unset MAGENTA
+    unset CYAN
+    unset WHITE
+    unset DEFAULT
+
+    # Background
+    unset BACK_BLACK
+    unset BACK_RED
+    unset BACK_GREEN
+    unset BACK_YELLOW
+    unset BACK_BLUE
+    unset BACK_MAGENTA
+    unset BACK_CYAN
+    unset BACK_WHITE
+    unset BACK_DEFAULT
+
+    # Modes
+    unset BOLD
+    unset NORMAL
+    unset DIM
+
+    # Advanced Modes
+    unset ITALIC
+    unset UNDERLINE
+    unset BLINK
+    unset INVERSE
+    unset HIDDEN
+    unset STRIKETHROUGH
+
+    # Reset Modes (Only upsets the mode)
+    unset BOLD_RESET
+    unset DIM_RESET
+    unset ITALIC_RESET
+    unset UNDERLINE_RESET
+    unset BLINK_RESET
+    unset INVERSE_RESET
+    unset HIDDEN_RESET
+    unset STRIKETHROUGH_RESET
 fi
 
 if [[ $# > 0 ]]; then
