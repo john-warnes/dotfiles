@@ -12,10 +12,15 @@ set -o nounset # Treat unset variables as an error
 
 # Use colors, but only if connected to a terminal, and that terminal
 # supports them.
-if which tput >/dev/null 2>&1; then
-    ncolors=$(tput colors)
+if (($CLICOLOR == 1)); then
+    ncolors=16
+else
+    if which tput >/dev/null 2>&1; then
+        ncolors=$(tput colors)
+    fi
 fi
-if [ -t 1 ] && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
+
+if [ -t 1 ] && [ -n "$ncolors" ] && (( $ncolors >= 8 )); then
     RED="$(tput setaf 1)"
     GREEN="$(tput setaf 2)"
     YELLOW="$(tput setaf 3)"
