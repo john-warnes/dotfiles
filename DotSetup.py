@@ -254,7 +254,7 @@ def createSysLinks() -> None:
 
 
 def exportDotFiles():
-    def safe_append(fileName: str, exportLines: list[str]) -> None:
+    def safe_append(fileName: str, exportLines: list) -> None:
         if not exportLines:
             # No lines to export
             return
