@@ -7,21 +7,19 @@
 #
 # @internal
 #      Created  2018 January 04, Thursday
-#     Modified  2022 July 15, Friday
-#     Revision  279
+#     Modified  2022 Aug 18, Thursday
+#     Revision  280
 #
-# @copyright  Copyright (c) 2020, John Warnes
+# @copyright  Copyright (c) 2022, John Warnes
 # ============================================================================
 
 # Required Python3 and Pip3
 
+import argparse
 import os
-import sys
 import platform
 import subprocess
-
-import argparse
-from unittest import skip
+import sys
 
 from pkg_resources import parse_version
 
@@ -349,7 +347,7 @@ def main():
     else:
         print()
         box_draw("Help")
-        print(" Usage: ./Dotfiles --install")
+        print(" Usage: ./DotSetup --install")
         print()
     return
 
