@@ -1,0 +1,20 @@
+# usage: `export ~/dotfiles/shell/c_locale`
+
+# Programmer mode: Symbols first
+#
+# .100.txt
+# 100.txt
+# 1aa.txt
+# 2aa.txt
+#
+export LC_COLLATE="C.UTF-8"
+# localectl set-locale LC_COLLATE="C.UTF-8"
+
+# Normal EN mode
+#
+# 1aa.txt
+# 2aa.txt
+# .100.txt
+# 100.txt
+#
+# export LC_COLLATE="en_US.UTF-8"

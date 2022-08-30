@@ -81,9 +81,12 @@ if [ -z "$password" ]; then
     echo "Random password generated: '$password'"
 fi
 
+# Interactively asks for password
+# sudo adduser --gecos "$fullname,,,," $username
+
 # Create the new user and set the password
-#sudo adduser --disabled-password --gecos "$fullname,,,," $username
-#echo "$username:$password" | sudo chpasswd
+sudo adduser --disabled-password --gecos "$fullname,,,," $username
+echo "$username:$password" | sudo chpasswd
 
 # Save the users password into password.txt
 echo "$password" > /home/$username/password.txt
@@ -91,20 +94,18 @@ sudo chown $username:$username /home/$username/password.txt
 sudo chmod 600 /home/$username/password.txt
 echo "Password saved to '/home/$username/password.txt'"
 
+# Make the ssh folder
+sudo mkdir /home/$username/.ssh
+sudo touch /home/$username/.ssh/authorized_keys
 
-# Interactively asks for password
-# sudo adduser --gecos "$fullname,,,," $username
+# Copy ssh key into authorized keys
+echo $pub_key | sudo tee -a /home/$username/.ssh/authorized_keys
 
-exit 0
+# Set correct ownership and permissions
+sudo chmod 755 /home/$username/.ssh
+sudo chmod 664 /home/$username/.ssh/authorized_keys
+sudo chown -R $username:$username /home/$username/
 
-
-# sudo mkdir /home/$username/.ssh
-# sudo touch /home/$username/.ssh/authorized_keys
-# echo $pub_key | sudo tee -a /home/$username/.ssh/authorized_keys
-# sudo chmod 755 /home/$username/.ssh
-# sudo chmod 664 /home/$username/.ssh/authorized_keys
-# sudo chown -R $username:$username /home/$username/
-
-# echo "Sudo-ing user: $username"
-# sudo usermod -a -G sudo $username
-# echo "Done."
+echo "Sudo-ing user: $username"
+sudo usermod -a -G sudo $username
+echo "Done."
