@@ -78,7 +78,7 @@ fi
 # If password is empty set it to random
 if [ -z "$password" ]; then
     password=$(head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 13)
-    echo "Random password generated: '$password'"
+    echo "Random password generated: \`$password\`"
 fi
 
 # Interactively asks for password
@@ -92,7 +92,7 @@ echo "$username:$password" | sudo chpasswd
 echo "$password" > /home/$username/password.txt
 sudo chown $username:$username /home/$username/password.txt
 sudo chmod 600 /home/$username/password.txt
-echo "Password saved to '/home/$username/password.txt'"
+echo "Password saved to \`/home/$username/password.txt\`"
 
 # Make the ssh folder
 sudo mkdir /home/$username/.ssh
@@ -106,6 +106,6 @@ sudo chmod 755 /home/$username/.ssh
 sudo chmod 664 /home/$username/.ssh/authorized_keys
 sudo chown -R $username:$username /home/$username/
 
-echo "Sudo-ing user: $username"
+echo "Sudo-ing user: \`$username\`"
 sudo usermod -a -G sudo $username
 echo "Done."
