@@ -32,8 +32,8 @@ SETTINGS = {
     # Files
     "backup_file": "~/.dotfiles_Backup",
     # VIM
-    "vim_required": "8.0",
-    "nvim_required": "0.2.0",
+    "vim_recommended": "8.0",
+    "nvim_recommended": "0.2.0",
 }
 
 
@@ -79,14 +79,14 @@ def display_system_data(skipUser: bool = False):
     print("║ OS     : {:{pad}} ║".format(SYS_DATA["os"], pad=43))
     print("║ Release: {:{pad}} ║".format(SYS_DATA["os_release"], pad=43))
     print("╠═ VIM ════════════════════════════════════════════════╣")
-    print("║ Script File     : {:{pad}} ║".format(SYS_DATA["script_file"], pad=34))
-    print("║ Script Directory: {:{pad}} ║".format(SYS_DATA["script_dir"], pad=34))
-    print("║ Home Directory  : {:{pad}} ║".format(SYS_DATA["home"], pad=34))
-    print("║ Current Version : {:{pad}} ║".format(SYS_DATA["vim_version"], pad=34))
-    print("║ Required Version: {:{pad}} ║".format(SETTINGS["vim_required"], pad=34)) if not skipUser else False
+    print("║ Script File      : {:{pad}} ║".format(SYS_DATA["script_file"], pad=33))
+    print("║ Script Directory : {:{pad}} ║".format(SYS_DATA["script_dir"], pad=33))
+    print("║ Home Directory   : {:{pad}} ║".format(SYS_DATA["home"], pad=33))
+    print("║ Current Version  : {:{pad}} ║".format(SYS_DATA["vim_version"], pad=33))
+    print("║ Recommend Version: {:{pad}} ║".format(SETTINGS["vim_recommended"], pad=33)) if not skipUser else False
     print("╠═ NEOVIM ═════════════════════════════════════════════╣")
     print("║ Current Version  : {:{pad}} ║".format(SYS_DATA["nvim_version"], pad=33))
-    print("║ Required Version : {:{pad}} ║".format(SETTINGS["nvim_required"], pad=33)) if not skipUser else False
+    print("║ Recommend Version: {:{pad}} ║".format(SETTINGS["nvim_recommended"], pad=33)) if not skipUser else False
     print("╚══════════════════════════════════════════════════════╝")
     print()
 
@@ -99,20 +99,14 @@ def hasDependencies(skipUser: bool = False) -> bool:
     if skipUser:
         return dependencies
 
-    if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]):
+    if parse_version(SETTINGS["vim_recommended"]) > parse_version(SYS_DATA["vim_version"]):
         print("Warning: Vim version is below the required version")
     else:
         print("Vim version: OK")
-    if parse_version(SETTINGS["nvim_required"]) > parse_version(SYS_DATA["nvim_version"]):
+    if parse_version(SETTINGS["nvim_recommended"]) > parse_version(SYS_DATA["nvim_version"]):
         print(" Warning: Neovim version is below the recommend version")
     else:
         print("Neovim version: OK")
-
-    if parse_version(SETTINGS["vim_required"]) > parse_version(SYS_DATA["vim_version"]) and parse_version(
-        SETTINGS["nvim_required"]
-    ) > parse_version(SYS_DATA["nvim_version"]):
-        dependencies = False
-        print("ERROR: Vim or Neovim must be above the required version")
 
     return dependencies
 
@@ -260,7 +254,7 @@ def exportDotFiles():
             return
 
         if not (os.path.isfile(fileName) or os.path.islink(fileName)):
-            with open(fileName, 'a'):
+            with open(fileName, "a"):
                 # Create file if does not exist
                 pass
 
@@ -314,7 +308,7 @@ def install(skipUser: bool = False):
     print()
     print(" 1. For vim 8.0>: run `vim +PackUpdate`")
     print("    For vim <7.4: run `vim`")
-    print(" 2. Ingore any errors in vim and quit with `:q!`")
+    print(" 2. Ignore any errors in vim and quit with `:q!`")
     print(" 3. Close `exit` all terminal windows and reopen them to finish setup.")
     print()
 
