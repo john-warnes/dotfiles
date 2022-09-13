@@ -20,6 +20,8 @@ import os
 import platform
 import subprocess
 import sys
+import configparser
+from pathlib import Path
 
 from pkg_resources import parse_version
 
@@ -157,7 +159,9 @@ def createUserVim(user: dict) -> None:
     if not user:
         return
     print("Creating user.vim")
-    f = open("vim/user.vim", "w")
+
+    vim_user_path = Path(f"{SETTINGS['dotfiles']}/vim/user.vim").expanduser()
+    f = open(vim_user_path, "w")
     f.write(f"let g:_NAME_    = {user['name']}\n")
     f.write(f"let g:_USER_    = {user['user']}\n")
     f.write(f"let g:_COMPANY_ = {user['company']}\n")
@@ -168,7 +172,9 @@ def createUserVim(user: dict) -> None:
 
 def createUserGit(user: dict) -> None:
     print("Creating gitconfig")
-    f = open("git/gitconfig", "w")
+
+    git_config_path = Path(f"{SETTINGS['dotfiles']}/git/gitconfig").expanduser()
+    f = open(git_config_path, "w")
     f.write(
         "\n".join(
             [
@@ -208,6 +214,27 @@ def createUserGit(user: dict) -> None:
         )
     )
     f.close()
+
+    # Check if a config file already exists in the home folder, If it does
+    # the file we created will not be linked so lets just edit the existing file
+    configPathFile = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
+    if configPathFile.is_file():
+        print("~/.gitconfig Already exists updating")
+        config = configparser.ConfigParser()
+        config.read(configPathFile)
+        if config["user"].get("name"):
+            config["user"]["name"] = user["name"]
+        if config["user"].get("email"):
+            config["user"]["email"] = user["email"]
+
+        config["alias"]["s"] = "status"
+        config["pull"]["ff"] = "only"
+
+        if not config["credential"].get("helper"):
+            config["credential"]["helper"] = "cache --timeout=28800"
+
+        with open(configPathFile, "w") as file:
+            config.write(file)
 
 
 def createFolders() -> None:
