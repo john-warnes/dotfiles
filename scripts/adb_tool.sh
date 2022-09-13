@@ -65,7 +65,7 @@ while (("$#")); do
         exit 1
         ;;
     *) # preserve positional arguments
-        POSITIONAL_ARGS="$POSITIONAL_ARGS $1"
+        POSITIONAL_ARGS="$POSITIONAL_ARGS \"$1\""
         shift
         ;;
     esac
