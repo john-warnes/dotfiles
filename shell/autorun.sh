@@ -107,14 +107,39 @@ PersonalAliases() {
 # ============================================================================
 # OSX Bash Completion {
 # ============================================================================
-OSXBashCompletion() {
+BashCompletion() {
+
+    # Linux
+    if [[ $OS == 'LINUX' ]] && ( [[ $SHELL == '/bin/bash' ]] || [[ $SHELL == '/bin/ash' ]] ); then
+
+        # enable programmable completion features (you don't need to enable
+        # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+        # sources /etc/bash.bashrc).
+        if ! shopt -oq posix; then
+            if [ -f /usr/share/bash-completion/bash_completion ]; then
+                . /usr/share/bash-completion/bash_completion
+                printf "${RESET}${GREEN}Bash Complete$RESET|"
+            elif [ -f /etc/bash_completion ]; then
+                . /etc/bash_completion
+                printf "${RESET}${GREEN}Bash Complete$RESET|"
+            else
+                printf "${RESET}${YELLOW}!! Bash Completion !!$RESET "
+            fi
+        else
+            printf "${RESET}${YELLOW}!! Bash Completion !!$RESET "
+        fi
+        return
+    fi
+
+    # OSX
     if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
         if [[ -f $(brew --prefix)/etc/bash_completion ]]; then
             source $(brew --prefix)/etc/bash_completion
-            printf "${RESET}${GREEN}OSX Bash Complete$RESET|"
+            printf "${RESET}${GREEN}Bash Complete$RESET|"
         else
-            printf "${RESET}${YELLOW}!! OSX Bash Completion !!$RESET "
+            printf "${RESET}${YELLOW}!! Bash Completion !!$RESET "
         fi
+        return
     fi
 }
 #} ===
@@ -217,7 +242,7 @@ main() {
         PersonalAliases
         ScriptsPath
 
-        #OSXBashCompletion
+        BashCompletion
         BashGit-Prompt
         FlutterBashCompletion
 
