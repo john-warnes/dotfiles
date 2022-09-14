@@ -21,7 +21,9 @@ import platform
 import subprocess
 import sys
 import configparser
+import shutil
 from pathlib import Path
+from turtle import back
 
 from pkg_resources import parse_version
 
@@ -33,6 +35,7 @@ SETTINGS = {
     "dotfiles": "~/dotfiles",
     # Files
     "backup_file": "~/.dotfiles_Backup",
+    "backup_path": "~/dotfiles/backup",
     # VIM
     "vim_recommended": "8.0",
     "nvim_recommended": "0.2.0",
@@ -209,6 +212,8 @@ def createUserGit(user: dict) -> None:
                 "	stats-commits = shortlog -sn --no-merges",  # Shows number of lines / commit by author for the current branch
                 "[pull]",
                 "	ff = only",
+                "[init]"
+                "	defaultBranch = main"
                 "",  # Ends in newline
             ]
         )
@@ -217,25 +222,35 @@ def createUserGit(user: dict) -> None:
 
     # Check if a config file already exists in the home folder, If it does
     # the file we created will not be linked so lets just edit the existing file
-    configPathFile = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
-    if configPathFile.is_file():
+    configPath = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
+    if configPath.is_file() or configPath.is_symlink():
+        backupPath = Path(SETTINGS['backup_path'])
+        backupPath.mkdir()
+        configPath.copy
+        shutil.copy(configPath, configPath)
+
         print("~/.gitconfig Already exists updating")
         config = configparser.ConfigParser()
-        config.read(configPathFile)
-        if config["user"].get("name"):
+        config.read(configPath)
+        if "name" in config["user"]:
             config["user"]["name"] = user["name"]
-        if config["user"].get("email"):
+        if "email" in config["user"]:
             config["user"]["email"] = user["email"]
 
         config["alias"]["s"] = "status"
         config["pull"]["ff"] = "only"
+        config["init"]["defaultBranch"] = "main"
 
-        if not config["credential"].get("helper"):
+        if not "helper" in config["credential"]:
             config["credential"]["helper"] = "cache --timeout=28800"
 
-        with open(configPathFile, "w") as file:
+        with open(configPath, "w") as file:
             config.write(file)
-
+    else:
+        # File does not exits go ahead and link it
+        src = Path(f"{SYS_DATA['script_dir']}/git/gitconfig").expanduser()
+        dest = Path(f"~/.gitconfig").expanduser()
+        os.symlink(src, dest)
 
 def createFolders() -> None:
     dir = f"{SYS_DATA['home']}/.config/nvim/"
