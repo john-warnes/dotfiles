@@ -56,9 +56,9 @@ eval set -- "${POSITIONAL_ARGS[@]}"
 
 username=${POSITIONAL_ARGS[0]}
 fullname=${POSITIONAL_ARGS[1]}
-pubkey=${POSITIONAL_ARGS[2]}
+pub_key=${POSITIONAL_ARGS[2]}
 
-if [[ $force == 0 ]] && [ -d "/home/$username" ]; then
+if [[ $force == 0 ]] && [[ -d "/home/$username" ]]; then
     echo "Error: User home directory already exists. (-f to force)"
     exit 1
 fi
@@ -85,27 +85,27 @@ fi
 # sudo adduser --gecos "$fullname,,,," $username
 
 # Create the new user and set the password
-sudo adduser --disabled-password --gecos "$fullname,,,," $username
+sudo adduser --disabled-password --gecos "$fullname,,,," "$username"
 echo "$username:$password" | sudo chpasswd
 
 # Save the users password into password.txt
-echo "$password" > /home/$username/password.txt
-sudo chown $username:$username /home/$username/password.txt
-sudo chmod 600 /home/$username/password.txt
+printf "%s" "$password" > "/home/$username/password.txt"
+sudo chown "$username":"$username" "/home/$username/password.txt"
+sudo chmod 600 "/home/$username/password.txt"
 echo "Password saved to \`/home/$username/password.txt\`"
 
 # Make the ssh folder
-sudo mkdir /home/$username/.ssh
-sudo touch /home/$username/.ssh/authorized_keys
+sudo mkdir "/home/$username/.ssh"
+sudo touch "/home/$username/.ssh/authorized_keys"
 
 # Copy ssh key into authorized keys
-echo $pub_key | sudo tee -a /home/$username/.ssh/authorized_keys
+printf "%s" "$pub_key" > "/home/$username/.ssh/authorized_keys"
 
-# Set correct ownership and permissions
-sudo chmod 755 /home/$username/.ssh
-sudo chmod 664 /home/$username/.ssh/authorized_keys
-sudo chown -R $username:$username /home/$username/
+# Set correct ownership and permissions for .ssh
+sudo chmod 700 "/home/$username/.ssh"
+sudo chmod 600 "/home/$username/.ssh/authorized_keys"
+sudo chown -R "$username":"$username" "/home/$username/.ssh"
 
 echo "Sudo-ing user: \`$username\`"
-sudo usermod -a -G sudo $username
+sudo usermod -a -G sudo "$username"
 echo "Done."
