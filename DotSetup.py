@@ -23,7 +23,6 @@ import sys
 import configparser
 import shutil
 from pathlib import Path
-from turtle import back
 
 from pkg_resources import parse_version
 
@@ -224,7 +223,7 @@ def createUserGit(user: dict) -> None:
     # the file we created will not be linked so lets just edit the existing file
     configPath = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
     if configPath.is_file() or configPath.is_symlink():
-        backupPath = Path(SETTINGS['backup_path'])
+        backupPath = Path(SETTINGS['backup_path']).expanduser()
         backupPath.mkdir()
         configPath.copy
         shutil.copy(configPath, configPath)
