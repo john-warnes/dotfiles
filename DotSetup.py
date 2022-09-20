@@ -95,7 +95,7 @@ def display_system_data(skipUser: bool = False):
     print()
 
 
-def hasDependencies(skipUser: bool = False) -> bool:
+def has_dependencies(skipUser: bool = False) -> bool:
     box_draw("Checking Dependencies")
     print()
     dependencies = True
@@ -121,7 +121,7 @@ def flat_string(text: str) -> str:
     return text
 
 
-def askUserData() -> dict:
+def ask_user_data() -> dict:
     user = {}
     print()
     box_draw("User information")
@@ -157,7 +157,7 @@ def askUserData() -> dict:
     return user
 
 
-def createUserVim(user: dict) -> None:
+def create_user_vim(user: dict) -> None:
     if not user:
         return
     print("Creating user.vim")
@@ -172,7 +172,7 @@ def createUserVim(user: dict) -> None:
     f.close()
 
 
-def createUserGit(user: dict) -> None:
+def create_user_git(user: dict) -> None:
     print("Creating gitconfig")
 
     git_config_path = Path(f"{SETTINGS['dotfiles']}/git/gitconfig").expanduser()
@@ -211,9 +211,7 @@ def createUserGit(user: dict) -> None:
                 "	stats-commits = shortlog -sn --no-merges",  # Shows number of lines / commit by author for the current branch
                 "[pull]",
                 "	ff = only",
-                "[init]"
-                "	defaultBranch = main"
-                "",  # Ends in newline
+                "[init]" "	defaultBranch = main" "",  # Ends in newline
             ]
         )
     )
@@ -221,15 +219,15 @@ def createUserGit(user: dict) -> None:
 
     # Check if a config file already exists in the home folder, If it does
     # the file we created will not be linked so lets just edit the existing file
-    configPath = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
-    if configPath.is_file() or configPath.is_symlink():
-        backupPath = Path(SETTINGS['backup_path']).expanduser()
-        backupPath.mkdir(exist_ok=True)
-        shutil.copy(configPath, backupPath)
+    config_file = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
+    if config_file.is_file() or config_file.is_symlink():
+        backup_path = Path(SETTINGS["backup_path"]).expanduser()
+        backup_path.mkdir(exist_ok=True)
+        shutil.copy(config_file, backup_path / config_file.name)
 
         print("~/.gitconfig Already exists updating")
         config = configparser.ConfigParser()
-        config.read(configPath)
+        config.read(config_file)
         if "name" in config["user"]:
             config["user"]["name"] = user["name"]
         if "email" in config["user"]:
@@ -242,7 +240,7 @@ def createUserGit(user: dict) -> None:
         if not "helper" in config["credential"]:
             config["credential"]["helper"] = "cache --timeout=28800"
 
-        with open(configPath, "w") as file:
+        with open(config_file, "w") as file:
             config.write(file)
     else:
         # File does not exits go ahead and link it
@@ -250,14 +248,15 @@ def createUserGit(user: dict) -> None:
         dest = Path(f"~/.gitconfig").expanduser()
         os.symlink(src, dest)
 
-def createFolders() -> None:
+
+def create_folders() -> None:
     dir = f"{SYS_DATA['home']}/.config/nvim/"
     if os.path.isdir(dir):
         return
     os.makedirs(dir)
 
 
-def createSysLinks() -> None:
+def create_sys_links() -> None:
     """
     {DOT_FILES}/vim -> ~/.vim
     {DOT_FILES}/vim/vimrc -> ~/.vimrc
@@ -287,7 +286,7 @@ def createSysLinks() -> None:
         os.symlink(src, dest)
 
 
-def exportDotFiles():
+def export_dot_files():
     def safe_append(fileName: str, exportLines: list) -> None:
         if not exportLines:
             # No lines to export
@@ -335,13 +334,13 @@ def exportDotFiles():
 def install(skipUser: bool = False):
     user = None
     if not skipUser:
-        user = askUserData()
-        createUserVim(user)
+        user = ask_user_data()
+        create_user_vim(user)
 
-    createUserGit(user)
-    createFolders()
-    createSysLinks()
-    exportDotFiles()
+    create_user_git(user)
+    create_folders()
+    create_sys_links()
+    export_dot_files()
 
     print()
     box_draw("Final Steps")
@@ -376,7 +375,7 @@ def main():
     collect_system_data()
     display_system_data(skipUser=args.skipUser)
 
-    if not hasDependencies(skipUser=args.skipUser):
+    if not has_dependencies(skipUser=args.skipUser):
         print("\nError: Missing dependencies.\n")
         exit(3)
 
