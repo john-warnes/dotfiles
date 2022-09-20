@@ -1,9 +1,5 @@
 #! /bin/bash
 
-# Script asks for SUDO power
-[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
-# TODO: Add a flag to toggle adding user to SUDO or not
-
 function help {
     cat <<EOF
     Usage: $0 [-p] [username] ['full name'] ['SSH Public Key']
@@ -66,6 +62,10 @@ if [[ $force == 0 ]] && [ -d "/home/$username" ]; then
     echo "Error: User home directory already exists. (-f to force)"
     exit 1
 fi
+
+# Script asks for SUDO power
+[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+# TODO: Add a flag to toggle adding user to SUDO or not
 
 echo "New Username: $username"
 
