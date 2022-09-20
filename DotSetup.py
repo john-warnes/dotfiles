@@ -224,9 +224,8 @@ def createUserGit(user: dict) -> None:
     configPath = Path(f"{SYS_DATA['home']}/.gitconfig").expanduser()
     if configPath.is_file() or configPath.is_symlink():
         backupPath = Path(SETTINGS['backup_path']).expanduser()
-        backupPath.mkdir()
-        configPath.copy
-        shutil.copy(configPath, configPath)
+        backupPath.mkdir(exist_ok=True)
+        shutil.copy(configPath, backupPath)
 
         print("~/.gitconfig Already exists updating")
         config = configparser.ConfigParser()
