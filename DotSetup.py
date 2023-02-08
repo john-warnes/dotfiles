@@ -56,7 +56,7 @@ def collect_system_data():
     Used to collect current system state
     """
     SYS_DATA["home"] = os.path.expanduser("~")
-    SYS_DATA["nvim_config"] = BAR = os.environ.get("XDG_CONFIG_HOME", SYS_DATA["home"] + "/.config/nvim/")  # None
+    SYS_DATA["nvim_config"] = os.environ.get("XDG_CONFIG_HOME", SYS_DATA["home"] + "/.config/nvim/")  # None
     SYS_DATA["script_dir"] = get_script_path()
     SYS_DATA["script_file"] = str(__file__)
     SYS_DATA["os_kind"] = os.name
@@ -132,7 +132,7 @@ def ask_user_data() -> dict:
         exit(1)
     first, *mid, last = user["name"].split()
 
-    user["user"] = input("Username '{}{}' [Enter] for default: ".format(first[0].lower(), last.lower()))
+    user["user"] = input(f"Username '{first[0].lower()}{last.lower()}' [Enter] for default: ")
     if user["user"] == "":
         user["user"] = first[0].lower() + last.lower()
 
@@ -282,7 +282,7 @@ def create_sys_links() -> None:
             os.unlink(dest)  # Del
 
         # Create new Link to file
-        print(" {} -> {}".format(src, dest))
+        print(f" {src} -> {dest}")
         os.symlink(src, dest)
 
 
