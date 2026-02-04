@@ -25,24 +25,19 @@ POSITIONAL_ARGS=""
 while (("$#")); do
     case "$1" in
     -d | --days)
-        [[ $# < 2 ]] && echo "Invalid days" && exit 1
+        [[ $# -lt 2 ]] && echo "Invalid days" && exit 1
         days=$2
         shift 2
         ;;
     -a | --author)
-        [[ $# < 2 ]] && echo "Invalid author" && exit 1
+        [[ $# -lt 2 ]] && echo "Invalid author" && exit 1
         author="$2"
         shift 2
         ;;
-
     -c | --committer)
-        [[ $# < 2 ]] && echo "Invalid committer" && exit 1
+        [[ $# -lt 2 ]] && echo "Invalid committer" && exit 1
         committer="$2"
         shift 2
-        ;;
-    -? | -h | --help)
-        shift 1
-        help
         ;;
     -? | -h | --help)
         shift 1
@@ -72,14 +67,20 @@ eval set -- "$POSITIONAL_ARGS"
 [[ $# -ge 1 ]] && days=$1
 [[ $# -ge 2 ]] && author="$2"
 
+# Check if we're in a git repository
+if ! git rev-parse --git-dir &>/dev/null; then
+    echo "Error: Not a git repository" >&2
+    exit 1
+fi
+
 
 # echo git log --shortstat $who --since="$days days"
 # git log --shortstat $who --since="$days days"
 
 if [ -z ${committer+x} ]; then
     echo "Stats for author containing '$author' from the last '$days' days"
-    git log --shortstat --author="$author" --since=""$days" days" | grep -E 'fil(e|es) changed' | awk '{files+=$1; inserted+=$4; deleted+=$6; delta+=$4-$6; total+=$4+$6; ratio=deleted/inserted} END {printf "Commit stats:\n- Files changed (total)..  %s\n- Lines added   (total)..  %s\n- Lines deleted (total)..  %s\n- Total lines............  %s\n- Total Delta............  %s\n- Add./Del. ratio (1:n)..  1 : %s\n", files, inserted, deleted, total, delta, ratio }' -
+    git log --shortstat --author="$author" --since="$days days" | grep -E 'fil(e|es) changed' | awk '{files+=$1; inserted+=$4; deleted+=$6; delta+=$4-$6; total+=$4+$6; ratio=deleted/inserted} END {printf "Commit stats:\n- Files changed (total)..  %s\n- Lines added   (total)..  %s\n- Lines deleted (total)..  %s\n- Total lines............  %s\n- Total Delta............  %s\n- Add./Del. ratio (1:n)..  1 : %s\n", files, inserted, deleted, total, delta, ratio }' -
 else
     echo "Stats for committer containing '$committer' from the last '$days' days"
-    git log --shortstat --committer="$committer" --since=""$days" days" | grep -E 'fil(e|es) changed' | awk '{files+=$1; inserted+=$4; deleted+=$6; delta+=$4-$6; total+=$4+$6; ratio=deleted/inserted} END {printf "Commit stats:\n- Files changed (total)..  %s\n- Lines added   (total)..  %s\n- Lines deleted (total)..  %s\n- Total lines............  %s\n- Total Delta............  %s\n- Add./Del. ratio (1:n)..  1 : %s\n", files, inserted, deleted, total, delta, ratio }' -
+    git log --shortstat --committer="$committer" --since="$days days" | grep -E 'fil(e|es) changed' | awk '{files+=$1; inserted+=$4; deleted+=$6; delta+=$4-$6; total+=$4+$6; ratio=deleted/inserted} END {printf "Commit stats:\n- Files changed (total)..  %s\n- Lines added   (total)..  %s\n- Lines deleted (total)..  %s\n- Total lines............  %s\n- Total Delta............  %s\n- Add./Del. ratio (1:n)..  1 : %s\n", files, inserted, deleted, total, delta, ratio }' -
 fi

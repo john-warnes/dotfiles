@@ -39,18 +39,16 @@ done
 eval set -- "${POSITIONAL_ARGS[@]}"
 # echo "Postional Args: ${POSITIONAL_ARGS[@]}"
 
-input=${POSITIONAL_ARGS[0]}
-
 # Check if we have at least one
-[[ ${#POSITIONAL_ARGS[@]} < 1 ]] && help
+[[ ${#POSITIONAL_ARGS[@]} -lt 1 ]] && help
 
 for i in "${POSITIONAL_ARGS[@]}"; do
-    echo "Adding environment variables from \`$input\`"
+    echo "Adding environment variables from \`$i\`"
     while read -r line; do
         [[ $line =~ ^\s*#.* ]] && continue
         [[ -z "$line" ]] && continue
         export "$line"
-    done <$input
+    done <"$i"
 done
 
 set +a

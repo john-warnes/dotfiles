@@ -4,19 +4,19 @@
 #         USAGE  ./colors.sh
 #
 #        AUTHOR  John Warnes (), john@warnes.email
-#      Revision  020
-#      Modified  Friday, 19 March 2022
+#      Revision  021
+#      Modified  Wednesday, 04 February 2026
 #=================================================================
 
 # set -o nounset # Treat unset variables as an error
 
 # Use colors
 # If connected to a terminal [ -t 1 ] and the CLICOLOR env set set
-if [ -t 1 ] && (($CLICOLOR == 1)); then
+if [ -t 1 ] && [ "${CLICOLOR:-0}" -eq 1 ]; then
 
     # This function evaluates the echo to turn the ESC sequence into a true byte value
     esc() {
-        local ESC="\x1B" # "\e"
+        local ESC="\x1B" # or \033
         eval 'echo -e "$ESC$1"'
     }
 
@@ -58,7 +58,7 @@ if [ -t 1 ] && (($CLICOLOR == 1)); then
     HIDDEN=$(esc '[8m')
     STRIKETHROUGH=$(esc '[9m')
 
-    # Reset Modes (Only upsets the mode)
+    # Reset Modes (Only unsets the mode)
     BOLD_RESET=$(esc '[22m')
     DIM_RESET=$(esc '[22m')
     ITALIC_RESET=$(esc '[23m')
@@ -105,7 +105,7 @@ else
     unset HIDDEN
     unset STRIKETHROUGH
 
-    # Reset Modes (Only upsets the mode)
+    # Reset Modes (Only unsets the mode)
     unset BOLD_RESET
     unset DIM_RESET
     unset ITALIC_RESET
@@ -116,7 +116,7 @@ else
     unset STRIKETHROUGH_RESET
 fi
 
-if [[ $# > 0 ]]; then
+if [[ $# -gt 0 ]]; then
     echo "$BOLD${RED}C${GREEN}O${YELLOW}L${BLUE}O${RED}R${GREEN}S$RESET$BOLD support$GREEN ON$RESET"
 fi
 

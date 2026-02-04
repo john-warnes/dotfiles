@@ -3,15 +3,17 @@
 ADB=~/Android/Sdk/platform-tools/adb
 PREFIX=screenshot_
 CONTINUOUS=false
+DEVICE=false
 SLEEPMS=0.1
 
 function help {
     cat <<EOF
     Usage: $0 [options]
 
+    -s | --select-device [serial]  Select device by serial
     -c | --continuous              Continuous take screenshots till '^C'
     -h | --help                    Display this text.
-
+0
 EOF
     exit
 }
@@ -33,6 +35,12 @@ while (("$#")); do
         CONTINUOUS=true
         shift 1
         echo "Taking a screenshot every ${SLEEPMS}s"
+        ;;
+    -s | --select-device)
+        shift 1
+        DEVICE=$1
+        shift 1
+        echo "Selecting device $DEVICE"
         ;;
     --) # end argument parsing
         shift
@@ -60,8 +68,14 @@ while true; do
     echo "$FILE"
 
     # DEBUG
-    # echo "$ADB" exec-out screencap -p $@ '>' $FILE
-    $ADB  exec-out screencap -p $@ > $FILE
+
+    if [ $DEVICE == false ]; then
+        echo "$ADB" exec-out screencap -p $@ '>' $FILE
+        $ADB exec-out screencap -p $@ > $FILE
+    else
+        echo "$ADB" -s "$DEVICE" exec-out screencap -p $@ '>' $FILE
+        $ADB -s $DEVICE exec-out screencap -p $@ > $FILE
+    fi
 
     if [ ! $CONTINUOUS == true ]; then
         break

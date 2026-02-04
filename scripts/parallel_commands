@@ -3,19 +3,51 @@
 # parallel_commands
 # https://stackoverflow.com/questions/10909685/run-parallel-multiple-commands-at-once-in-the-same-terminal
 
-# Examples:
-# parallel_commands "cmd arg0 arg1 arg2" "other_cmd arg0 arg2 arg3"
-# parallel_commands "sleep 1" "sleep 2" "sleep 3" "sleep 4"
+show_help() {
+    cat << EOF
+Usage: parallel_commands "command1" "command2" ["command3" ...]
+
+Run multiple commands in parallel in the same terminal.
+
+ARGUMENTS:
+    "command"    One or more commands (with arguments) to run in parallel.
+                 Each command should be quoted as a single string.
+
+OPTIONS:
+    -h, --help   Display this help message and exit.
+
+EXAMPLES:
+    parallel_commands "sleep 5" "sleep 1" "sleep 2" "sleep 3"
+    parallel_commands "cmd arg0 arg1 arg2" "other_cmd arg0 arg2 arg3"
+    parallel_commands "echo foo" "echo bar" "ls -la"
+
+NOTES:
+    - All commands will start immediately in parallel
+    - The script waits for all commands to complete
+    - Use Ctrl+C to terminate all parallel processes
+
+EOF
+}
+
+# Show help if no arguments or help flag is provided
+if [ $# -eq 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    show_help
+    exit 0
+fi
+
+# Initialize PID list
+PID_LIST=""
+
+# Set trap before starting processes
+trap "kill $PID_LIST 2>/dev/null" SIGINT
 
 for cmd in "$@"; do {
   echo "Process \"$cmd\" started"
-  $cmd & pid=$!
+  (eval "$cmd"; echo "Process \"$cmd\" completed") & pid=$!
   PID_LIST+=" $pid";
 } done
 
-trap "kill $PID_LIST" SIGINT
-
-echo "Parallel processes have started"
+echo "Parallel processes have started (Ctrl+C to kill all commands)"
 
 wait $PID_LIST
 
