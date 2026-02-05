@@ -3,13 +3,13 @@
 # =rev=======================================================================
 #  File:      DotSetup.py
 #  Brief:     Install Dot files
-#  Version:   2.0
+#  Version:   2.0.1
 #
 #  Author:    John Warnes
 #  Created:   2018 January 04, Thursday
 #
-#  Modified:  Wednesday, 4 February 2026
-#  Revision:  285
+#  Modified:  Thursday, 5 February 2026
+#  Revision:  286
 #
 #  License:   Copyright (c) 2026, John Warnes
 # ===========================================================================
@@ -24,6 +24,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from typing import Dict, Optional
 
 from pkg_resources import parse_version
 
@@ -129,8 +130,8 @@ def flat_string(text: str) -> str:
     return text
 
 
-def ask_user_data() -> dict[str, str]:
-    user: dict[str, str] = {}
+def ask_user_data() -> Dict[str, str]:
+    user: Dict[str, str] = {}
     print()
     box_draw("User information")
     print()
@@ -165,7 +166,7 @@ def ask_user_data() -> dict[str, str]:
     return user
 
 
-def create_user_vim(user: dict[str, str] | None) -> None:
+def create_user_vim(user: Optional[Dict[str, str]]) -> None:
     if not user:
         return
     print("Creating user.vim")
@@ -179,7 +180,7 @@ def create_user_vim(user: dict[str, str] | None) -> None:
         f.write(f"let g:_VIM_     = '{user['vim']}'\n")
 
 
-def create_user_git(user: dict | None) -> None:
+def create_user_git(user: Optional[Dict[str, str]]) -> None:
     print("Creating gitconfig")
 
     git_config_path = Path(f"{SETTINGS['dotfiles']}/git/gitconfig").expanduser()
