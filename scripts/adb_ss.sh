@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ADB=~/Android/Sdk/platform-tools/adb
 PREFIX=screenshot_

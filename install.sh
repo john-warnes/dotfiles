@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Setup without asking for user info
 python3 ~/dotfiles/DotSetup.py --skip-user

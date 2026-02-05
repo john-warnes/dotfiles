@@ -32,7 +32,7 @@ if exists('*minpac#init')
 
     " Vim 8
     call minpac#add('lifepillar/vim-mucomplete')      " Builtin chainable autocomplete
-    call minpac#add('w0rp/ale')                       " async linting engine
+    call minpac#add('dense-analysis/ale')             " async linting engine
 
 
     "call minpac#update()

@@ -5,4 +5,7 @@ vim/.netrwhist
 vim/undo
 vim/view
 vim/pack/minpac/start
+vim/pack/minpac/opt/minpac
+vim/bundle
+vim/autoload
 

@@ -1,12 +1,13 @@
-#!/bin/bash -
-#=================================================================
+#!/usr/bin/env bash
+
+# =rev================================================================
 #          FILE  colors.sh
 #         USAGE  ./colors.sh
 #
 #        AUTHOR  John Warnes (), john@warnes.email
-#      Revision  021
-#      Modified  Wednesday, 04 February 2026
-#=================================================================
+#      Revision  023
+#      Modified  Wednesday, 4 February 2026
+# ====================================================================
 
 # set -o nounset # Treat unset variables as an error
 

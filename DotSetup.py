@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
-# ============================================================================
-# @file   DotSetup.py
-# @brief  Install Dot files
+
+# =rev=======================================================================
+#  File:      DotSetup.py
+#  Brief:     Install Dot files
+#  Version:   2.0
 #
-# @author John Warnes
+#  Author:    John Warnes
+#  Created:   2018 January 04, Thursday
 #
-# @internal
-#      Created  2018 January 04, Thursday
-#     Modified  2022 Aug 18, Thursday
-#     Revision  280
+#  Modified:  Wednesday, 4 February 2026
+#  Revision:  285
 #
-# @copyright  Copyright (c) 2022, John Warnes
-# ============================================================================
+#  License:   Copyright (c) 2026, John Warnes
+# ===========================================================================
 
 # Required Python3 and Pip3
 
 import argparse
+import configparser
 import os
 import platform
+import shutil
 import subprocess
 import sys
-import configparser
-import shutil
 from pathlib import Path
 
 from pkg_resources import parse_version
@@ -56,20 +57,27 @@ def collect_system_data():
     Used to collect current system state
     """
     SYS_DATA["home"] = os.path.expanduser("~")
-    SYS_DATA["nvim_config"] = os.environ.get("XDG_CONFIG_HOME", SYS_DATA["home"] + "/.config/nvim/")  # None
+    SYS_DATA["nvim_config"] = os.environ.get("XDG_CONFIG_HOME", SYS_DATA["home"] + "/.config")
     SYS_DATA["script_dir"] = get_script_path()
     SYS_DATA["script_file"] = str(__file__)
     SYS_DATA["os_kind"] = os.name
     SYS_DATA["os"] = platform.system()
     SYS_DATA["os_release"] = platform.release()
-    SYS_DATA["vim_version"] = (
-        subprocess.check_output("vim --version | head -1 | cut -d ' ' -f 5", shell=True).decode("ascii").strip()
-        or "[Unknown]"
-    )
-    SYS_DATA["nvim_version"] = (
-        subprocess.check_output("nvim --version | head -1 | cut -d ' ' -f 2", shell=True).decode("ascii").strip()[1:]
-        or "[Unknown]"
-    )
+    try:
+        SYS_DATA["vim_version"] = (
+            subprocess.check_output("vim --version | head -1 | cut -d ' ' -f 5", shell=True).decode("ascii").strip()
+            or "[Unknown]"
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        SYS_DATA["vim_version"] = "[Not Installed]"
+
+    try:
+        SYS_DATA["nvim_version"] = (
+            subprocess.check_output("nvim --version | head -1 | cut -d ' ' -f 2", shell=True).decode("ascii").strip()[1:]
+            or "[Unknown]"
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        SYS_DATA["nvim_version"] = "[Not Installed]"
     # print(os.getcwd())  # Current DIR
     # os.chdir(current_dir)  # Chance DIR
 
@@ -121,15 +129,15 @@ def flat_string(text: str) -> str:
     return text
 
 
-def ask_user_data() -> dict:
-    user = {}
+def ask_user_data() -> dict[str, str]:
+    user: dict[str, str] = {}
     print()
     box_draw("User information")
     print()
     user["name"] = input("Full Name 'John Smith': ")
     if user["name"] == "":
         print("Error! Must enter a fist and last name. example: John Smith")
-        exit(1)
+        sys.exit(1)
     first, *mid, last = user["name"].split()
 
     user["user"] = input(f"Username '{first[0].lower()}{last.lower()}' [Enter] for default: ")
@@ -139,7 +147,7 @@ def ask_user_data() -> dict:
     user["company"] = input("Company Name: ")
     if user["company"] == "":
         print("Error! Must enter a company name.")
-        exit(2)
+        sys.exit(2)
 
     user["email"] = input(
         "Email '{}{}@{}.net [Enter] for default': ".format(
@@ -157,26 +165,25 @@ def ask_user_data() -> dict:
     return user
 
 
-def create_user_vim(user: dict) -> None:
+def create_user_vim(user: dict[str, str] | None) -> None:
     if not user:
         return
     print("Creating user.vim")
 
     vim_user_path = Path(f"{SETTINGS['dotfiles']}/vim/user.vim").expanduser()
-    f = open(vim_user_path, "w")
-    f.write(f"let g:_NAME_    = {user['name']}\n")
-    f.write(f"let g:_USER_    = {user['user']}\n")
-    f.write(f"let g:_COMPANY_ = {user['company']}\n")
-    f.write(f"let g:_EMAIL_   = {user['email']}\n")
-    f.write(f"let g:_VIM_     = {user['vim']}\n")
-    f.close()
+    with open(vim_user_path, "w") as f:
+        f.write(f"let g:_NAME_    = '{user['name']}'\n")
+        f.write(f"let g:_USER_    = '{user['user']}'\n")
+        f.write(f"let g:_COMPANY_ = '{user['company']}'\n")
+        f.write(f"let g:_EMAIL_   = '{user['email']}'\n")
+        f.write(f"let g:_VIM_     = '{user['vim']}'\n")
 
 
-def create_user_git(user: dict) -> None:
+def create_user_git(user: dict | None) -> None:
     print("Creating gitconfig")
 
     git_config_path = Path(f"{SETTINGS['dotfiles']}/git/gitconfig").expanduser()
-    f = open(git_config_path, "w")
+    f = open(git_config_path, "w", encoding="utf-8")
     f.write(
         "\n".join(
             [
@@ -211,7 +218,9 @@ def create_user_git(user: dict) -> None:
                 "	stats-commits = shortlog -sn --no-merges",  # Shows number of lines / commit by author for the current branch
                 "[pull]",
                 "	ff = only",
-                "[init]" "	defaultBranch = main" "",  # Ends in newline
+                "[init]",
+                "\tdefaultBranch = main",
+                "",  # Ends in newline
             ]
         )
     )
@@ -228,16 +237,32 @@ def create_user_git(user: dict) -> None:
         print("~/.gitconfig Already exists updating")
         config = configparser.ConfigParser()
         config.read(config_file)
-        if "name" in config["user"]:
-            config["user"]["name"] = user["name"]
-        if "email" in config["user"]:
-            config["user"]["email"] = user["email"]
 
+        # Update user information if provided
+        if user:
+            if "user" in config:
+                if "name" in config["user"]:
+                    config["user"]["name"] = user["name"]
+                if "email" in config["user"]:
+                    config["user"]["email"] = user["email"]
+            else:
+                config["user"] = {"name": user["name"], "email": user["email"]}
+
+        if "alias" not in config:
+            config["alias"] = {}
         config["alias"]["s"] = "status"
+
+        if "pull" not in config:
+            config["pull"] = {}
         config["pull"]["ff"] = "only"
+
+        if "init" not in config:
+            config["init"] = {}
         config["init"]["defaultBranch"] = "main"
 
-        if not "helper" in config["credential"]:
+        if "credential" not in config:
+            config["credential"] = {}
+        if "helper" not in config["credential"]:
             config["credential"]["helper"] = "cache --timeout=28800"
 
         with open(config_file, "w") as file:
@@ -250,10 +275,44 @@ def create_user_git(user: dict) -> None:
 
 
 def create_folders() -> None:
-    dir = f"{SYS_DATA['home']}/.config/nvim/"
-    if os.path.isdir(dir):
+    # Neovim config directory
+    nvim_dir = Path(f"{SYS_DATA['home']}/.config/nvim/").expanduser()
+    if not nvim_dir.exists():
+        nvim_dir.mkdir(parents=True, exist_ok=True)
+        print(f"Created {nvim_dir}")
+
+    # SSH controlmasters directory for connection multiplexing
+    ssh_control_dir = Path(f"{SYS_DATA['home']}/.ssh/controlmasters").expanduser()
+    if not ssh_control_dir.exists():
+        ssh_control_dir.mkdir(parents=True, exist_ok=True)
+        ssh_control_dir.chmod(0o700)  # Secure permissions
+        print(f"Created {ssh_control_dir} with mode 700")
+
+
+def install_minpac() -> None:
+    """
+    Install minpac plugin manager if not already present
+    """
+    minpac_dir = Path(f"{SYS_DATA['script_dir']}/vim/pack/minpac/opt/minpac").expanduser()
+
+    if minpac_dir.exists() and (minpac_dir / ".git").exists():
+        print("minpac already installed")
         return
-    os.makedirs(dir)
+
+    print("\nInstalling minpac plugin manager...")
+    minpac_dir.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        subprocess.run(
+            ["git", "clone", "--depth=1", "https://github.com/k-takata/minpac.git", str(minpac_dir)],
+            check=True,
+            capture_output=True
+        )
+        print("minpac installed successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"Warning: Failed to install minpac: {e}")
+        print("You can manually install it later with:")
+        print(f"  git clone --depth=1 https://github.com/k-takata/minpac.git {minpac_dir}")
 
 
 def create_sys_links() -> None:
@@ -276,10 +335,12 @@ def create_sys_links() -> None:
     print("\nCreating symlinks")
 
     for src, dest in symlinks.items():
-        if os.path.isfile(dest):  # File already exists
-            os.remove(dest)  # Del
         if os.path.islink(dest):  # Link already exists
             os.unlink(dest)  # Del
+        elif os.path.isfile(dest):  # File already exists
+            os.remove(dest)  # Del
+        elif os.path.isdir(dest):  # Directory exists
+            shutil.rmtree(dest)  # Del directory
 
         # Create new Link to file
         print(f" {src} -> {dest}")
@@ -339,6 +400,7 @@ def install(skipUser: bool = False):
 
     create_user_git(user)
     create_folders()
+    install_minpac()
     create_sys_links()
     export_dot_files()
 
@@ -377,7 +439,7 @@ def main():
 
     if not has_dependencies(skipUser=args.skipUser):
         print("\nError: Missing dependencies.\n")
-        exit(3)
+        sys.exit(3)
 
     if args.install or args.skipUser:
         install(skipUser=args.skipUser)
@@ -391,4 +453,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    exit(0)  # Normal
+    sys.exit(0)  # Normal

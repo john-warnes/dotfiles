@@ -6,10 +6,11 @@ let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 " Use .vim even on windows
 set packpath^=~/.vim
 
-
-" Try to load minpac.
-" silent!
-packadd minpac
+" Load minpac directly since packadd doesn't work reliably in some Neovim setups
+let s:minpac_autoload = expand('~/.vim/pack/minpac/opt/minpac/autoload/minpac.vim')
+if filereadable(s:minpac_autoload)
+    execute 'source ' . s:minpac_autoload
+endif
 
 
 if exists('*minpac#init')
@@ -31,7 +32,7 @@ if exists('*minpac#init')
 
     " Vim 8
     call minpac#add('lifepillar/vim-mucomplete')      " Builtin chainable autocomplete
-    call minpac#add('w0rp/ale')                       " async linting engine
+    call minpac#add('dense-analysis/ale')             " async linting engine
 
     "call minpac#update()
 

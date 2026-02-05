@@ -1,11 +1,11 @@
-"=================================================================
-"                             vimrc                              "
-"=================================================================
+" =================================================================
+"                             vimrc                               
+" =================================================================
 " vim:foldmarker={,}:foldmethod=marker:
-"=================================================================
+" =rev=============================================================
 "  Revision  1213
 "  Modified  Tuesday, 23 October 2018
-"=================================================================
+" =================================================================
 scriptencoding utf-8
 setlocal keywordprg=:help
 
@@ -143,7 +143,7 @@ endif
 if ($OS ==? 'OSX') && !has('nvim')
     let g:gruvbox_italic=0
     if ($TERM ==? 'screen' && $COLORTERM ==? 'truecolor')
-        set t_Co=255
+        set t_Co=256
         set termguicolors
     endif
 endif
@@ -191,7 +191,9 @@ set modelines=10               " Check top and bottom 10 lines for modelines(s)
 set nobackup                   " No Backups
 set nowritebackup              " No Backups even when editing
 set noswapfile                 " Don't leave swap files
-set printoptions=paper:letter,number:y,portrait:y " defualt printing
+if !has('nvim')
+    set printoptions=paper:letter,number:y,portrait:y " default printing (Vim only)
+endif
 set shortmess+=aoOtT           " Abbrev. of messages (avoids 'hit enter')
 set formatoptions+=cq          " Basic formatting of text and comments
 set formatoptions-=t           " Don't automatically wrap text when typing
@@ -219,7 +221,7 @@ set termencoding=utf-8         " Lets try using Unicode
 " Vim Look and Decorations {
 "=================================================================
 set ruler                   " Show the line / column number of cursor
-set showcmd                 " Show current command virual selected char count
+set showcmd                 " Show current command visual selected char count
 set number                  " Display line number"
 set numberwidth=5           " Use 5 spaces for number column"
 set textwidth=79            " Width of document (used by gd)
@@ -235,9 +237,12 @@ if has('gui_running')
     set guicursor+=n-v-c:blinkon0
     "set guicursor+=i:blinkwait10
 else
-"   let &t_SI = "\<Esc>[6 q"
-"   let &t_SR = "\<Esc>[4 q"
-"   let &t_EI = "\<Esc>[2 q"
+    if !has('nvim')
+        " Vim cursor shapes for insert/replace/normal modes
+        let &t_SI = "\<Esc>[6 q"  " Insert mode: vertical bar
+        let &t_SR = "\<Esc>[4 q"  " Replace mode: underline
+        let &t_EI = "\<Esc>[2 q"  " Normal mode: block
+    endif
 endif
 "} ===
 
@@ -300,8 +305,12 @@ endif
 " Map <NUL> and <C-@> as Control-Space as it commonly is
 " Allow remapping
 if !has('nvim')
+    " Vim needs these mappings for Control-Space
     imap <NUL> <C-Space>
     imap <C-@> <C-Space>
+else
+    " Neovim handles Control-Space natively
+    " No mapping needed
 endif
 "} ===
 
@@ -316,7 +325,9 @@ if has('nvim')
 elseif ( has('job') && has('packages') )
     execute 'source ' . s:path . '/' . 'vim8/vim8.vim'
 else
-    execute 'source ' . s:path . '/' . 'vim7/vim7.vim'
+    echohl WarningMsg
+    echo "Warning: Vim 8.0+ or Neovim 0.2.0+ required for plugin support"
+    echohl None
 endif
 
 silent! colorscheme gruvbox " Sometime other plugins will reset the colorscheme so set it at the end once more

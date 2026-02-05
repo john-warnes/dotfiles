@@ -1,13 +1,13 @@
-[![Build Status](https://travis-ci.org/k-takata/minpac.svg?branch=master)](https://travis-ci.org/k-takata/minpac)
+[![Build status](https://github.com/k-takata/minpac/workflows/CI/badge.svg)](https://github.com/k-takata/minpac/actions)
 [![Build status](https://ci.appveyor.com/api/projects/status/qakftqoyx5m47ns3/branch/master?svg=true)](https://ci.appveyor.com/project/k-takata/minpac/branch/master)
 
-minpac: A minimal package manager for Vim 8 (and Neovim)
-========================================================
+minpac: A minimal package manager for Vim 8+ (and Neovim)
+=========================================================
 
 Overview
 --------
 
-Minpac is a minimal package manager for Vim 8 (and Neovim). This uses the
+Minpac is a minimal package manager for Vim 8+ (and Neovim). This uses the
 [packages](http://vim-jp.org/vimdoc-en/repeat.html#packages) feature and
 the [jobs](http://vim-jp.org/vimdoc-en/channel.html#job-channel-overview)
 feature which have been newly added on Vim 8.
@@ -38,10 +38,16 @@ Plugins installed under `pack/*/start/` are automatically added to the `'runtime
 
 ### Windows
 
+Vim:
+
 ```cmd
-cd /d %USERPROFILE%
-git clone https://github.com/k-takata/minpac.git ^
-    vimfiles\pack\minpac\opt\minpac
+git clone https://github.com/k-takata/minpac.git %USERPROFILE%\vimfiles\pack\minpac\opt\minpac
+```
+
+Neovim:
+
+```cmd
+git clone https://github.com/k-takata/minpac.git %LOCALAPPDATA%\nvim\pack\minpac\opt\minpac
 ```
 
 ### Linux, macOS
@@ -49,15 +55,13 @@ git clone https://github.com/k-takata/minpac.git ^
 Vim:
 
 ```sh
-git clone https://github.com/k-takata/minpac.git \
-    ~/.vim/pack/minpac/opt/minpac
+git clone https://github.com/k-takata/minpac.git ~/.vim/pack/minpac/opt/minpac
 ```
 
 Neovim (use `$XDG_CONFIG_HOME` in place of `~/.config` if set on your system):
 
 ```sh
-git clone https://github.com/k-takata/minpac.git \
-    ~/.config/nvim/pack/minpac/opt/minpac
+git clone https://github.com/k-takata/minpac.git ~/.config/nvim/pack/minpac/opt/minpac
 ```
 
 ### Sample .vimrc
@@ -65,6 +69,15 @@ git clone https://github.com/k-takata/minpac.git \
 #### Basic sample
 
 ```vim
+" Normally this if-block is not needed, because `:set nocp` is done
+" automatically when .vimrc is found. However, this might be useful
+" when you execute `vim -u .vimrc` from the command line.
+if &compatible
+  " `:set nocp` has many side effects. Therefore this should be done
+  " only when 'compatible' is set.
+  set nocompatible
+endif
+
 packadd minpac
 
 call minpac#init()
@@ -79,6 +92,8 @@ call minpac#add('vim-jp/syntax-vim-ex')
 " Load the plugins right now. (optional)
 "packloadall
 ```
+
+Minpac itself requires 'compatible' to be unset. However, the `if &compatible`-block is optional.
 
 #### Customizing 'packpath'
 
@@ -99,9 +114,9 @@ You can write a .vimrc which can be also used even if minpac is not installed.
 
 ```vim
 " Try to load minpac.
-silent! packadd minpac
+packadd minpac
 
-if !exists('*minpac#init')
+if !exists('g:loaded_minpac')
   " minpac is not available.
 
   " Settings for plugin-less environment.
@@ -124,45 +139,75 @@ endif
 
 #### Load minpac on demand
 
-Very interestingly, minpac doesn't need to be loaded every time. Unlike other plugin managers, it is needed only when updating, installing or cleaning the plugins. This is because minpac itself doesn't handle the runtime path.
-You can define a user command to load minpac, reload .vimrc to register the information of plugins, then call `minpac#update()` or `minpac#clean()`.
+Very interestingly, minpac doesn't need to be loaded every time when you execute Vim. Unlike other plugin managers, it is needed only when updating, installing or cleaning the plugins. This is because minpac itself doesn't handle the runtime path.
+
+You can define user commands to load minpac, register the information of plugins, then call `minpac#update()`, `minpac#clean()` or `minpac#status()`.
 
 ```vim
-" For a paranoia.
-" Normally `:set nocp` is not needed, because it is done automatically
-" when .vimrc is found.
-if &compatible
-  " `:set nocp` has many side effects. Therefore this should be done
-  " only when 'compatible' is set.
-  set nocompatible
-endif
+function! PackInit() abort
+  packadd minpac
 
-if exists('*minpac#init')
-  " minpac is loaded.
   call minpac#init()
   call minpac#add('k-takata/minpac', {'type': 'opt'})
 
   " Additional plugins here.
   call minpac#add('vim-jp/syntax-vim-ex')
+  call minpac#add('tyru/open-browser.vim')
   ...
-endif
+endfunction
 
 " Plugin settings here.
 ...
 
 " Define user commands for updating/cleaning the plugins.
-" Each of them loads minpac, reloads .vimrc to register the
-" information of plugins, then performs the task.
-command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update()
-command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
+" Each of them calls PackInit() to load minpac and register
+" the information of plugins, then performs the task.
+command! PackUpdate call PackInit() | call minpac#update()
+command! PackClean  call PackInit() | call minpac#clean()
+command! PackStatus packadd minpac | call minpac#status()
 ```
 
-Note that your .vimrc must be reloadable to use this. E.g.:
+If you make your .vimrc reloadable, you can reflect the setting of the .vimrc immediately after you edit it by executing `:so $MYVIMRC | PackUpdate`. Or you can define the commands like this:
+
+```vim
+command! PackUpdate source $MYVIMRC | call PackInit() | call minpac#update()
+command! PackClean  source $MYVIMRC | call PackInit() | call minpac#clean()
+command! PackStatus packadd minpac | call minpac#status()
+```
+
+To make your .vimrc reloadable:
 
 * `:set nocompatible` should not be executed twice to avoid side effects.
 * `:function!` should be used to define a user function.
 * `:command!` should be used to define a user command.
 * `:augroup!` should be used properly to avoid the same autogroups are defined twice.
+
+
+Sometimes, you may want to open a shell at the directory where a plugin is installed.  The following example defines a command to open a terminal window at the directory of a specified plugin.  (Requires Vim 8.0.902 or later.)
+
+```vim
+function! PackList(...)
+  call PackInit()
+  return join(sort(keys(minpac#getpluglist())), "\n")
+endfunction
+
+command! -nargs=1 -complete=custom,PackList
+      \ PackOpenDir call PackInit() | call term_start(&shell,
+      \    {'cwd': minpac#getpluginfo(<q-args>).dir,
+      \     'term_finish': 'close'})
+```
+
+If you execute `:PackOpenDir minpac`, it will open a terminal window at `~/.vim/pack/minpac/opt/minpac` (or the directory where minpac is installed).
+
+To define a command to open the repository of a plugin in a web browser:
+
+```vim
+command! -nargs=1 -complete=custom,PackList
+      \ PackOpenUrl call PackInit() | call openbrowser#open(
+      \    minpac#getpluginfo(<q-args>).url)
+```
+
+This uses [open-browser.vim](https://github.com/tyru/open-browser.vim).
 
 
 Usage
@@ -179,7 +224,12 @@ call minpac#update()
 
 " To uninstall unused plugins:
 call minpac#clean()
+
+" To see plugins status:
+call minpac#status()
 ```
+
+Or define commands by yourself as described in the previous section.
 
 
 ### Functions
@@ -197,7 +247,11 @@ Initialize minpac.
 | `'git'`   | Git command. Default: `'git'` |
 | `'depth'` | Default clone depth. Default: 1 |
 | `'jobs'`  | Maximum job numbers. If <= 0, unlimited. Default: 8 |
-| `'verbose'` | Verbosity level (0 to 3). Default: 1 |
+| `'verbose'` | Verbosity level (0 to 4).<br/>0: Show only important messages.<br/>1: Show the result of each plugin.<br/>2: Show error messages from external commands.<br/>3: Show start/end messages for each plugin.<br/>4: Show debug messages.<br/>Default: 2 |
+| `'confirm'` | Show interactive confirmation prompts, such as in `minpac#clean()`.<br/>Default: TRUE |
+| `'progress_open'` | Specify how to show the progress of `minpac#update()`.<br/>`'none'`: Do not open the progress window. (Compatible with minpac v2.0.x or earlier.)<br/>`'horizontal'`: Open the progress window by splitting horizontally.<br/>`'vertical'`: Open the progress window by splitting vertically.<br/>`'tab'`: Open the progress window in a new tab.<br/>Default: `'horizontal'` |
+| `'status_open'` | Default setting for the open option of `minpac#status()`. Default: `'horizontal'` |
+| `'status_auto'` | Specify whether the status window will open automatically after `minpac#update()` is finished.<br/>TRUE: Open the status window automatically, when one or more plugins are updated or installed.<br/>FALSE: Do not open the status window automatically.<br/>Default: FALSE |
 
 All plugins will be installed under the following directories:
 
@@ -213,7 +267,7 @@ See `:help packages` for detail.
 
 Register a plugin.
 
-`{url}` is a URL of a plugin. It can be a short form (`'<github-account>/<repository>'`) or a valid git URL.
+`{url}` is a URL of a plugin. It can be a short form (`'<github-account>/<repository>'`) or a valid git URL.  If you use the short form, `<repository>` should not include the ".git" suffix.
 Note: Unlike Vundle, a short form without `<github-account>/` is not supported. (Because vim-scripts.org is not maintained now.)
 
 `{config}` is a Dictionary of options for configuring the plugin.
@@ -222,10 +276,29 @@ Note: Unlike Vundle, a short form without `<github-account>/` is not supported. 
 |------------|-------------|
 | `'name'`   | Unique name of the plugin (`plugin_name`). Also used as a local directory name. Default: derived from the repository name. |
 | `'type'`   | Type of the plugin. `'start'` or `'opt'`. Default: `'start'` |
-| `'frozen'` | If 1, the plugin will not be updated automatically. Default: 0 |
-| `'depth'`  | If >= 1, it is used as a depth to be cloned. Default: 1 or specified value by `minpac#init()`. |
-| `'branch'` | Used as a branch name to be cloned. Default: empty |
+| `'frozen'` | If TRUE, the plugin will not be updated automatically. Default: FALSE |
+| `'depth'`  | If >= 1, it is used as a depth to be cloned. Only effective when install the plugin newly. Default: 1 or specified value by `minpac#init()`. |
+| `'branch'` | Used as a branch name to be cloned. Only effective when install the plugin newly. Default: empty |
+| `'rev'`    | Commit ID, branch name or tag name to be checked out. If this is specified, `'depth'` will be ignored. Default: empty |
 | `'do'`     | Post-update hook. See [Post-update hooks](#post-update-hooks). Default: empty |
+| `'subdir'` | Subdirectory that contains Vim plugin. Default: empty |
+| `'pullmethod'` | Specify how to update the plugin.<br/>Empty: Update with `--ff-only` option.<br/>`'autostash'`: Update with `--rebase --autostash` options.<br/>Default: empty |
+
+The `'branch'` and `'rev'` options are slightly different.  
+The `'branch'` option is used only when the plugin is newly installed. It clones the plugin by `git clone <URL> --depth=<DEPTH> -b <BRANCH>`. This is faster at the installation, but it can be slow if you want to change the branch (by the `'rev'` option) later. This cannot specify a commit ID.
+The `'rev'` option is used both for installing and updating the plugin. It installs the plugin by `git clone <URL> && git checkout <REV>` and updates the plugin by `git fetch && git checkout <REV>`. This is slower because it clones the whole repository, but you can change the rev (commit ID, branch or tag) later.
+So, if you want to change the branch frequently or want to specify a commit ID, you should use the `'rev'` option. Otherwise you can use the `'branch'` option.
+
+If you include `*` in `'rev'`, minpac tries to checkout the latest tag name which matches the `'rev'`.
+
+When `'subdir'` is specified, the plugin will be installed as usual (e.g. in `pack/minpac/start/pluginname`), however, another directory is created and a symlink (or a junction on Windows) will be created in it. E.g.:
+
+```
+ln -s pack/minpac/start/pluginname/subdir pack/minpac-sub/start/pluginname
+```
+
+This way, Vim can load the plugin from its subdirectory.
+
 
 #### minpac#update([{name}[, {config}]])
 
@@ -252,12 +325,12 @@ Note: This resets the 'more' option temporarily to avoid jobs being interrupted.
 
 Remove all plugins which are not registered, or remove the specified plugin.
 
-`{name}` is a name of a plugin. It can be a unique plugin name (`plugin_name`) or a plugin name with wildcards (`*` and `?` are supported).
+`{name}` is a name of a plugin. It can be a unique plugin name (`plugin_name`) or a plugin name with wildcards (`*` and `?` are supported). It can also be a list of plugin names.
 
 If `{name}` is omitted, all plugins under the `minpac` directory will be checked. If unregistered plugins are found, they are listed and a prompt is shown. If you type `y`, they will be removed.
 
-If `{name}` is specified, matched plugins are listed (even they are registered with `minpac#add()`) and a prompt is shown. If you type `y`, they will be removed.
-`{name}` can also be a list of plugin names.
+When called, matched plugins are listed (even they are registered with `minpac#add()`) and a prompt is shown. If you type `y`, they will be removed.
+`{name}` can also be a list of plugin names. If the `'confirm'` option is not |TRUE|, the prompt will not be shown.
 
 #### minpac#getpluginfo({name})
 
@@ -268,12 +341,21 @@ A dictionary with following items will be returned:
 
 | item       | description |
 |------------|-------------|
+| `'name'`   | Name of the plugin.  |
 | `'url'`    | URL of the plugin repository.  |
 | `'dir'`    | Local directory of the plugin. |
-| `'frozen'` | If 1, the plugin is frozen. |
+| `'subdir'` | Subdirectory that contains Vim plugin. |
+| `'frozen'` | If TRUE, the plugin is frozen. |
 | `'type'`   | Type of the plugin. |
-| `'branch'` | Branch name to be cloned. |
 | `'depth'`  | Depth to be cloned. |
+| `'branch'` | Branch name to be cloned. |
+| `'rev'`    | Revision to be checked out. |
+| `'do'`     | Post-update hook. |
+| `'stat'`   | Status of last update. |
+
+#### minpac#getpluglist()
+
+Get a list of plugin information. Mainly for debugging.
 
 #### minpac#getpackages([{packname}[, {packtype}[, {plugname}[, {nameonly}]]]])
 
@@ -288,7 +370,7 @@ If `"NONE"` is specified, package directories are listed instead of plugin direc
 
 `{plugname}` specifies a plugin name. Wildcards can be used. If omitted or an empty string is specified, `"*"` is used.
 
-If `{nameonly}` is 1, plugin (or package) names are listed instead of the direcotries. Default is 0.
+If `{nameonly}` is TRUE, plugin (or package) names are listed instead of the directories. Default is FALSE.
 
 E.g.:
 
@@ -306,6 +388,26 @@ echo minpac#getpackages("minpac", "", "", 1)
 " List package names.
 echo minpac#getpackages("", "NAME", "", 1)
 ```
+
+#### minpac#status([{config}])
+
+Print status of plugins.
+
+When ran after `minpac#update()`, shows only installed and updated plugins.
+
+Otherwise, shows the status of the plugin and commits of last update (if any).
+
+`{config}` is a Dictionary of options for configuring the function.
+
+| option   | description |
+|----------|-------------|
+| `'open'` | Specify how to open the status window.<br/>`'vertical'`: Open in vertical split.<br/>`'horizontal'`: Open in horizontal split.<br/>`'tab'`: Open in a new tab.<br/>Default: `'horizontal'` or specified value by `minpac#init()`.  |
+
+#### minpac#abort()
+
+Abort updating the plugins. Mainly for debugging.
+
+If you face any errors while running `minpac#update()` and you cannot run it again, you can try this.
 
 
 ### Hooks
@@ -370,7 +472,30 @@ E.g.:
 
 ```vim
 " Quit Vim immediately after all updates are finished.
-call minpac#update('', {'do': 'quit'})
+call minpac#update('', {'do': 'qall'})
+```
+
+### Mappings
+
+List of mappings available only in progress window.
+
+| mapping | description |
+|---------|-------------|
+|`s`      | Open the status window. |
+|`q`      | Exit the progress window. |
+
+List of mappings available only in status window.
+
+| mapping | description |
+|---------|-------------|
+|`<CR>`   | Preview the commit under the cursor. |
+|`<C-j>`  | Jump to next package in list. |
+|`<C-k>`  | Jump to previous package in list. |
+|`q`      | Exit the status window.<br/>(Also works for commit preview window) |
+
+The mappings for `<C-j>` and `<C-k>` can be disabled with:
+```vim
+let g:no_minpac_maps = 1
 ```
 
 Similar projects
@@ -378,17 +503,22 @@ Similar projects
 
 There are some other plugin managers built on top of the Vim 8's packages feature.
 
+* [vim-packager](https://github.com/kristijanhusak/vim-packager): written in Vim script
 * [pack](https://github.com/maralla/pack): written in Rust
 * [infect](https://github.com/csexton/infect): written in Ruby
 * [vim-pck](https://github.com/nicodebo/vim-pck): written in Python
 * [vim8-pack](https://github.com/mkarpoff/vim8-pack): written in Bash
 * [volt](https://github.com/vim-volt/volt): written in Go
+* [autopac](https://github.com/meldavis/autopac): modified version of minpac
+* [plugpac.vim](https://github.com/bennyyip/plugpac.vim): thin wrapper of minpac, provides vim-plug like experience
+* [minPlug](https://github.com/Jorengarenar/minPlug): written in Vim script
 
 
 Credit
 ------
 
-Prabir Shrestha (as the author of [async.vim](https://github.com/prabirshrestha/async.vim))
+Prabir Shrestha (as the author of [async.vim](https://github.com/prabirshrestha/async.vim))  
+Kristijan Husak (status window)  
 
 
 License

@@ -2,7 +2,7 @@
 
 set CACHED=yes
 set DL=yes
-py tools\dl-kaoriya-vim.py -c > release-info.txt
+py tools\dl-vim-kt.py -c > release-info.txt
 if ERRORLEVEL 1 (
 	rem Maybe this is a PR build and reaches the limit rate of GitHub API.
 	set DL=no
@@ -15,7 +15,7 @@ if ERRORLEVEL 1 (
 )
 if "%DL%"=="yes" (
 	echo Download the latest Vim.
-	py tools\dl-kaoriya-vim.py --arch win64 --filename vim.zip --force
+	py tools\dl-vim-kt.py --arch win64 --filename vim.zip --force --noprogress
 	if not ERRORLEVEL 1 (
 		move /y vim.zip downloads > nul
 		copy /y release-info.txt downloads > nul

@@ -1,9 +1,13 @@
-#!/bin/bash -
-#===============================================================================
-#          FILE: CreateUserLinux.sh
-#         USAGE: ./CreateUserLinux.sh
-#        AUTHOR: John Warnes (), john@warnes.email
-#===============================================================================
+#!/usr/bin/env bash
+
+# =rev=======================================================================
+#          File: CreateUsersLinux.sh
+#        Author: John Warnes, johnw@gurutechnologies.net
+#       Created: 07/27/2022 11:47:06 PM
+#      Revision: 003
+#      Modified: Wednesday, 4 February 2026
+#       Version: 1.0.0
+# ===========================================================================
 
 set -o nounset # Treat unset variables as an error
 

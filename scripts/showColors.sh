@@ -3,7 +3,7 @@
 #
 #          FILE: tmuxcolor.sh
 #
-#         USAGE: ./tmuxcolor.sh 
+#         USAGE: ./tmuxcolor.sh
 #
 #   DESCRIPTION:
 #
@@ -11,7 +11,7 @@
 #  REQUIREMENTS: ---
 #          BUGS: ---
 #         NOTES: ---
-#        AUTHOR: John Warnes (), johnwarnes@mail.weber.edu
+#        AUTHOR: John Warnes (), john@savagebee.org
 #  ORGANIZATION: WSU
 #       CREATED: 06/02/2017 02:03:01 AM
 #      REVISION:  ---

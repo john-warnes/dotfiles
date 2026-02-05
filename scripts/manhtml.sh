@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #=================================================================
 #  Revision  066
 #  Modified  Wednesday, 11 March 2020
