@@ -1,5 +1,4 @@
 .*.swp
-secure
 vim/user.vim
 vim/.netrwhist
 vim/undo
@@ -9,3 +8,11 @@ vim/pack/minpac/opt/minpac
 vim/bundle
 vim/autoload
 
+# secure folder don't track
+secure
+
+# local backups
+backup
+
+# option venv
+venv

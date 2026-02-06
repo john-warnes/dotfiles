@@ -14,7 +14,7 @@ Personal configuration files for Linux and macOS development environments.
 
 ### Prerequisites
 
-- Python 3
+- Python 3.8 >
 - Git
 - Vim 8.0+ or Neovim 0.2.0+
 - Tmux 3.0+ (recommended)
