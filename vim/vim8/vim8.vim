@@ -43,15 +43,12 @@ if exists('g:loaded_minpac')
     call minpac#add('lifepillar/vim-mucomplete')      " Builtin chainable autocomplete
     call minpac#add('dense-analysis/ale')             " async linting engine
 
-
-    "call minpac#update()
-
     " Load the plugins right now. (optional)
     " Plugins need to be added to runtimepath before helptags can be generated.
-    "packloadall
+    packloadall
     " Load all of the helptags now, after plugins have been loaded.
     " All messages and errors will be ignored.
-    "silent! helptags ALL
+    silent! helptags ALL
 
     " Define user commands for updating/cleaning the plugins.
     " Each of them loads minpac, reloads .vimrc to register the
