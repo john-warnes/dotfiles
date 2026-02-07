@@ -14,18 +14,19 @@ Personal configuration files for Linux and macOS development environments.
 
 ### Prerequisites
 
-- Python 3.8 >
+- Python 3.8+
 - Git
 - Vim 8.0+ or Neovim 0.2.0+
 - Tmux 3.0+ (recommended)
 
 ### Installation
 
-Clone the repository and run the installation script:
+Clone the repository and install Python dependencies:
 
 ```bash
 git clone <your-repo-url> ~/dotfiles
 cd ~/dotfiles
+pip3 install -r requirements.txt
 ./install.sh
 ```
 

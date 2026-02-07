@@ -5,6 +5,25 @@ All notable changes to the DotSetup project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.2] - 2026-02-06
+
+### Added
+- `ensure_dotfiles_symlink()` function to support dotfiles installation from any location
+- Automatic creation of `~/dotfiles` symlink when running from alternate paths
+- Support for `box_draw()` to accept lists of strings in addition to newline-delimited strings
+- Clearer output formatting with indentation and symbols (✓, +, →) in `export_dot_files()`
+
+### Changed
+- Refactored `display_system_data()` to use list-based approach for cleaner code
+- Refactored `display_backups()` to use list-based approach for consistency
+- Improved output clarity in `safe_append()` with per-file processing indicators
+- Enhanced symlink handling to verify and update `~/dotfiles` if pointing to wrong location
+
+### Fixed
+- Python 3.8 compatibility by replacing union operators (`|`) with `Union[]` from typing
+- Python 3.8 compatibility by replacing lowercase generics (`dict`, `list`) with capitalized versions (`Dict`, `List`)
+- Confusing output when processing multiple shell config files - now shows which file is being modified
+
 ## [4.0.1] - 2026-02-06
 
 ### Added
