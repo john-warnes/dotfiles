@@ -16,3 +16,6 @@ backup
 
 # option venv
 venv
+
+# Old scripts
+scripts/old

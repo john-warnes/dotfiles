@@ -3,13 +3,13 @@
 # =rev=======================================================================
 #  File:      DotSetup.py
 #  Brief:     Install Dot files
-#  Version:   4.0.0
+#  Version:   4.0.1
 #
 #  Author:    John Warnes
 #  Created:   2018 January 04, Thursday
 #
 #  Modified:  Friday, 6 February 2026
-#  Revision:  758
+#  Revision:  761
 #
 #  License:   Copyright (c) 2026, John Warnes
 # ===========================================================================
@@ -33,7 +33,7 @@ from packaging.version import parse as parse_version
 SYS_DATA: dict[str, Any | dict[str, Any]] = {"version": {}}
 SETTINGS: dict[str, Any] = {
     # DotSetup Script Version
-    "version": "4.0.0",
+    "version": "4.0.1",
     # Directories
     "dotfiles": "~/dotfiles",
     "backup_path": "~/dotfiles/backup",
@@ -373,7 +373,7 @@ def display_system_data(skipUser: bool = False):
     if SYS_DATA.get("os_release"):
         os_info += f"Release:  {SYS_DATA['os_release']}\n"
 
-    def version_line(name, version, recommended, v_pad: int = 0, r_pad: int | None = 0) -> str:        
+    def version_line(name, version, recommended, v_pad: int = 0, r_pad: int | None = 0) -> str:
         current = False
         if version:
             version = version.split("p")[0].split("-")[0].split("(")[0]
