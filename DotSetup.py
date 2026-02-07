@@ -9,7 +9,7 @@
 #  Created:   2018 January 04, Thursday
 #
 #  Modified:  Friday, 6 February 2026
-#  Revision:  752
+#  Revision:  758
 #
 #  License:   Copyright (c) 2026, John Warnes
 # ===========================================================================
@@ -287,7 +287,17 @@ def collect_system_data():
 
     # Get current shell
     shell_path = os.environ.get("SHELL", "")
-    SYS_DATA["shell"] = shell_path.split("/")[-1] if shell_path else None
+    if shell_path:
+        SYS_DATA['shell'] = shell_path.split("/")[-1] if shell_path else None
+    else:
+        try:
+            # Get parent process (the shell that launched this script)
+            ppid = os.getppid()
+            SYS_DATA['shell'] = subprocess.check_output(
+                f"ps -p {ppid} -o comm=", shell=True
+            ).decode("ascii").strip()
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            SYS_DATA['shell'] = None
 
     # Get shell version
     try:
@@ -363,9 +373,13 @@ def display_system_data(skipUser: bool = False):
     if SYS_DATA.get("os_release"):
         os_info += f"Release:  {SYS_DATA['os_release']}\n"
 
-    def version_line(name, version, recommended, v_pad: int = 0, r_pad: int | None = 0) -> str:
-        version = version.split("p")[0].split("-")[0].split("(")[0]
-        current = parse_version(version) >= parse_version(recommended)
+    def version_line(name, version, recommended, v_pad: int = 0, r_pad: int | None = 0) -> str:        
+        current = False
+        if version:
+            version = version.split("p")[0].split("-")[0].split("(")[0]
+            current = parse_version(version) >= parse_version(recommended)
+        else:
+            version = "Not detected"
         if current:
             return f"{Colors.GREEN}✓{Colors.RESET} {name}:  {version:{v_pad}}"
         else:
@@ -452,18 +466,18 @@ def ask_user_data() -> Dict[str, str]:
     if user["user"] == "":
         user["user"] = first[0].lower() + last.lower()
 
-    user["company"] = input("Company Name: ")
-    if user["company"] == "":
-        print("Error! Must enter a company name.")
-        sys.exit(2)
+        user["company"] = input("Company Name: ")
 
-    user["email"] = input(
-        "Email '{}{}@{}.net [Enter] for default': ".format(
-            first.lower(), last[0].lower(), flat_string(user["company"])
-        )
-    )
-    if user["email"] == "":
-        user["email"] = "{}{}@{}.net".format(first.lower(), last[0].lower(), flat_string(user["company"]))
+        if user["company"]:
+            user["email"] = input(
+                "Email '{}{}@{}.net [Enter] for default': ".format(
+                    first.lower(), last[0].lower(), flat_string(user["company"])
+                )
+            )
+            if user["email"] == "":
+                user["email"] = "{}{}@{}.net".format(first.lower(), last[0].lower(), flat_string(user["company"]))
+        else:
+            user["email"] = input("Email: ")
 
     user["vim"] = input(" Default console editor '{}' [Enter] for default: ".format("[vim], nvim, nano, code"))
     if user["vim"] == "":
