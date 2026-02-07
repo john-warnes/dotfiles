@@ -2,6 +2,15 @@ if !( has('job') && has('packages') )
     finish
 endif
 
+" Normally this if-block is not needed, because `:set nocp` is done
+" automatically when .vimrc is found. However, this might be useful
+" when you execute `vim -u .vimrc` from the command line.
+if &compatible
+  " `:set nocp` has many side effects. Therefore this should be done
+  " only when 'compatible' is set.
+  set nocompatible
+endif
+
 " get current script path
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
@@ -14,7 +23,7 @@ set packpath^=~/.vim
 " Try to load minpac.
 silent! packadd minpac
 
-if exists('*minpac#init')
+if exists('g:loaded_minpac')
     " Initalize plugin system
     call minpac#init()
 
@@ -51,4 +60,6 @@ if exists('*minpac#init')
     command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 
     " echom "minpac loaded"
+else
+    echom "ERROR loading minpac"
 endif

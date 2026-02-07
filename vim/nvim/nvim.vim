@@ -7,14 +7,14 @@ let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 set packpath^=~/.vim
 
 " Load minpac directly since packadd doesn't work reliably in some Neovim setups
-let s:minpac_autoload = expand('~/.vim/pack/minpac/opt/minpac/autoload/minpac.vim')
-if filereadable(s:minpac_autoload)
-    execute 'source ' . s:minpac_autoload
-endif
+"let s:minpac_autoload = expand('~/.vim/pack/minpac/opt/minpac/autoload/minpac.vim')
+"if filereadable(s:minpac_autoload)
+"    execute 'source ' . s:minpac_autoload
+"endif
 
+packadd minpac
 
-if exists('*minpac#init')
-
+if exists('g:loaded_minpac')
     " Initalize plugin system
     call minpac#init()
 
@@ -54,6 +54,6 @@ if exists('*minpac#init')
 
     " echom "minpac loaded"
 else
-    " echom "ERROR loading minpac"
+    echom "ERROR loading minpac"
 endif
 

@@ -3,7 +3,7 @@
 # =rev=======================================================================
 #  File:      DotSetup.py
 #  Brief:     Install Dot files
-#  Version:   4.0.3
+#  Version:   4.0.4
 #
 #  Author:    John Warnes
 #  Created:   2018 January 04, Thursday
@@ -76,7 +76,7 @@ SYSTEM: SystemData = SystemData(
 
 SETTINGS: Dict[str, Any] = {
     # DotSetup Script Version
-    "version": "4.0.3",
+    "version": "4.0.4",
     # Directories
     "dotfiles": "~/dotfiles",
     # Note: backup_path will be set dynamically in collect_system_data() to use script_dir
@@ -514,9 +514,17 @@ def ask_user_data() -> UserData:
     print()
     user["name"] = input("Full Name 'John Smith': ")
     if user["name"] == "":
-        print("Error! Must enter a fist and last name. example: John Smith")
+        print("Error! Must enter a name. example: John Smith")
         sys.exit(1)
-    first, *mid, last = user["name"].split()
+
+    # Parse name - handle single name or multiple names
+    name_parts = user["name"].split()
+    if len(name_parts) == 1:
+        # Single name - use it as both first and last
+        first = last = name_parts[0]
+    else:
+        # Multiple names - first and last
+        first, *mid, last = name_parts
 
     user["user"] = input(f"Username '{first[0].lower()}{last.lower()}' [Enter] for default: ")
     if user["user"] == "":

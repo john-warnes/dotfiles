@@ -5,6 +5,16 @@ All notable changes to the DotSetup project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.4] - 2026-02-06
+
+### Fixed
+- Crash when user enters single name instead of first and last name
+- Handle single name input by using it as both first and last name
+- Fixed typo in error message ("fist" → "a")
+
+### Changed
+- Name parsing now supports single names, two names, or multiple names gracefully
+
 ## [4.0.3] - 2026-02-06
 
 ### Fixed
