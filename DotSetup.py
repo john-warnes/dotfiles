@@ -3,7 +3,7 @@
 # =rev=======================================================================
 #  File:      DotSetup.py
 #  Brief:     Install Dot files
-#  Version:   4.0.2
+#  Version:   4.0.3
 #
 #  Author:    John Warnes
 #  Created:   2018 January 04, Thursday
@@ -76,10 +76,11 @@ SYSTEM: SystemData = SystemData(
 
 SETTINGS: Dict[str, Any] = {
     # DotSetup Script Version
-    "version": "4.0.2",
+    "version": "4.0.3",
     # Directories
     "dotfiles": "~/dotfiles",
-    "backup_path": "~/dotfiles/backup",
+    # Note: backup_path will be set dynamically in collect_system_data() to use script_dir
+    "backup_path": None,
     # Recommended Versions
     "recommended": {
         "vim": "8.0",
@@ -404,6 +405,9 @@ def collect_system_data() -> None:
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
         SYSTEM.version["gpg"] = None
+
+    # Set backup path to script directory (not ~/dotfiles which may not exist yet)
+    SETTINGS["backup_path"] = str(SYSTEM.script_dir / "backup")
 
 
 def display_system_data() -> None:

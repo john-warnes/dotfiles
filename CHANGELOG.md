@@ -5,6 +5,17 @@ All notable changes to the DotSetup project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.3] - 2026-02-06
+
+### Fixed
+- Critical bug where backup path used `~/dotfiles/backup` instead of script directory
+- Backup directory creation now uses actual script location, preventing premature `~/dotfiles` directory creation
+- `ensure_dotfiles_symlink()` now works correctly when running from alternate installation paths
+
+### Changed
+- `backup_path` in SETTINGS now dynamically set to `{script_dir}/backup` during `collect_system_data()`
+- Backups always stored with the actual dotfiles location regardless of installation path
+
 ## [4.0.2] - 2026-02-06
 
 ### Added
