@@ -4,8 +4,8 @@
 #          File: autorun.sh
 #        Author: John Warnes, johnw@gurutechnologies.net
 #       Created: 08/30/2022 03:09:00 PM
-#      Revision: 0171
-#      Modified: Wednesday, 4 February 2026
+#      Revision: 0172
+#      Modified: Friday, 20 March 2026
 #       Version: 2.0.0
 # ===========================================================================
 
@@ -200,10 +200,10 @@ BashCompletion() {
 # Bash Git Prompt {
 # ============================================================================
 checkvenv() {
-    if [[ ${VIRTUAL_ENV:-0} == 0 ]]; then
+    if [[ -z "$VIRTUAL_ENV" ]]; then
         echo ""
     else
-        echo "($(basename \"$VIRTUAL_ENV\"))\n"
+        echo "($(basename "$VIRTUAL_ENV")) "
     fi
 }
 
