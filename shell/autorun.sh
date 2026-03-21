@@ -207,6 +207,22 @@ checkvenv() {
     fi
 }
 
+shortpwd() {
+    local pwd_str="${PWD/#$HOME/~}"
+    local max_len=30
+    if [[ ${#pwd_str} -le $max_len ]]; then
+        printf '%s' "$pwd_str"
+        return
+    fi
+    local trimmed="$pwd_str"
+    while [[ ${#trimmed} -gt $max_len ]]; do
+        local next="${trimmed#*/}"
+        [[ "$next" == "$trimmed" ]] && break
+        trimmed="$next"
+    done
+    printf '\[\033[90m\]...\[\033[01;34m\]/%s' "$trimmed"
+}
+
 BashGitPrompt() {
 
     if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/zsh' || $SHELL == '/bin/ash' ]]; then
@@ -238,7 +254,7 @@ BashGitPrompt() {
                 export GIT_PS1_SHOWCOLORHINTS=1
                 # PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "' # original
                 # PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
-                PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
+                PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(shortpwd)\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
                 printf "${RESET}${GREEN}Bash git-prompt$RESET|"
                 builtin return
             fi
