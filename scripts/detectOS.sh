@@ -13,16 +13,20 @@ esac
 if [[ $OS == "LINUX" ]]; then
     # IDs help ---> https://gitlab.com/zygoon/os-release-zoo
     if [[ -f /etc/os-release ]]; then
-        source /etc/os-release # Load OS VARS
-        OS_ID="$ID"
-        export OS
-        export OS_ID
+        # Read in a subshell to avoid polluting the environment
+        _os_info=$(. /etc/os-release && echo "$PRETTY_NAME|$ID|${VERSION:-${VERSION_ID:-unknown}}")
+        _pretty="${_os_info%%|*}"
+        _id="${_os_info#*|}"; _id="${_id%%|*}"
+        _version="${_os_info##*|}"
+        unset _os_info
 
-        if [[ -n $PRETTY_NAME ]]; then
-            echo "${RESET}OS Detect: $BOLD$GREEN$OS$RESET/$BOLD$GREEN$PRETTY_NAME$RESET Version $BOLD$GREEN$VERSION$RESET"
+        if [[ -n "$_pretty" ]]; then
+            # PRETTY_NAME already includes the version (e.g. "Ubuntu 24.04.4 LTS")
+            echo "${RESET}OS Detect: $BOLD$GREEN$OS$RESET/$BOLD$GREEN$_pretty$RESET"
         else
-            echo "${RESET}OS Detect: $BOLD$GREEN$OS$RESET/$BOLD$GREEN$OS_ID$RESET Version $BOLD$GREEN$VERSION$RESET"
+            echo "${RESET}OS Detect: $BOLD$GREEN$OS$RESET/$BOLD$GREEN$_id$RESET Version $BOLD$GREEN$_version$RESET"
         fi
+        unset _pretty _id _version
     else
         echo "${RESET}OS Detect: $BOLD$GREEN$OS$RESET"
     fi
