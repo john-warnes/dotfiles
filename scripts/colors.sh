@@ -9,16 +9,13 @@
 #      Modified  Wednesday, 4 February 2026
 # ====================================================================
 
-# set -o nounset # Treat unset variables as an error
-
 # Use colors
 # If connected to a terminal [ -t 1 ] and the CLICOLOR env set set
-if [ -t 1 ] && [ "${CLICOLOR:-0}" -eq 1 ]; then
+if [ -t 1 ] && [ "${CLICOLOR:-0}" = "1" ]; then
 
-    # This function evaluates the echo to turn the ESC sequence into a true byte value
+    # Output an ANSI escape sequence
     esc() {
-        local ESC="\x1B" # or \033
-        eval 'echo -e "$ESC$1"'
+        printf '\033%s' "$1"
     }
 
     # Reset
@@ -120,5 +117,3 @@ fi
 if [[ $# -gt 0 ]]; then
     echo "$BOLD${RED}C${GREEN}O${YELLOW}L${BLUE}O${RED}R${GREEN}S$RESET$BOLD support$GREEN ON$RESET"
 fi
-
-set +o nounset # Do Not treat unset variables as an error
