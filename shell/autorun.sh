@@ -14,7 +14,7 @@
 # ============================================================================
 Colors() {
     if [[ -f $DOT_FILES/scripts/colors.sh ]]; then
-        source $DOT_FILES/scripts/colors.sh
+        source "$DOT_FILES/scripts/colors.sh"
     fi
 }
 # } ===
@@ -24,10 +24,8 @@ Colors() {
 # ============================================================================
 RunCheck() {
     if [[ $DOT_FILES_AUTO == 1 ]]; then
-        #echo "$RESET${GREEN}[dot files Already Loaded]$RESET"
         echo 1
     else
-        export DOT_FILES_AUTO=1
         echo 0
     fi
 }
@@ -38,7 +36,7 @@ RunCheck() {
 # ============================================================================
 DetectOS() {
     if [[ -f $DOT_FILES/scripts/detectOS.sh ]]; then
-        source $DOT_FILES/scripts/detectOS.sh
+        source "$DOT_FILES/scripts/detectOS.sh"
     fi
 }
 # } ===
@@ -77,38 +75,6 @@ SSHConfiguration() {
 # } ===
 
 # ============================================================================
-# Python Virtual Environments {
-# ============================================================================
-PythonVirtualEnvironments() {
-    if [[ -f $HOME/.local/bin/virtualenvwrapper.sh ]] || [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
-
-        if ! [[ -d $HOME/.virtualenvs ]]; then
-            mkdir $HOME/.virtualenvs
-        fi
-        export WORKON_HOME=$HOME/.virtualenvs
-
-        # Set Dir for development director
-        if ! [[ -d $HOME/dev ]]; then
-            mkdir $HOME/dev
-        fi
-        export PROJECT_HOME=$HOME/dev
-
-        #what python to use
-        export VIRTUALENVWRAPPER_PYTHON="$(which python3)"
-
-        if [[ -f $HOME/.local/bin/virtualenvwrapper.sh ]]; then
-            source $HOME/.local/bin/virtualenvwrapper.sh
-        elif [[ -f /usr/local/bin/virtualenvwrapper.sh ]]; then
-            source /usr/local/bin/virtualenvwrapper.sh
-        fi
-        printf "${RESET}${GREEN}Python Virt Wrapper$RESET|"
-    else
-        printf "${RESET}${YELLOW}!! Python Virt Wrapper !!$RESET "
-    fi
-}
-#} ===
-
-# ============================================================================
 # Script Path {
 # ============================================================================
 ScriptsPath() {
@@ -126,7 +92,7 @@ ScriptsPath() {
 # ============================================================================
 ShellAliases() {
     if [[ -f $DOT_FILES/shell/shell_aliases ]]; then
-        source $DOT_FILES/shell/shell_aliases
+        source "$DOT_FILES/shell/shell_aliases"
     fi
 }
 # } ===
@@ -136,7 +102,7 @@ ShellAliases() {
 # ============================================================================
 PersonalAliases() {
     if [[ -f $DOT_FILES/secure/personal_aliases ]]; then
-        source $DOT_FILES/secure/personal_aliases
+        source "$DOT_FILES/secure/personal_aliases"
     fi
 }
 # } ===
@@ -145,24 +111,20 @@ PersonalAliases() {
 # Set Cursor {
 # ============================================================================
 SetCursor() {
-    # Skip cursor changes in VSCode integrated terminal
-    if [ -n "$VSCODE_SHELL_INTEGRATION" ] || [ "$TERM_PROGRAM" = "vscode" ]; then
-        return
-    fi
     if [[ -f $DOT_FILES/shell/set_cursor.sh ]]; then
-        source $DOT_FILES/shell/set_cursor.sh
+        source "$DOT_FILES/shell/set_cursor.sh"
         printf "${RESET}${GREEN}SetCursor$RESET|"
     fi
 }
 # } ===
 
 # ============================================================================
-# OSX Bash Completion {
+# Bash Completion (Linux + OSX) {
 # ============================================================================
 BashCompletion() {
 
     # Linux
-    if [[ $OS == 'LINUX' ]] && ([[ $SHELL == '/bin/bash' ]] || [[ $SHELL == '/bin/ash' ]]); then
+    if [[ $OS == 'LINUX' ]] && ([[ $SHELL == */bash ]] || [[ $SHELL == */ash ]]); then
 
         # enable programmable completion features (you don't need to enable
         # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -184,8 +146,8 @@ BashCompletion() {
     fi
 
     # OSX
-    if [[ $OS == 'OSX' ]] && [[ $SHELL == '/bin/bash' ]]; then
-        if [[ -f "$(brew --prefix)/etc/bash_completion" ]]; then
+    if [[ $OS == 'OSX' ]] && [[ $SHELL == */bash ]]; then
+        if command -v brew &>/dev/null && [[ -f "$(brew --prefix)/etc/bash_completion" ]]; then
             source "$(brew --prefix)/etc/bash_completion"
             printf "${RESET}${GREEN}Bash Complete$RESET|"
         else
@@ -200,78 +162,72 @@ BashCompletion() {
 # Bash Git Prompt {
 # ============================================================================
 checkvenv() {
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-        echo ""
-    else
+    if [[ -n "$VIRTUAL_ENV" ]]; then
         echo "($(basename "$VIRTUAL_ENV")) "
     fi
 }
 
 shortpwd() {
-    local pwd_str="${PWD/#$HOME/~}"
+    local pwd_str
+    if [[ "$PWD" == "$HOME" ]]; then
+        pwd_str="~"
+    elif [[ "$PWD" == "$HOME/"* ]]; then
+        pwd_str="~${PWD#"$HOME"}"
+    else
+        pwd_str="$PWD"
+    fi
+
     local max_len=30
     if [[ ${#pwd_str} -le $max_len ]]; then
         printf '%s' "$pwd_str"
         return
     fi
+    # Preserve leading ~ so home paths show as ~.../tail instead of .../tail
+    local prefix=""
     local trimmed="$pwd_str"
+    if [[ "$trimmed" == '~/'* ]]; then
+        prefix="~"
+        trimmed="${trimmed#\~}"  # e.g. /a/b/c/d
+    fi
     while [[ ${#trimmed} -gt $max_len ]]; do
         local next="${trimmed#*/}"
         [[ "$next" == "$trimmed" ]] && break
         trimmed="$next"
     done
-    printf '\[\033[90m\]...\[\033[01;34m\]/%s' "$trimmed"
+    printf $'\001\033[90m\002%s...\001\033[01;34m\002/%s' "$prefix" "$trimmed"
 }
 
-BashGitPrompt() {
+GitPrompt() {
 
-    if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/zsh' || $SHELL == '/bin/ash' ]]; then
+    if [[ $SHELL == */bash || $SHELL == */zsh || $SHELL == */ash ]]; then
         # ash = https://en.wikipedia.org/wiki/Almquist_shell
 
-        if [[ -f $DOT_FILES/shell/git-prompt.sh ]]; then
-
-            source $DOT_FILES/shell/git-prompt.sh
-
-            # VSCODE Integrated Terminal
-            if [ -n "$VSCODE_SHELL_INTEGRATION" ]; then
-                export GIT_PS1_SHOWDIRTYSTATE=1
-                export GIT_PS1_SHOWUNTRACKEDFILES=1
-                export GIT_PS1_SHOWSTASHSTATE=1
-
-                # Simpler prompt for VSCode - it handles decorations itself
-                # Use PS1 instead of PROMPT_COMMAND to avoid conflicts with VSCode's shell integration
-                PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(__git_ps1 " (\[\033[01;32m\]%s\[\033[00m\])")\$ '
-
-                # Disable problematic features in VSCode
-                unset PROMPT_COMMAND  # VSCode manages its own prompt command
-
-                printf "${RESET}${GREEN}VSCode git-prompt$RESET|"
-                builtin return
-            fi
-
-            # Bash
-            if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/ash' ]]; then
-                export GIT_PS1_SHOWCOLORHINTS=1
-                # PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "' # original
-                # PROMPT_COMMAND='__git_ps1 "${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\\[\033[00m\]" "\\[\033[00m\]\$ "' # just the git on line
-                PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(shortpwd)\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
-                printf "${RESET}${GREEN}Bash git-prompt$RESET|"
-                builtin return
-            fi
-
-            # Zsh
-            if [[ $SHELL == '/bin/zsh' ]]; then
-                export GIT_PS1_SHOWCOLORHINTS=1
-                precmd() {
-                    __git_ps1 "%n" ":%~$ " "|%s"
-                }
-                printf "${RESET}${GREEN}Zsh git-prompt$RESET|"
-                builtin return
-            fi
-            printf "${RESET}${YELLOW}!! Unknown shell: skip git-prompt !!$RESET|"
+        if [[ -f /usr/lib/git-core/git-sh-prompt ]]; then
+            source /usr/lib/git-core/git-sh-prompt
+        elif [[ -f /usr/share/git-core/contrib/completion/git-prompt.sh ]]; then
+            source /usr/share/git-core/contrib/completion/git-prompt.sh
         else
-            printf "${RESET}${YELLOW}!! Bash git-prompt !!$RESET|"
+            printf "${RESET}${YELLOW}!! git-prompt not found !!$RESET|"
+            return
         fi
+
+        # Bash
+        if [[ $SHELL == */bash || $SHELL == */ash ]]; then
+            export GIT_PS1_SHOWCOLORHINTS=1
+            PROMPT_COMMAND='__git_ps1 "$(checkvenv)${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(shortpwd)\\[\033[00m\]" "\\[\033[00m\]\$ "' # virtual env on pre line if using one
+            printf "${RESET}${GREEN}Git Prompt$RESET|"
+            builtin return
+        fi
+
+        # Zsh
+        if [[ $SHELL == */zsh ]]; then
+            precmd() {
+                __git_ps1 "%n" ":%~$ " "|%s"
+            }
+            printf "${RESET}${GREEN}Git Prompt$RESET|"
+            builtin return
+        fi
+        printf "${RESET}${YELLOW}!! Unknown shell: skip git-prompt !!$RESET|"
     fi
 }
 #} ===
@@ -280,15 +236,44 @@ BashGitPrompt() {
 # flutter completion {
 # ============================================================================
 FlutterBashCompletion() {
-    # Currently works in both zsh and bash
-    if [[ -f $DOT_FILES/shell/flutter_bash_completion.sh ]]; then
-        source $DOT_FILES/shell/flutter_bash_completion.sh
-        printf "${RESET}${GREEN}Flutter Completion$RESET"
+    if command -v flutter &>/dev/null; then
+        source <(flutter bash-completion 2>/dev/null)
+        printf "${RESET}${GREEN}Flutter Completion$RESET|"
     else
-        printf "${RESET}${YELLOW}!! Flutter Completion !!$RESET"
+        printf "${RESET}${YELLOW}!! Flutter Completion !!$RESET|"
     fi
 }
 #} ===
+
+# ============================================================================
+# History Configuration {
+# ============================================================================
+HistoryConfig() {
+    if [[ $SHELL == */bash || $SHELL == */ash ]]; then
+        export HISTSIZE=200000
+        export HISTFILESIZE=1000000
+
+        # Enable history appending instead of overwriting
+        shopt -s histappend
+
+        # Sync history on every prompt: append new commands, read new commands from other sessions
+        PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+    elif [[ $SHELL == */zsh ]]; then
+        export HISTSIZE=200000
+        export SAVEHIST=200000
+        export HISTFILE="$HOME/.zsh_history"
+
+        # Zsh history sharing in tmux
+        if [ -n "$TMUX" ]; then
+            setopt SHARE_HISTORY        # Share history across all sessions
+            setopt INC_APPEND_HISTORY   # Append immediately
+            setopt HIST_IGNORE_DUPS     # Don't record duplicates
+            printf "${RESET}${GREEN}Tmux history sharing enabled$RESET\n"
+        fi
+    fi
+}
+# } ===
 
 # ============================================================================
 # VSCode Terminal Optimizations {
@@ -297,22 +282,16 @@ VSCodeOptimizations() {
     if [[ "$TERM_PROGRAM" = "vscode" ]]; then
         export VSCODE_TERMINAL=1
 
-
-        # 1. Optimize History (Use an array-safe append for Bash)
-        if [[ $SHELL == *'/bash'* ]]; then
-            shopt -s histappend
-            # Append history -a without breaking existing hooks
-            PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
-        fi
-
-        # 2. Manual Fallback for Shell Integration
+        # Manual Fallback for Shell Integration
         # We check for the VSCODE_INJECTION var or the specific function
         if [[ -z "$VSCODE_INJECTION" ]] && ! declare -f __vsc_prompt_command > /dev/null; then
             # Use 'command -v code' to ensure the binary exists before calling it
             if command -v code >/dev/null 2>&1; then
-                # Sourcing the integration script
+                # Detect shell name for integration script lookup
+                local shell_name
+                shell_name=$(basename "$SHELL")
                 local SCRIPT_PATH
-                SCRIPT_PATH=$(code --locate-shell-integration-path bash)
+                SCRIPT_PATH=$(code --locate-shell-integration-path "$shell_name" 2>/dev/null)
                 if [[ -f "$SCRIPT_PATH" ]]; then
                     . "$SCRIPT_PATH"
                 fi
@@ -345,38 +324,36 @@ main() {
     DetectOS
 
     HAS_RUN=$(RunCheck)
+    export DOT_FILES_AUTO=1
 
     if [[ $# -gt 0 ]]; then
         echo "auto run exec from: $1"
     fi
 
-    # Might need to force it
-    #HAS_RUN=0
-    # this need more testing to see if detecting loaded or not
-
     if [[ $HAS_RUN -eq 1 ]]; then
-        printf "$RESET[dot files reload: "
-        BashGitPrompt
-        echo "]"
+        printf "%s[autorun skipped: already loaded]\n" "$RESET"
+        return 0
     else
         printf "["
 
         SSHConfiguration
 
-        #PythonVirtualEnvironments
-
         # Colors already loaded at top of file
         if [[ -f $DOT_FILES/scripts/colors.sh ]]; then
             printf "${RESET}${GREEN}Colors$RESET|"
         fi
-        SetCursor
         ShellAliases
         PersonalAliases
         ScriptsPath
 
-        BashCompletion
-        BashGitPrompt
-        FlutterBashCompletion
+        if [[ -z "$VSCODE_SHELL_INTEGRATION" && "$TERM_PROGRAM" != "vscode" ]]; then
+            # SetCursor
+            BashCompletion
+            FlutterBashCompletion
+            GitPrompt
+        fi
+
+        HistoryConfig
         VSCodeOptimizations
 
         echo "]"
@@ -384,41 +361,6 @@ main() {
         echo "${RESET}DOT_FILES${GREEN} Ready$RESET"
     fi
 
-    # Set history to 200k lines, memory and file
-    if [[ $SHELL == '/bin/bash' || $SHELL == '/bin/ash' ]]; then
-        export HISTSIZE=200000
-        export HISTFILESIZE=200000
-
-        # Enable history appending instead of overwriting
-        shopt -s histappend
-
-        # Tmux history sharing: append and reload history after each command
-        if [ -n "$TMUX" ]; then
-            # In tmux: append history immediately and reload from all sessions
-            # This allows real-time history sharing across tmux panes
-            if [ -z "$VSCODE_TERMINAL" ]; then
-                # Don't override VSCode's PROMPT_COMMAND if it exists
-                export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -n"
-            fi
-            printf "${RESET}${GREEN}Tmux history sharing enabled$RESET\n"
-        else
-            # Not in tmux: just append history on exit
-            shopt -s histappend
-        fi
-
-    elif [[ $SHELL == '/bin/zsh' ]]; then
-        export HISTSIZE=200000
-        export SAVEHIST=200000
-        export HISTFILE="$HOME/.zsh_history"
-
-        # Zsh history sharing in tmux
-        if [ -n "$TMUX" ]; then
-            setopt SHARE_HISTORY        # Share history across all sessions
-            setopt INC_APPEND_HISTORY   # Append immediately
-            setopt HIST_IGNORE_DUPS     # Don't record duplicates
-            printf "${RESET}${GREEN}Tmux history sharing enabled$RESET\n"
-        fi
-    fi
 }
 #} ===
 main "$@" #remember to pass all command line args
