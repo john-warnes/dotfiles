@@ -5,21 +5,21 @@ if [[ $OS == 'LINUX' ]]; then
     alias ls='ls -Fh --color=auto'
     alias ll='ls -Fhl --color=auto'
     alias la='ls -Fha --color=auto'
-    alias lr='ls -fhlrt --color=auto'
+    alias lr='ls -hlrt --color=auto'
 
     alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+    alias fgrep='grep -F --color=auto'
+    alias egrep='grep -E --color=auto'
 
 elif [[ $OS == 'OSX' ]]; then
     alias ls='ls -FhG'
     alias ll='ls -FhlG'
     alias la='ls -FhaG'
-    alias lr='ls -fhlrtG'
+    alias lr='ls -hlrtG'
 
     alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+    alias fgrep='grep -F --color=auto'
+    alias egrep='grep -E --color=auto'
 fi
 
 # Tmux alias
@@ -45,8 +45,6 @@ alias jnvim='nvim -p ~/.vimrc ~/.vim/bundle/jvim/plugin/jvim.vim'
 #Colorize GCC output
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-printf "${RESET}${GREEN}Shell Aliases$RESET|"
-
 # Convenience alias for mounted volumes (Linux GNOME/KDE)
 if [[ -d "/run/user/$UID/gvfs" ]]; then
     alias cdmount='cd "/run/user/$UID/gvfs"'
@@ -55,3 +53,5 @@ elif [[ -d "$XDG_RUNTIME_DIR/gvfs" ]]; then
 elif [[ -d "/media/$USER" ]]; then
     alias cdmount='cd "/media/$USER"'
 fi
+
+printf "${RESET}${GREEN}Shell Aliases$RESET|"
