@@ -294,27 +294,32 @@ FlutterBashCompletion() {
 # VSCode Terminal Optimizations {
 # ============================================================================
 VSCodeOptimizations() {
-    if [ -n "$VSCODE_SHELL_INTEGRATION" ] || [ "$TERM_PROGRAM" = "vscode" ]; then
-        # Disable features that conflict with VSCode's shell integration
-
-        # VSCode handles command execution tracking, so we simplify output
+    if [[ "$TERM_PROGRAM" = "vscode" ]]; then
         export VSCODE_TERMINAL=1
 
-        # Ensure VSCode's shell integration script is sourced if available
-        # VSCode typically injects this automatically, but we can check
-        if [ -n "$VSCODE_INJECTION" ] && [ "$VSCODE_INJECTION" = "1" ]; then
-            # VSCode's shell integration is active
-            :
-        fi
 
-        # Optimize history for VSCode terminal
-        # VSCode can track commands across sessions, so we ensure history is immediate
-        if [[ $SHELL == '/bin/bash' ]]; then
+        # 1. Optimize History (Use an array-safe append for Bash)
+        if [[ $SHELL == *'/bash'* ]]; then
             shopt -s histappend
-            PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a"
+            # Append history -a without breaking existing hooks
+            PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
         fi
 
-        printf "${RESET}${GREEN}VSCode Terminal$RESET|"
+        # 2. Manual Fallback for Shell Integration
+        # We check for the VSCODE_INJECTION var or the specific function
+        if [[ -z "$VSCODE_INJECTION" ]] && ! declare -f __vsc_prompt_command > /dev/null; then
+            # Use 'command -v code' to ensure the binary exists before calling it
+            if command -v code >/dev/null 2>&1; then
+                # Sourcing the integration script
+                local SCRIPT_PATH
+                SCRIPT_PATH=$(code --locate-shell-integration-path bash)
+                if [[ -f "$SCRIPT_PATH" ]]; then
+                    . "$SCRIPT_PATH"
+                fi
+            fi
+        fi
+
+        printf " ${RESET}${GREEN}|VSCode Terminal$RESET"
     fi
 }
 # } ===
@@ -357,7 +362,6 @@ main() {
         printf "["
 
         SSHConfiguration
-        VSCodeOptimizations
 
         #PythonVirtualEnvironments
 
@@ -373,6 +377,7 @@ main() {
         BashCompletion
         BashGitPrompt
         FlutterBashCompletion
+        VSCodeOptimizations
 
         echo "]"
 
