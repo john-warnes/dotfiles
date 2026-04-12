@@ -1,5 +1,5 @@
 " =================================================================
-"                             vimrc                               
+"                             vimrc
 " =================================================================
 " vim:foldmarker={,}:foldmethod=marker:
 " =rev=============================================================
@@ -7,7 +7,7 @@
 "  Modified  Tuesday, 23 October 2018
 " =================================================================
 scriptencoding utf-8
-setlocal keywordprg=:help
+set keywordprg=:help
 
 " get current script path
 let s:path = fnamemodify(resolve(expand('<sfile>:p')), ':h')
@@ -33,7 +33,7 @@ let g:Jvim#hidden#showIndent   = 0 " Show indent guides when (F2 Toggles)
 let g:Jvim#hidden#codePretty   = 1 " Replace some chars with alternatives (F2 Toggles)
 
 let g:Jvim#presistentUndo#enable = 1 " Use persistent Undo
-let g:Jvim#presistentUndo#dir    = expand($DOT_FILES.'/vim/undo') " Where to store persistent files
+let g:Jvim#presistentUndo#dir    = expand(empty($DOT_FILES) ? '~/.vim/undo' : $DOT_FILES.'/vim/undo') " Where to store persistent files
 
 let g:Jvim#folding#syntax = 1 " Enable folding by syntax for all files
                               "  NOTE: Might be slow on older systems
@@ -202,7 +202,6 @@ set wildmode=list:longest,full " Command <Tab> completion, list matches and,
                                "  complete the longest common part,
                                "  then, cycle through the matches
 set wildchar=<Tab>             " Use tab to move in the menu
-set backspace=2                " Set backspace
 set backspace=indent,eol,start " Allow backspace over listed types
 set nostartofline              " Stay on current char on page commands
 set novisualbell               " Don't flash the screen
@@ -228,7 +227,7 @@ set textwidth=79            " Width of document (used by gd)
 set nowrap                  " Don't automatically wrap on load
 set commentstring=\ #\ %s   " This how fold markers look
 set cursorline              " Highlight the current line
-set visualbell              " Visual bell instead of beeping
+" set visualbell is disabled; novisualbell is set above
 
 " Changes the shape of the cursor depending on the current mode
 if has('gui_running')
@@ -269,7 +268,7 @@ set cindent                 " Intelligent indenting for source code
 "set cinkeys=0{,0},!^F,o,O,e " Default is: 0{,0},0),:,0#,!^F,o,O,e
 set cinoptions=N-s
 set noshowmatch               " Show matching brackets / parenthesis
-set matchtime=0            " Show matching character for 5s
+set matchtime=0            " No delay when showing matching character
 set shiftwidth=4            " Spaces used for auto indents
 set tabstop=4               " Set the tab width to 4
 set softtabstop=4           " Spaces that a tab moves over

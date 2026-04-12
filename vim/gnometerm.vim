@@ -7,7 +7,7 @@ let g:powerlineFonts= [
             \'Droid Sans Mono for Powerline',
             \'Droid Sans Mono Dotted for Powerline',
             \'Droid Sans Mono Slashed for Powerline',
-            \'Fria Mono for Powerline'
+            \'Fria Mono for Powerline',
             \'Go Mono for Powerline',
             \'Hack',
             \'Inconsolata for Powerline',
@@ -18,7 +18,7 @@ let g:powerlineFonts= [
             \'Noto Mono for Powerline',
             \'NovaMono for Powerline',
             \'Roboto Mono for Powerline',
-            \'Space Mono for Powerline'
+            \'Space Mono for Powerline',
             \'Ubuntu Mono derivative Powerline',
             \]
 
