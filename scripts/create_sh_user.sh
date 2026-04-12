@@ -13,12 +13,12 @@ function help {
     -p | --password              Asks for user password interactively
                                  else password will be random '~/password.txt'
 EOF
-    exit
 }
 
 # If 1 then ask for the password on command line
 ask_password=0
 force=0
+password=""
 
 POSITIONAL_ARGS=()
 
@@ -27,6 +27,7 @@ while (("$#")); do
     -\? | -h | --help)
         shift 1
         help
+        exit 0
         ;;
     -p | --password)
         shift
@@ -40,7 +41,7 @@ while (("$#")); do
         shift
         break
         ;;
-    -* | --*=) # unsupported flags
+    -* | --*) # unsupported flags
         echo "Error: Unsupported flag $1" >&2
         help
         exit 1
@@ -57,10 +58,14 @@ set -- "${POSITIONAL_ARGS[@]}"
 # echo "Positional Args: ${POSITIONAL_ARGS[@]}"
 
 # Check if we have at least three
-[[ ${#POSITIONAL_ARGS[@]} -lt 3 ]] && echo "Error: Invalid arguments" && help
+if [[ ${#POSITIONAL_ARGS[@]} -lt 3 ]]; then
+    echo "Error: Invalid arguments" >&2
+    help
+    exit 1
+fi
 
 username=${POSITIONAL_ARGS[0]}
-fullname=${POSITIONAL_ARGS[1]}
+fullname=${POSITIONAL_ARGS[1]//,/}  # strip commas to avoid corrupting GECOS fields
 pub_key=${POSITIONAL_ARGS[2]}
 
 # Validate username format (alphanumeric, dash, underscore only)
@@ -90,7 +95,7 @@ fi
 
 # If password is empty set it to random
 if [ -z "$password" ]; then
-    password=$(head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 13)
+    password=$(tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 13)
     echo "Random password generated: \`$password\`"
 fi
 
