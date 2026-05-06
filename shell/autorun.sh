@@ -256,8 +256,8 @@ HistoryConfig() {
         # Enable history appending instead of overwriting
         shopt -s histappend
 
-        # Sync history on every prompt: append new commands, read new commands from other sessions
-        PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+        # Append new commands to history file on every prompt (no cross-session sync)
+        PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
     elif [[ $SHELL == */zsh ]]; then
         export HISTSIZE=200000
